@@ -186,13 +186,14 @@ fun NetRemittanceCard(netRemittance: Double) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .shadow(3.dp, RoundedCornerShape(16.dp)),
+            .height(130.dp)
+            .shadow(4.dp, RoundedCornerShape(18.dp)),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(18.dp)
     ) {
         Box(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(
@@ -201,17 +202,17 @@ fun NetRemittanceCard(netRemittance: Double) {
                         )
                     )
                 )
-                .padding(16.dp)
+                .padding(18.dp)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxSize(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Box(
                         modifier = Modifier
-                            .size(52.dp)
+                            .size(56.dp)
                             .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f), CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
@@ -219,30 +220,33 @@ fun NetRemittanceCard(netRemittance: Double) {
                             imageVector = Icons.Default.Payments,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(28.dp)
+                            modifier = Modifier.size(30.dp)
                         )
                     }
                     Spacer(modifier = Modifier.width(16.dp))
                     Column {
                         Text(
                             text = "صافي التوريد للمكتب",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.ExtraBold,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(6.dp))
                         Text(
                             text = "السائق مطالب بتوريد هذا المبلغ",
-                            fontSize = 11.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
                         )
                     }
                 }
 
-                Column(horizontalAlignment = Alignment.End) {
+                Column(
+                    horizontalAlignment = Alignment.End,
+                    verticalArrangement = Arrangement.Center
+                ) {
                     Text(
                         text = "%,.2f".format(netRemittance) + " ج.م",
-                        fontSize = 22.sp,
+                        fontSize = 24.sp,
                         fontWeight = FontWeight.Black,
                         color = if (netRemittance >= 0) Color(0xFF10B981) else MaterialTheme.colorScheme.error
                     )
@@ -265,7 +269,7 @@ fun StatCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(140.dp)
+            .height(110.dp)
             .shadow(4.dp, RoundedCornerShape(16.dp))
             .testTag("${testTagPrefix}_card"),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
@@ -274,18 +278,18 @@ fun StatCard(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(12.dp),
+                .padding(10.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = title,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontSize = 12.sp,
+                    fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.weight(1f)
                 )
@@ -293,21 +297,21 @@ fun StatCard(
                     imageVector = icon,
                     contentDescription = null,
                     tint = iconColor,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(18.dp)
                 )
             }
 
             Text(
                 text = value,
                 color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 22.sp,
+                fontSize = 18.sp,
                 fontWeight = FontWeight.Black
             )
 
             Text(
                 text = subtext,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-                fontSize = 11.sp
+                fontSize = 10.sp
             )
         }
     }
@@ -501,19 +505,21 @@ fun launchWhatsApp(context: Context, phoneNumber: String) {
 
 fun shareOrderToWhatsApp(context: Context, order: Order) {
     try {
+        val statusText = when (order.status) {
+            Order.STATUS_PARTIAL -> "${order.status} (تم تحصيل ${order.collectedAmount ?: 0.0} ج.م)"
+            Order.STATUS_REJECTED_WITH_FEE -> "${order.status} (تم دفع مصاريف الشحن ${order.deliveryFeeAmount ?: 0.0} ج.م)"
+            else -> order.status
+        }
+
         val templateText = """
-            📦 *تفاصيل الأوردر ومطالبة التحصيل لعميل بوسطة*
-            
             👤 *العميل:* ${order.clientName}
             📞 *رقم الموبايل:* ${order.phoneNumber}
             📍 *العنوان:* ${order.address}
             💰 *المطلوب دفعه وتحصيله:* ${order.amount} ج.م
-            
-            ⏱️ *تاريخ الإرسال:* ${getCurrentFormattedDate()}
-            🚀 _برعاية مندوب التوزيع المحترف_
+            📊 *حالة الأوردر:* $statusText
         """.trimIndent()
         
-        val url = "https://api.whatsapp.com/send?text=" + URLEncoder.encode(templateText, "UTF-8")
+        val url = "https://api.whatsapp.com/send?text=" + java.net.URLEncoder.encode(templateText, "UTF-8")
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)

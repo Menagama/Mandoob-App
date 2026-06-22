@@ -103,7 +103,7 @@ fun HomeScreen(
             }
 
             // Margin bottom to clear overlapping floating action buttons
-            item { Spacer(modifier = Modifier.height(160.dp)) }
+            item { Spacer(modifier = Modifier.height(80.dp)) }
         }
 
         // Floating stacked action buttons matching the layout perfectly

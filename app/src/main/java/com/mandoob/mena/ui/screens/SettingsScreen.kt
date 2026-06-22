@@ -168,7 +168,6 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                             "profile" -> "بيانات الكابتن"
                             "commissions" -> "فئات العمولات"
                             "appearance" -> "مظهر التطبيق"
-                            "migrations" -> "سلامة البيانات والترحيل"
                             else -> "إعدادات التطبيق"
                         },
                         fontSize = 24.sp,
@@ -241,19 +240,6 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                                 iconBackgroundColor = Color(0xFFFEF7E0),
                                 iconColor = Color(0xFFF9AB00),
                                 onClick = { activeSection = "appearance" }
-                            )
-
-                            // Separator
-                            Box(modifier = Modifier.fillMaxWidth().height(1.dp).background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)))
-
-                            // Section 4: Migrations & Safety
-                            SettingsMenuItem(
-                                title = "سلامة البيانات والترحيل",
-                                subtitle = "خريطة وجاهزية ترحيل البيانات الحالية عند رفع إصدار البرنامج",
-                                icon = Icons.Default.Security,
-                                iconBackgroundColor = Color(0xFFE8F0FE),
-                                iconColor = Color(0xFF1976D2),
-                                onClick = { activeSection = "migrations" }
                             )
 
                             // Separator
@@ -538,60 +524,6 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Text("رجوع للقائمة الرئيسية", color = Color.White, fontWeight = FontWeight.Bold)
-                            }
-                        }
-                    }
-                }
-            } else if (activeSection == "migrations") {
-                // DATA SAFETY / WARNING INFO CARD (Issue 2)
-                item {
-                    Card(
-                        modifier = Modifier.fillMaxWidth().shadow(4.dp, RoundedCornerShape(24.dp)),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                        shape = RoundedCornerShape(24.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxWidth().padding(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
-                        ) {
-                            Text(
-                                text = "سلامة البيانات والترحيل التلقائي 🛡️",
-                                fontSize = 17.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary,
-                                textAlign = TextAlign.Right
-                            )
-
-                            Text(
-                                text = "تم تفعيل نظام الهجرة التدريجي (Room Database Migration) في هذا الإصدار لضمان المحافظة على بياناتك أوردراتك الثمينة عند تحديث التطبيق إلى إصدارات أحدث بميزات جديدة.",
-                                fontSize = 13.sp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                textAlign = TextAlign.Right
-                            )
-
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(Color(0xFFFFF9C4), RoundedCornerShape(12.dp))
-                                    .padding(12.dp)
-                            ) {
-                                Text(
-                                    text = "⚠️ تنبيه السلامة:\nدائمًا عندما يتوجب إجراء تغيير عميق في قاعدة بيانات البرنامج، يُنصح بحفظ وعودتك لشيت الإكسل كنسخة احتياطية لتجنب أي فقد فجائي في العمل الميداني.",
-                                    fontSize = 11.sp,
-                                    color = Color(0xFFF57F17),
-                                    fontWeight = FontWeight.Bold,
-                                    textAlign = TextAlign.Right,
-                                    modifier = Modifier.fillMaxWidth()
-                                )
-                            }
-
-                            Button(
-                                onClick = { activeSection = null },
-                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                                shape = RoundedCornerShape(12.dp),
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text("فهمت ذلك", color = Color.White, fontWeight = FontWeight.Bold)
                             }
                         }
                     }

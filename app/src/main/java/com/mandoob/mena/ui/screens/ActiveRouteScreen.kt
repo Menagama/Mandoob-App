@@ -242,26 +242,28 @@ fun ActiveRouteScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit) {
                     )
                 }
 
-                // Fast Move Button
-                Row(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(if (isFastMoveEnabled) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f) else MaterialTheme.colorScheme.surfaceVariant)
-                        .border(
-                            1.dp,
-                            if (isFastMoveEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
-                            RoundedCornerShape(8.dp)
+                // Fast Move Button (ONLY visible when sorting is enabled)
+                if (isSortingEnabled) {
+                    Row(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(if (isFastMoveEnabled) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f) else MaterialTheme.colorScheme.surfaceVariant)
+                            .border(
+                                1.dp,
+                                if (isFastMoveEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
+                                RoundedCornerShape(8.dp)
+                            )
+                            .clickable { viewModel.toggleFastMove() }
+                            .padding(horizontal = 10.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "نقل سريع ⚡",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = if (isFastMoveEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                         )
-                        .clickable { viewModel.toggleFastMove() }
-                        .padding(horizontal = 10.dp, vertical = 6.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "نقل سريع ⚡",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = if (isFastMoveEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
-                    )
+                    }
                 }
             }
         }
@@ -319,7 +321,7 @@ fun ActiveRouteScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit) {
                 }
             }
 
-            item { Spacer(modifier = Modifier.height(130.dp)) }
+            item { Spacer(modifier = Modifier.height(16.dp)) }
         }
     }
 

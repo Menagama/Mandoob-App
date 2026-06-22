@@ -42,10 +42,11 @@ fun ActiveRouteCard(
     var showDropdown by remember(order.id) { mutableStateOf(false) }
     var showPartialInput by remember(order.id) { mutableStateOf(false) }
     var showFeeInput by remember(order.id) { mutableStateOf(false) }
+    var showDeleteWarning by remember(order.id) { mutableStateOf(false) }
     
     // Hold temp inputs for amounts
-    var partialAmountText by remember(order.id) { mutableStateOf(order.collectedAmount?.toString() ?: order.amount.toString()) }
-    var feeAmountText by remember(order.id) { mutableStateOf(order.deliveryFeeAmount?.toString() ?: "25") }
+    var partialAmountText by remember(order.id) { mutableStateOf(order.collectedAmount?.toString() ?: "0") }
+    var feeAmountText by remember(order.id) { mutableStateOf(order.deliveryFeeAmount?.toString() ?: "0") }
 
     Card(
         modifier = Modifier
@@ -139,7 +140,7 @@ fun ActiveRouteCard(
 
                     // 2. Trash (Delete) button
                     IconButton(
-                        onClick = onDelete,
+                        onClick = { showDeleteWarning = true },
                         modifier = Modifier.size(32.dp)
                     ) {
                         Icon(
@@ -148,32 +149,6 @@ fun ActiveRouteCard(
                             tint = CancelledRed.copy(alpha = 0.8f),
                             modifier = Modifier.size(20.dp)
                         )
-                    }
-
-                    // Up and Down Arrow buttons (ONLY when isSortingEnabled is true)
-                    if (isSortingEnabled) {
-                        IconButton(
-                            onClick = { onMoveUp?.invoke() },
-                            modifier = Modifier.size(32.dp).background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), CircleShape)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowUpward,
-                                contentDescription = "نقل لأعلى",
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(18.dp)
-                            )
-                        }
-                        IconButton(
-                            onClick = { onMoveDown?.invoke() },
-                            modifier = Modifier.size(32.dp).background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), CircleShape)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowDownward,
-                                contentDescription = "نقل لأسفل",
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(18.dp)
-                            )
-                        }
                     }
 
                     // 3. Order number sequence badge
@@ -265,19 +240,49 @@ fun ActiveRouteCard(
                     }
                 }
 
-                IconButton(
-                    onClick = onEditClick,
-                    modifier = Modifier
-                        .size(36.dp)
-                        .background(MaterialTheme.colorScheme.surface, CircleShape)
-                        .border(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f), CircleShape)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "تعديل بيانات الأوردر",
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.size(18.dp)
-                    )
+                    if (isSortingEnabled) {
+                        IconButton(
+                            onClick = { onMoveUp?.invoke() },
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowUpward,
+                                contentDescription = "نقل لأعلى",
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(22.dp)
+                            )
+                        }
+                        IconButton(
+                            onClick = { onMoveDown?.invoke() },
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowDownward,
+                                contentDescription = "نقل لأسفل",
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(22.dp)
+                            )
+                        }
+                    }
+
+                    IconButton(
+                        onClick = onEditClick,
+                        modifier = Modifier
+                            .size(36.dp)
+                            .background(MaterialTheme.colorScheme.surface, CircleShape)
+                            .border(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f), CircleShape)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "تعديل بيانات الأوردر",
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
                 }
             }
 
@@ -455,8 +460,12 @@ fun ActiveRouteCard(
                     Button(
                         onClick = {
                             val valAmt = partialAmountText.toDoubleOrNull() ?: 0.0
-                            onStatusChanged(Order.STATUS_PARTIAL, valAmt, null, false)
-                            showPartialInput = false
+                            if (valAmt >= order.amount) {
+                                android.widget.Toast.makeText(context, "مبلغ التحصيل الجزئي يجب أن يكون أقل من قيمة الأوردر (${order.amount})", android.widget.Toast.LENGTH_LONG).show()
+                            } else {
+                                onStatusChanged(Order.STATUS_PARTIAL, valAmt, null, false)
+                                showPartialInput = false
+                            }
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                         shape = RoundedCornerShape(8.dp)
@@ -492,7 +501,7 @@ fun ActiveRouteCard(
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(
                         onClick = {
-                            val valAmt = feeAmountText.toDoubleOrNull() ?: 25.0
+                            val valAmt = feeAmountText.toDoubleOrNull() ?: 0.0
                             onStatusChanged(Order.STATUS_REJECTED_WITH_FEE, null, valAmt, false)
                             showFeeInput = false
                         },
@@ -504,5 +513,49 @@ fun ActiveRouteCard(
                 }
             }
         }
+    }
+
+    if (showDeleteWarning) {
+        AlertDialog(
+            onDismissRequest = { showDeleteWarning = false },
+            title = {
+                Text(
+                    text = "تأكيد الحذف ⚠️",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    textAlign = TextAlign.Right,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            text = {
+                Text(
+                    text = "هل أنت متأكد من حذف هذا الأوردر للعميل (${order.clientName})؟ هذا الإجراء غير قابل للتراجع.",
+                    fontSize = 14.sp,
+                    textAlign = TextAlign.Right,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        onDelete()
+                        showDeleteWarning = false
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = CancelledRed)
+                ) {
+                    Text("حذف الأوردر", color = Color.White, fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showDeleteWarning = false }
+                ) {
+                    Text("إلغاء", color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
+                }
+            },
+            containerColor = MaterialTheme.colorScheme.surface,
+            shape = RoundedCornerShape(16.dp)
+        )
     }
 }

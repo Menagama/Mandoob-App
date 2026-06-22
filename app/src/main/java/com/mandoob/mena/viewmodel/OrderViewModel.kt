@@ -230,6 +230,9 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
 
     fun toggleSorting() {
         _isSortingEnabled.value = !_isSortingEnabled.value
+        if (!_isSortingEnabled.value) {
+            _isFastMoveEnabled.value = false
+        }
     }
 
     fun toggleFastMove() {

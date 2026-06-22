@@ -64,19 +64,13 @@ fun MainScreen(viewModel: OrderViewModel) {
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                // Animated container for switching between screens smoothly
+                // Animated container for switching between screens smoothly and with high performance
                 AnimatedContent(
                     targetState = currentTab,
                     transitionSpec = {
-                        if (targetState > initialState) {
-                            (slideInHorizontally { width -> -width } + fadeIn()).togetherWith(
-                                slideOutHorizontally { width -> width } + fadeOut()
-                            )
-                        } else {
-                            (slideInHorizontally { width -> width } + fadeIn()).togetherWith(
-                                slideOutHorizontally { width -> -width } + fadeOut()
-                            )
-                        }
+                        (fadeIn(animationSpec = androidx.compose.animation.core.tween(120)) +
+                                scaleIn(initialScale = 0.98f, animationSpec = androidx.compose.animation.core.tween(120)))
+                            .togetherWith(fadeOut(animationSpec = androidx.compose.animation.core.tween(120)))
                     },
                     label = "TabTransition"
                 ) { tab ->

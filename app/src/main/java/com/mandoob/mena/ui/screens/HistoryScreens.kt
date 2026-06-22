@@ -181,7 +181,7 @@ fun SuccessfulOrdersScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit
                 }
             }
 
-            item { Spacer(modifier = Modifier.height(130.dp)) }
+            item { Spacer(modifier = Modifier.height(16.dp)) }
         }
     }
 
@@ -368,7 +368,7 @@ fun CancelledOrdersScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit)
                 }
             }
 
-            item { Spacer(modifier = Modifier.height(130.dp)) }
+            item { Spacer(modifier = Modifier.height(16.dp)) }
         }
     }
 
