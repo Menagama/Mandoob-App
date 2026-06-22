@@ -1,6 +1,7 @@
-package com.example.ui.screens
+package com.mandoob.mena.ui.screens
 
 import android.widget.Toast
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,12 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.ui.theme.BackgroundGray
-import com.example.ui.theme.BlueLight
-import com.example.ui.theme.BluePrimary
-import com.example.ui.theme.SurfaceWhite
-import com.example.ui.theme.TextMuted
-import com.example.viewmodel.OrderViewModel
+import com.mandoob.mena.viewmodel.OrderViewModel
 
 @Composable
 fun MainScreen(viewModel: OrderViewModel) {
@@ -68,22 +64,38 @@ fun MainScreen(viewModel: OrderViewModel) {
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                // Screen contents based on selected tab
-                when (currentTab) {
-                    0 -> HomeScreen(
-                        viewModel = viewModel,
-                        onOpenAddOrder = { showAddDialog = true },
-                        onOpenImportExcel = { showImportDialog = true },
-                        onOpenSettings = { currentTab = 2 }
-                    )
-                    1 -> ActiveRouteScreen(
-                        viewModel = viewModel,
-                        onOpenSettings = { currentTab = 2 }
-                    )
-                    2 -> SettingsScreen(
-                        viewModel = viewModel,
-                        onBack = { currentTab = 0 }
-                    )
+                // Animated container for switching between screens smoothly
+                AnimatedContent(
+                    targetState = currentTab,
+                    transitionSpec = {
+                        if (targetState > initialState) {
+                            (slideInHorizontally { width -> -width } + fadeIn()).togetherWith(
+                                slideOutHorizontally { width -> width } + fadeOut()
+                            )
+                        } else {
+                            (slideInHorizontally { width -> width } + fadeIn()).togetherWith(
+                                slideOutHorizontally { width -> -width } + fadeOut()
+                            )
+                        }
+                    },
+                    label = "TabTransition"
+                ) { tab ->
+                    when (tab) {
+                        0 -> HomeScreen(
+                            viewModel = viewModel,
+                            onOpenAddOrder = { showAddDialog = true },
+                            onOpenImportExcel = { showImportDialog = true },
+                            onOpenSettings = { currentTab = 2 }
+                        )
+                        1 -> ActiveRouteScreen(
+                            viewModel = viewModel,
+                            onOpenSettings = { currentTab = 2 }
+                        )
+                        2 -> SettingsScreen(
+                            viewModel = viewModel,
+                            onBack = { currentTab = 0 }
+                        )
+                    }
                 }
 
                 // Add Dialog Implementation
@@ -140,11 +152,11 @@ fun BottomBar(selectedTab: Int, onTabSelected: (Int) -> Unit) {
                 )
             },
             colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = BluePrimary,
-                selectedTextColor = BluePrimary,
+                selectedIconColor = MaterialTheme.colorScheme.primary,
+                selectedTextColor = MaterialTheme.colorScheme.primary,
                 unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                indicatorColor = BlueLight
+                indicatorColor = MaterialTheme.colorScheme.primaryContainer
             ),
             modifier = Modifier.testTag("nav_home")
         )
@@ -166,11 +178,11 @@ fun BottomBar(selectedTab: Int, onTabSelected: (Int) -> Unit) {
                 )
             },
             colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = BluePrimary,
-                selectedTextColor = BluePrimary,
+                selectedIconColor = MaterialTheme.colorScheme.primary,
+                selectedTextColor = MaterialTheme.colorScheme.primary,
                 unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                indicatorColor = BlueLight
+                indicatorColor = MaterialTheme.colorScheme.primaryContainer
             ),
             modifier = Modifier.testTag("nav_route")
         )
@@ -192,11 +204,11 @@ fun BottomBar(selectedTab: Int, onTabSelected: (Int) -> Unit) {
                 )
             },
             colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = BluePrimary,
-                selectedTextColor = BluePrimary,
+                selectedIconColor = MaterialTheme.colorScheme.primary,
+                selectedTextColor = MaterialTheme.colorScheme.primary,
                 unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                indicatorColor = BlueLight
+                indicatorColor = MaterialTheme.colorScheme.primaryContainer
             ),
             modifier = Modifier.testTag("nav_settings")
         )

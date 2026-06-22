@@ -1,12 +1,13 @@
-package com.example.viewmodel
+package com.mandoob.mena.viewmodel
 
 import android.app.Application
 import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.data.AppDatabase
-import com.example.data.Order
-import com.example.data.OrderRepository
+import com.mandoob.mena.data.AppDatabase
+import com.mandoob.mena.data.Order
+import com.mandoob.mena.data.OrderRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -24,6 +25,9 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _isSortingEnabled = MutableStateFlow(false)
     val isSortingEnabled: StateFlow<Boolean> = _isSortingEnabled.asStateFlow()
+
+    private val _isFastMoveEnabled = MutableStateFlow(false)
+    val isFastMoveEnabled: StateFlow<Boolean> = _isFastMoveEnabled.asStateFlow()
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
@@ -228,6 +232,51 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
         _isSortingEnabled.value = !_isSortingEnabled.value
     }
 
+    fun toggleFastMove() {
+        _isFastMoveEnabled.value = !_isFastMoveEnabled.value
+    }
+
+    fun moveOrder(orderId: Int, up: Boolean, isFast: Boolean, currentFilteredList: List<Order>) {
+        viewModelScope.launch {
+            val listToUpdate = currentFilteredList.toMutableList()
+            val index = listToUpdate.indexOfFirst { it.id == orderId }
+            if (index == -1) return@launch
+
+            if (isFast) {
+                if (up) {
+                    if (index > 0) {
+                        val item = listToUpdate.removeAt(index)
+                        listToUpdate.add(0, item)
+                    }
+                } else {
+                    if (index < listToUpdate.size - 1) {
+                        val item = listToUpdate.removeAt(index)
+                        listToUpdate.add(item)
+                    }
+                }
+            } else {
+                if (up) {
+                    if (index > 0) {
+                        val temp = listToUpdate[index]
+                        listToUpdate[index] = listToUpdate[index - 1]
+                        listToUpdate[index - 1] = temp
+                    }
+                } else {
+                    if (index < listToUpdate.size - 1) {
+                        val temp = listToUpdate[index]
+                        listToUpdate[index] = listToUpdate[index + 1]
+                        listToUpdate[index + 1] = temp
+                    }
+                }
+            }
+
+            listToUpdate.forEachIndexed { i, ord ->
+                val updated = ord.copy(sequenceNumber = i, isSequenceArranged = true)
+                repository.updateOrder(updated)
+            }
+        }
+    }
+
     fun setSearchQuery(query: String) {
         _searchQuery.value = query
     }
@@ -414,7 +463,7 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
         try {
             val contentResolver = context.contentResolver
             contentResolver.openInputStream(uri)?.use { inputStream ->
-                val rows = com.example.util.ExcelReader.readXlsx(inputStream)
+                val rows = com.mandoob.mena.util.ExcelReader.readXlsx(inputStream)
                 if (rows.isEmpty()) return 0
 
                 val dataRows = rows.drop(1)
