@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [Order::class], version = 2, exportSchema = false)
+@Database(entities = [Order::class], version = 3, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun orderDao(): OrderDao
 
@@ -23,10 +23,10 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-        // Future migration roadmap template
+        // Safe migration from version 2 to 3 to add courierNotes column
         val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(db: SupportSQLiteDatabase) {
-                // Future changes go here
+                db.execSQL("ALTER TABLE orders ADD COLUMN courierNotes TEXT DEFAULT NULL")
             }
         }
 

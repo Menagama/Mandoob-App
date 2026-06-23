@@ -10,6 +10,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,6 +23,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.mandoob.mena.data.Order
 import com.mandoob.mena.ui.theme.BlueLight
 import com.mandoob.mena.ui.theme.BluePrimary
@@ -36,6 +40,7 @@ fun ActiveRouteScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit) {
     val context = LocalContext.current
 
     var editingOrder by remember { mutableStateOf<Order?>(null) }
+    var showReorderScreen by remember { mutableStateOf(false) }
     var selectedSubTab by remember { mutableStateOf(0) } // 0 = جاري العمل, 1 = الناجحة, 2 = الملغاة
 
     // Count pending, success and cancelled categories
@@ -220,48 +225,36 @@ fun ActiveRouteScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Sorting Toggle Button
-                Row(
+                // Sorting Reorder Screen Button as custom double-arrow icon (down and up)
+                Box(
                     modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(if (isSortingEnabled) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f) else MaterialTheme.colorScheme.surfaceVariant)
+                        .size(40.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f))
                         .border(
                             1.dp,
-                            if (isSortingEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
-                            RoundedCornerShape(8.dp)
+                            MaterialTheme.colorScheme.primary,
+                            RoundedCornerShape(10.dp)
                         )
-                        .clickable { viewModel.toggleSorting() }
-                        .padding(horizontal = 10.dp, vertical = 6.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                        .clickable { showReorderScreen = true },
+                    contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = "ترتيب 🔒" ,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = if (isSortingEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
-                    )
-                }
-
-                // Fast Move Button (ONLY visible when sorting is enabled)
-                if (isSortingEnabled) {
                     Row(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(if (isFastMoveEnabled) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f) else MaterialTheme.colorScheme.surfaceVariant)
-                            .border(
-                                1.dp,
-                                if (isFastMoveEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
-                                RoundedCornerShape(8.dp)
-                            )
-                            .clickable { viewModel.toggleFastMove() }
-                            .padding(horizontal = 10.dp, vertical = 6.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
                     ) {
-                        Text(
-                            text = "نقل سريع ⚡",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = if (isFastMoveEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                        Icon(
+                            imageVector = Icons.Default.ArrowDownward,
+                            contentDescription = "ترتيب خط السير",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(2.dp))
+                        Icon(
+                            imageVector = Icons.Default.ArrowUpward,
+                            contentDescription = "ترتيب خط السير",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(16.dp)
                         )
                     }
                 }
@@ -309,6 +302,9 @@ fun ActiveRouteScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit) {
                                 Toast.makeText(context, "تم حفظ حالة الأوردر: $status", Toast.LENGTH_SHORT).show()
                             }
                         },
+                        onUpdateNotes = { updateNotes, courierNotes ->
+                            viewModel.updateOrderNotes(order.id, updateNotes, courierNotes)
+                        },
                         isSortingEnabled = isSortingEnabled,
                         isFastMoveEnabled = isFastMoveEnabled,
                         onMoveUp = {
@@ -345,5 +341,17 @@ fun ActiveRouteScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit) {
                 Toast.makeText(context, "تم تعديل بيانات الأوردر بنجاح!", Toast.LENGTH_SHORT).show()
             }
         )
+    }
+
+    if (showReorderScreen) {
+        Dialog(
+            onDismissRequest = { showReorderScreen = false },
+            properties = DialogProperties(usePlatformDefaultWidth = false)
+        ) {
+            RouteReorderScreen(
+                viewModel = viewModel,
+                onDismiss = { showReorderScreen = false }
+            )
+        }
     }
 }

@@ -280,6 +280,15 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun saveRouteSequence(orderedList: List<Order>) {
+        viewModelScope.launch {
+            val updatedList = orderedList.mapIndexed { index, order ->
+                order.copy(sequenceNumber = index, isSequenceArranged = true)
+            }
+            repository.insertOrders(updatedList)
+        }
+    }
+
     fun setSearchQuery(query: String) {
         _searchQuery.value = query
     }
@@ -362,6 +371,20 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
                     amount = amount,
                     commission = commission,
                     notes = notes
+                )
+                repository.updateOrder(updated)
+            }
+        }
+    }
+
+    fun updateOrderNotes(orderId: Int, notes: String?, courierNotes: String?) {
+        viewModelScope.launch {
+            val currentList = allOrders.value
+            val order = currentList.find { it.id == orderId }
+            if (order != null) {
+                val updated = order.copy(
+                    notes = notes,
+                    courierNotes = courierNotes
                 )
                 repository.updateOrder(updated)
             }

@@ -176,6 +176,9 @@ fun SuccessfulOrdersScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit
                             if (!isQuiet) {
                                 Toast.makeText(context, "تم حفظ حالة الأوردر: $status", Toast.LENGTH_SHORT).show()
                             }
+                        },
+                        onUpdateNotes = { updateNotes, courierNotes ->
+                            viewModel.updateOrderNotes(order.id, updateNotes, courierNotes)
                         }
                     )
                 }
@@ -363,6 +366,9 @@ fun CancelledOrdersScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit)
                             if (!isQuiet) {
                                 Toast.makeText(context, "تم حفظ حالة الأوردر: $status", Toast.LENGTH_SHORT).show()
                             }
+                        },
+                        onUpdateNotes = { updateNotes, courierNotes ->
+                            viewModel.updateOrderNotes(order.id, updateNotes, courierNotes)
                         }
                     )
                 }

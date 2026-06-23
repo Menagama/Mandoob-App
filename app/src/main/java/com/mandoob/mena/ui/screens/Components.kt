@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
@@ -28,13 +29,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.isSystemInDarkTheme
 import com.mandoob.mena.R
 import com.mandoob.mena.data.Order
 import com.mandoob.mena.ui.theme.*
@@ -186,69 +194,66 @@ fun NetRemittanceCard(netRemittance: Double) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(130.dp)
-            .shadow(4.dp, RoundedCornerShape(18.dp)),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(18.dp)
+            .height(145.dp)
+            .shadow(6.dp, RoundedCornerShape(24.dp)),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF006399)),
+        shape = RoundedCornerShape(24.dp)
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            MaterialTheme.colorScheme.surface,
-                            MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
-                        )
-                    )
-                )
-                .padding(18.dp)
-        ) {
+        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
             Row(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 20.dp, vertical = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(
-                        modifier = Modifier
-                            .size(56.dp)
-                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f), CircleShape),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Payments,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(30.dp)
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Column {
-                        Text(
-                            text = "صافي التوريد للمكتب",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Spacer(modifier = Modifier.height(6.dp))
-                        Text(
-                            text = "السائق مطالب بتوريد هذا المبلغ",
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
-                        )
-                    }
+                // Left side: Bank Icon inside a soft semi-transparent white circle
+                Box(
+                    modifier = Modifier
+                        .size(68.dp)
+                        .background(Color.White.copy(alpha = 0.15f), CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.AccountBalance,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(36.dp)
+                    )
                 }
 
+                // Right side: Column of text styled exactly like the screenshot
                 Column(
                     horizontalAlignment = Alignment.End,
-                    verticalArrangement = Arrangement.Center
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxHeight()
                 ) {
                     Text(
-                        text = "%,.2f".format(netRemittance) + " ج.م",
-                        fontSize = 24.sp,
+                        text = "صافي التوريد للمكتب",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White.copy(alpha = 0.9f),
+                        textAlign = TextAlign.End
+                    )
+                    
+                    Spacer(modifier = Modifier.height(4.dp))
+                    
+                    Text(
+                        text = "${"%,.0f".format(netRemittance)} ج.م",
+                        fontSize = 32.sp,
                         fontWeight = FontWeight.Black,
-                        color = if (netRemittance >= 0) Color(0xFF10B981) else MaterialTheme.colorScheme.error
+                        color = Color.White,
+                        textAlign = TextAlign.End
+                    )
+                    
+                    Spacer(modifier = Modifier.height(4.dp))
+                    
+                    Text(
+                        text = "صافي المبالغ المستحقة للتسليم وتصفية الوردية",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = Color.White.copy(alpha = 0.75f),
+                        textAlign = TextAlign.End
                     )
                 }
             }
@@ -323,60 +328,148 @@ private val Int.ddp: androidx.compose.ui.unit.Dp get() = this.dp
 @Composable
 fun InteractiveRouteProgressCard(completed: Int, total: Int) {
     val progress = if (total > 0) completed.toFloat() / total.toFloat() else 0f
-    val percentage = (progress * 100).toInt()
+    val isDark = MaterialTheme.colorScheme.background == Color(0xFF000000)
 
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .shadow(2.dp, RoundedCornerShape(16.dp)),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(16.dp)
-    ) {
-        Column(
+    val cardBg = if (isDark) Color(0xFF121212) else Color(0xFFEAF8FE)
+    val cardBorder = if (isDark) Color(0xFF38BDF8).copy(alpha = 0.4f) else Color(0xFFB1E6F8)
+    val textColor = if (isDark) Color(0xFFF8FAFC) else Color(0xFF1E293B)
+    val highlightColor = if (isDark) Color(0xFF38BDF8) else Color(0xFF139CB5)
+    val trackBg = if (isDark) Color(0xFF262626) else Color(0xFFE2F1F8)
+    val trackCompleted = if (isDark) Color(0xFF0284C7) else Color(0xFF139CB5)
+    val badgeBorder = if (isDark) Color(0xFF38BDF8) else Color.White
+
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+        Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+                .shadow(1.dp, RoundedCornerShape(24.dp)),
+            colors = CardDefaults.cardColors(containerColor = cardBg),
+            border = BorderStroke(1.5.dp, cardBorder),
+            shape = RoundedCornerShape(24.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.DirectionsRun,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "تقدم خط السير لليوم",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-                Text(
-                    text = "$completed من $total أوردر ($percentage%)",
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
-
-            LinearProgressIndicator(
-                progress = { progress },
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(8.dp)
-                    .clip(RoundedCornerShape(4.dp)),
-                color = MaterialTheme.colorScheme.primary,
-                trackColor = MaterialTheme.colorScheme.primaryContainer
-            )
+                    .padding(horizontal = 24.dp, vertical = 20.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp),
+                horizontalAlignment = Alignment.Start
+            ) {
+                // Header line: "يلا يا بطل! 🛵"
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "يلا يا بطل! 🛵",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = textColor,
+                        textAlign = TextAlign.Start
+                    )
+                }
+
+                // Subtitle line: "خلصت (15 من 59) من مهماتك النهاردة" with coloured numbers
+                val annotatedSubtitle = buildAnnotatedString {
+                    append("خلصت ")
+                    withStyle(style = SpanStyle(color = highlightColor, fontWeight = FontWeight.Bold)) {
+                        append("($completed من $total)")
+                    }
+                    append(" من مهماتك النهاردة")
+                }
+
+                Text(
+                    text = annotatedSubtitle,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = if (isDark) Color(0xFF94A3B8) else textColor,
+                    textAlign = TextAlign.Start,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+            // Custom Interactive Progress bar with Force Ltr support
+            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(44.dp),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    // Underneath, the route track
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(18.dp)
+                            .clip(RoundedCornerShape(9.dp))
+                            .background(trackBg)
+                    ) {
+                        // Uncompleted track segment (Left part)
+                        Box(
+                            modifier = Modifier
+                                .weight(if (progress >= 1f) 0.001f else (1f - progress))
+                                .fillMaxHeight()
+                                .background(trackBg)
+                        ) {
+                            // Finish Flag at the far left
+                            Text(
+                                text = "🏁",
+                                fontSize = 14.sp,
+                                modifier = Modifier
+                                    .align(Alignment.CenterStart)
+                                    .padding(start = 2.dp)
+                            )
+                        }
+
+                        // Completed track segment (Right part)
+                        Box(
+                            modifier = Modifier
+                                .weight(if (progress <= 0f) 0.001f else progress)
+                                .fillMaxHeight()
+                                .background(trackCompleted)
+                        ) {
+                            // Dashed white line inside completed segment using Canvas
+                            androidx.compose.foundation.Canvas(modifier = Modifier.fillMaxSize()) {
+                                val strokeWidth = 2.dp.toPx()
+                                val pathEffect = androidx.compose.ui.graphics.PathEffect.dashPathEffect(
+                                    floatArrayOf(10f, 10f), 0f
+                                )
+                                drawLine(
+                                    color = Color.White.copy(alpha = 0.85f),
+                                    start = androidx.compose.ui.geometry.Offset(0f, size.height / 2),
+                                    end = androidx.compose.ui.geometry.Offset(size.width, size.height / 2),
+                                    strokeWidth = strokeWidth,
+                                    pathEffect = pathEffect
+                                )
+                            }
+                        }
+                    }
+
+                    // Package moving circle indicator
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = BiasAlignment(horizontalBias = 1f - (progress * 2f), verticalBias = 0f)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .shadow(3.dp, CircleShape)
+                                .background(trackCompleted, CircleShape)
+                                .border(2.dp, badgeBorder, CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Inventory2,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
+}
 }
 
 // ---------------- EMPTY STATE VIEW ----------------
