@@ -218,13 +218,7 @@ fun CancelledOrdersScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit)
     val context = LocalContext.current
     var editingOrder by remember { mutableStateOf<Order?>(null) }
 
-    val cancelledOrders = allOrders.filter {
-        it.status == Order.STATUS_CANCELLED || 
-        it.status == Order.STATUS_REJECTED_NO_FEE || 
-        it.status == Order.STATUS_REJECTED_WITH_FEE || 
-        it.status == Order.STATUS_NO_ANSWER || 
-        it.status == Order.STATUS_POSTPONED
-    }
+    val cancelledOrders = allOrders.filter { it.isCancelledOrPostponed() }
 
     val filteredOrders = remember(cancelledOrders, searchQuery) {
         cancelledOrders.filter { order ->

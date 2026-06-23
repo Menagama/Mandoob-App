@@ -203,20 +203,7 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
         }.sumOf { it.commission }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0.0)
 
-    val netRemittanceToOffice: StateFlow<Double> = allOrders.map { orders ->
-        val cash = orders.sumOf { order ->
-            when (order.status) {
-                Order.STATUS_DELIVERED -> order.amount
-                Order.STATUS_PARTIAL -> order.collectedAmount ?: 0.0
-                Order.STATUS_REJECTED_WITH_FEE -> order.deliveryFeeAmount ?: 0.0
-                else -> 0.0
-            }
-        }
-        val comm = orders.filter { 
-            it.status == Order.STATUS_DELIVERED || 
-            it.status == Order.STATUS_PARTIAL || 
-            it.status == Order.STATUS_REJECTED_WITH_FEE 
-        }.sumOf { it.commission }
+    val netRemittanceToOffice: StateFlow<Double> = combine(totalCashInWallet, totalCommissions) { cash, comm ->
         cash - comm
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0.0)
 
@@ -241,7 +228,10 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
 
     fun moveOrder(orderId: Int, up: Boolean, isFast: Boolean, currentFilteredList: List<Order>) {
         viewModelScope.launch {
-            val listToUpdate = currentFilteredList.toMutableList()
+            val latestOrdersFromDb = repository.allOrders.first()
+            val latestOrdersMap = latestOrdersFromDb.associateBy { it.id }
+            val listToUpdate = currentFilteredList.mapNotNull { latestOrdersMap[it.id] }.toMutableList()
+            
             val index = listToUpdate.indexOfFirst { it.id == orderId }
             if (index == -1) return@launch
 
@@ -282,10 +272,10 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
 
     fun saveRouteSequence(orderedList: List<Order>) {
         viewModelScope.launch {
-            val updatedList = orderedList.mapIndexed { index, order ->
-                order.copy(sequenceNumber = index, isSequenceArranged = true)
+            orderedList.forEachIndexed { index, order ->
+                val updated = order.copy(sequenceNumber = index, isSequenceArranged = true)
+                repository.updateOrder(updated)
             }
-            repository.insertOrders(updatedList)
         }
     }
 
@@ -325,7 +315,7 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
                 val updated = order.copy(
                     status = status,
                     collectedAmount = if (status == Order.STATUS_PARTIAL) order.amount else null,
-                    deliveryFeeAmount = if (status == Order.STATUS_REJECTED_WITH_FEE) 25.0 else null,
+                    deliveryFeeAmount = null,
                     commission = getCommissionForStatus(status)
                 )
                 repository.updateOrder(updated)
@@ -400,7 +390,6 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
     fun resetAllData() {
         viewModelScope.launch {
             repository.clearAll()
-            populateSampleOrders()
         }
     }
 

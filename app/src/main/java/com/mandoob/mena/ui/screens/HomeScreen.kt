@@ -47,7 +47,7 @@ fun HomeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             // Top Spacing for status bar area
             item { Spacer(modifier = Modifier.height(12.dp)) }
@@ -103,7 +103,7 @@ fun HomeScreen(
             }
 
             // Margin bottom to clear overlapping floating action buttons
-            item { Spacer(modifier = Modifier.height(80.dp)) }
+            item { Spacer(modifier = Modifier.height(140.dp)) }
         }
 
         // Floating stacked action buttons matching the layout perfectly

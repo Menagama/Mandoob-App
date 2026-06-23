@@ -46,26 +46,14 @@ fun ActiveRouteScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit) {
     // Count pending, success and cancelled categories
     val countPending = allOrders.count { it.status == Order.STATUS_PENDING }
     val countSuccess = allOrders.count { it.status == Order.STATUS_DELIVERED || it.status == Order.STATUS_PARTIAL }
-    val countCancelled = allOrders.count {
-        it.status == Order.STATUS_CANCELLED || 
-        it.status == Order.STATUS_REJECTED_NO_FEE || 
-        it.status == Order.STATUS_REJECTED_WITH_FEE || 
-        it.status == Order.STATUS_NO_ANSWER || 
-        it.status == Order.STATUS_POSTPONED
-    }
+    val countCancelled = allOrders.count { it.isCancelledOrPostponed() }
 
     // Filter by the selected sub-tab
     val activeOrders = remember(allOrders, selectedSubTab) {
         when (selectedSubTab) {
             0 -> allOrders.filter { it.status == Order.STATUS_PENDING }
             1 -> allOrders.filter { it.status == Order.STATUS_DELIVERED || it.status == Order.STATUS_PARTIAL }
-            else -> allOrders.filter {
-                it.status == Order.STATUS_CANCELLED || 
-                it.status == Order.STATUS_REJECTED_NO_FEE || 
-                it.status == Order.STATUS_REJECTED_WITH_FEE || 
-                it.status == Order.STATUS_NO_ANSWER || 
-                it.status == Order.STATUS_POSTPONED
-            }
+            else -> allOrders.filter { it.isCancelledOrPostponed() }
         }
     }
 
@@ -281,7 +269,10 @@ fun ActiveRouteScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit) {
                     )
                 }
             } else {
-                items(filteredAndSortedOrders.size) { i ->
+                items(
+                    count = filteredAndSortedOrders.size,
+                    key = { index -> filteredAndSortedOrders[index].id }
+                ) { i ->
                     val order = filteredAndSortedOrders[i]
                     ActiveRouteCard(
                         order = order,

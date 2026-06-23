@@ -194,7 +194,7 @@ fun NetRemittanceCard(netRemittance: Double) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(145.dp)
+            .height(120.dp)
             .shadow(6.dp, RoundedCornerShape(24.dp)),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF006399)),
         shape = RoundedCornerShape(24.dp)
@@ -274,7 +274,7 @@ fun StatCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(110.dp)
+            .height(95.dp)
             .shadow(4.dp, RoundedCornerShape(16.dp))
             .testTag("${testTagPrefix}_card"),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
@@ -350,8 +350,8 @@ fun InteractiveRouteProgressCard(completed: Int, total: Int) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 24.dp, vertical = 20.dp),
-                verticalArrangement = Arrangement.spacedBy(14.dp),
+                    .padding(horizontal = 24.dp, vertical = 14.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
                 horizontalAlignment = Alignment.Start
             ) {
                 // Header line: "يلا يا بطل! 🛵"

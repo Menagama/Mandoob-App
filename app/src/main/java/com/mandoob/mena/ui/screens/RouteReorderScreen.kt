@@ -97,7 +97,10 @@ fun RouteReorderScreen(
                         )
                     },
                     actions = {
-                        IconButton(onClick = onDismiss) {
+                        IconButton(onClick = {
+                            viewModel.saveRouteSequence(itemsList)
+                            onDismiss()
+                        }) {
                             Icon(
                                 imageVector = Icons.Default.Close,
                                 contentDescription = "إغلاق",
@@ -197,9 +200,6 @@ fun RouteReorderScreen(
                                         }
                                     },
                                     onDragEnd = {
-                                        val finalOrdered = itemsList
-                                        // Save the new sequence completely to database
-                                        viewModel.saveRouteSequence(finalOrdered)
                                         draggedIndex = null
                                         dragOffset = 0f
                                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -322,7 +322,6 @@ fun RouteReorderScreen(
                                                 val item = mutable.removeAt(index)
                                                 mutable.add(0, item)
                                                 itemsList = mutable
-                                                viewModel.saveRouteSequence(mutable)
                                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                             },
                                         contentAlignment = Alignment.Center
@@ -479,7 +478,6 @@ fun RouteReorderScreen(
                                                 val item = mutable.removeAt(index)
                                                 mutable.add(item)
                                                 itemsList = mutable
-                                                viewModel.saveRouteSequence(mutable)
                                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                             },
                                         contentAlignment = Alignment.Center

@@ -21,6 +21,14 @@ data class Order(
     val sequenceNumber: Int = 0, // Order sequence index
     val createdAt: Long = System.currentTimeMillis()
 ) {
+    fun isCancelledOrPostponed(): Boolean {
+        return status == STATUS_CANCELLED ||
+               status == STATUS_REJECTED_NO_FEE ||
+               status == STATUS_REJECTED_WITH_FEE ||
+               status == STATUS_NO_ANSWER ||
+               status == STATUS_POSTPONED
+    }
+
     companion object {
         const val STATUS_PENDING = "جاري العمل"
         const val STATUS_DELIVERED = "تم التسليم"

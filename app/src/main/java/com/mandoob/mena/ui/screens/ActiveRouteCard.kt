@@ -54,6 +54,8 @@ fun ActiveRouteCard(
     var showFeeInput by remember(order.id) { mutableStateOf(false) }
     var showDeleteWarning by remember(order.id) { mutableStateOf(false) }
     var showDetailsPage by remember(order.id) { mutableStateOf(false) }
+    var showPhoneSelectorDialog by remember(order.id) { mutableStateOf(false) }
+    var pendingActionType by remember(order.id) { mutableStateOf<String?>(null) }
     
     // Hold temp inputs for amounts
     var partialAmountText by remember(order.id) { mutableStateOf(order.collectedAmount?.toString() ?: "0") }
@@ -282,7 +284,15 @@ fun ActiveRouteCard(
             ) {
                 // 1. Dialer Button (renders on Right in RTL)
                 IconButton(
-                    onClick = { launchDialer(context, order.phoneNumber) },
+                    onClick = {
+                        val hasSecondPhone = !order.phoneNumber2.isNullOrEmpty()
+                        if (hasSecondPhone) {
+                            pendingActionType = "CALL"
+                            showPhoneSelectorDialog = true
+                        } else {
+                            launchDialer(context, order.phoneNumber)
+                        }
+                    },
                     modifier = Modifier
                         .weight(1f)
                         .height(48.dp)
@@ -311,7 +321,15 @@ fun ActiveRouteCard(
 
                 // 2. Quick Message (SMS)
                 IconButton(
-                    onClick = { sendQuickSMSMessage(context, order) },
+                    onClick = {
+                        val hasSecondPhone = !order.phoneNumber2.isNullOrEmpty()
+                        if (hasSecondPhone) {
+                            pendingActionType = "SMS"
+                            showPhoneSelectorDialog = true
+                        } else {
+                            sendQuickSMSMessage(context, order)
+                        }
+                    },
                     modifier = Modifier
                         .weight(1f)
                         .height(48.dp)
@@ -340,7 +358,15 @@ fun ActiveRouteCard(
 
                 // 3. WhatsApp Quick Message (renders on Left in RTL)
                 IconButton(
-                    onClick = { sendQuickWhatsAppMessage(context, order) },
+                    onClick = {
+                        val hasSecondPhone = !order.phoneNumber2.isNullOrEmpty()
+                        if (hasSecondPhone) {
+                            pendingActionType = "WHATSAPP"
+                            showPhoneSelectorDialog = true
+                        } else {
+                            sendQuickWhatsAppMessage(context, order)
+                        }
+                    },
                     modifier = Modifier
                         .weight(1f)
                         .height(48.dp)
@@ -398,6 +424,22 @@ fun ActiveRouteCard(
                 )
             }
         }
+    }
+
+    if (showPhoneSelectorDialog && pendingActionType != null) {
+        PhoneSelectorDialog(
+            phoneNumber1 = order.phoneNumber,
+            phoneNumber2 = order.phoneNumber2 ?: "",
+            onNumberSelected = { selectedNumber ->
+                executeCommunication(context, pendingActionType!!, selectedNumber, order)
+                showPhoneSelectorDialog = false
+                pendingActionType = null
+            },
+            onDismiss = {
+                showPhoneSelectorDialog = false
+                pendingActionType = null
+            }
+        )
     }
 
     if (showDeleteWarning) {
@@ -465,10 +507,11 @@ fun OrderDetailsFullScreenPage(
     var tempPartialAmount by remember { mutableStateOf(order.collectedAmount?.toString() ?: "0") }
     var tempFeeAmount by remember { mutableStateOf(order.deliveryFeeAmount?.toString() ?: "0") }
 
-    var showEditNotesDialog by remember { mutableStateOf(false) }
     var showEditCourierNotesDialog by remember { mutableStateOf(false) }
-    var tempNotesValue by remember(order.notes) { mutableStateOf(order.notes ?: "") }
     var tempCourierNotesValue by remember(order.courierNotes) { mutableStateOf(order.courierNotes ?: "") }
+
+    var showPhoneSelectorDialog by remember { mutableStateOf(false) }
+    var pendingActionType by remember { mutableStateOf<String?>(null) }
 
     Scaffold(
         topBar = {
@@ -557,13 +600,12 @@ fun OrderDetailsFullScreenPage(
             }
         },
         bottomBar = {
-            Surface(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .navigationBarsPadding()
-                    .shadow(8.dp)
                     .background(MaterialTheme.colorScheme.surface)
-                    .padding(horizontal = 16.dp, vertical = 14.dp)
+                    .navigationBarsPadding()
+                    .padding(start = 16.dp, end = 16.dp, top = 14.dp, bottom = 34.dp)
             ) {
                 if (order.status == Order.STATUS_PENDING) {
                     Row(
@@ -667,7 +709,15 @@ fun OrderDetailsFullScreenPage(
                     modifier = Modifier
                         .weight(1f)
                         .height(54.dp)
-                        .clickable { launchDialer(context, order.phoneNumber) },
+                        .clickable {
+                            val hasSecondPhone = !order.phoneNumber2.isNullOrEmpty()
+                            if (hasSecondPhone) {
+                                pendingActionType = "CALL"
+                                showPhoneSelectorDialog = true
+                            } else {
+                                launchDialer(context, order.phoneNumber)
+                            }
+                        },
                     shape = RoundedCornerShape(12.dp),
                     colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF1E1E1E) else Color.White),
                     border = BorderStroke(1.dp, if (isDark) Color(0xFF374151) else Color(0xFFE2E8F0))
@@ -697,7 +747,15 @@ fun OrderDetailsFullScreenPage(
                     modifier = Modifier
                         .weight(1f)
                         .height(54.dp)
-                        .clickable { sendQuickSMSMessage(context, order) },
+                        .clickable {
+                            val hasSecondPhone = !order.phoneNumber2.isNullOrEmpty()
+                            if (hasSecondPhone) {
+                                pendingActionType = "SMS"
+                                showPhoneSelectorDialog = true
+                            } else {
+                                sendQuickSMSMessage(context, order)
+                            }
+                        },
                     shape = RoundedCornerShape(12.dp),
                     colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF1E1E1E) else Color.White),
                     border = BorderStroke(1.dp, if (isDark) Color(0xFF374151) else Color(0xFFE2E8F0))
@@ -727,7 +785,15 @@ fun OrderDetailsFullScreenPage(
                     modifier = Modifier
                         .weight(1f)
                         .height(54.dp)
-                        .clickable { sendQuickWhatsAppMessage(context, order) },
+                        .clickable {
+                            val hasSecondPhone = !order.phoneNumber2.isNullOrEmpty()
+                            if (hasSecondPhone) {
+                                pendingActionType = "WHATSAPP"
+                                showPhoneSelectorDialog = true
+                            } else {
+                                sendQuickWhatsAppMessage(context, order)
+                            }
+                        },
                     shape = RoundedCornerShape(12.dp),
                     colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF1E1E1E) else Color.White),
                     border = BorderStroke(1.dp, if (isDark) Color(0xFF374151) else Color(0xFFE2E8F0))
@@ -930,68 +996,6 @@ fun OrderDetailsFullScreenPage(
 
                 Divider(color = if (isDark) Color(0xFF374151) else Color(0xFFF1F5F9), thickness = 1.dp)
 
-                // 1. Shipment Description Block (وصف الشحنة)
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            color = if (isDark) Color(0xFF1E1E1E) else Color(0xFFF8FAFC),
-                            shape = RoundedCornerShape(12.dp)
-                        )
-                        .padding(12.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Inventory,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(18.dp)
-                            )
-                            Text(
-                                text = "وصف الشحنة",
-                                fontSize = 14.sp,
-                                color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-
-                        IconButton(
-                            onClick = { showEditNotesDialog = true },
-                            modifier = Modifier
-                                .size(32.dp)
-                                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), CircleShape)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Edit,
-                                contentDescription = "تعديل وصف الشحنة",
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(16.dp)
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(6.dp))
-
-                    Text(
-                        text = order.notes ?: "شحنة تجارية عامة",
-                        fontSize = 15.sp,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Right,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(4.dp))
-
                 // 2. Rider Notes Block (ملاحظات المندوب)
                 Column(
                     modifier = Modifier
@@ -1057,59 +1061,7 @@ fun OrderDetailsFullScreenPage(
         }
     }
 
-    if (showEditNotesDialog) {
-        AlertDialog(
-            onDismissRequest = { showEditNotesDialog = false },
-            title = {
-                Text(
-                    text = "تعديل وصف الشحنة 📝",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Right,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            },
-            text = {
-                OutlinedTextField(
-                    value = tempNotesValue,
-                    onValueChange = { tempNotesValue = it },
-                    label = { Text("وصف الشحنة", fontSize = 12.sp) },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                        focusedBorderColor = MaterialTheme.colorScheme.primary,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-                    )
-                )
-            },
-            confirmButton = {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Button(
-                        onClick = {
-                            onUpdateNotes(tempNotesValue, order.courierNotes)
-                            showEditNotesDialog = false
-                        },
-                        modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-                    ) {
-                        Text("حفظ", color = Color.White, fontWeight = FontWeight.Bold)
-                    }
-                    OutlinedButton(
-                        onClick = { showEditNotesDialog = false },
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text("إلغاء", fontWeight = FontWeight.Bold)
-                    }
-                }
-            },
-            containerColor = MaterialTheme.colorScheme.surface,
-            shape = RoundedCornerShape(16.dp)
-        )
-    }
+
 
     if (showEditCourierNotesDialog) {
         AlertDialog(
@@ -1144,7 +1096,7 @@ fun OrderDetailsFullScreenPage(
                 ) {
                     Button(
                         onClick = {
-                            onUpdateNotes(order.notes, tempCourierNotesValue)
+                            onUpdateNotes(null, tempCourierNotesValue)
                             showEditCourierNotesDialog = false
                         },
                         modifier = Modifier.weight(1f),
@@ -1438,5 +1390,167 @@ fun OrderDetailsFullScreenPage(
             containerColor = MaterialTheme.colorScheme.surface,
             shape = RoundedCornerShape(16.dp)
         )
+    }
+
+    if (showPhoneSelectorDialog && pendingActionType != null) {
+        PhoneSelectorDialog(
+            phoneNumber1 = order.phoneNumber,
+            phoneNumber2 = order.phoneNumber2 ?: "",
+            onNumberSelected = { selectedNumber ->
+                executeCommunication(context, pendingActionType!!, selectedNumber, order)
+                showPhoneSelectorDialog = false
+                pendingActionType = null
+            },
+            onDismiss = {
+                showPhoneSelectorDialog = false
+                pendingActionType = null
+            }
+        )
+    }
+}
+
+@Composable
+fun PhoneSelectorDialog(
+    phoneNumber1: String,
+    phoneNumber2: String,
+    onNumberSelected: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = "اختر رقم الهاتف للتواصل 📞",
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                textAlign = TextAlign.Right,
+                modifier = Modifier.fillMaxWidth()
+            )
+        },
+        text = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
+                    text = "يرجى تحديد الرقم الذي ترغب في التواصل من خلاله:",
+                    fontSize = 14.sp,
+                    textAlign = TextAlign.Right,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                
+                Button(
+                    onClick = { onNumberSelected(phoneNumber1) },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Phone,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                        Text(
+                            text = "الرقم الأساسي: $phoneNumber1",
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 15.sp,
+                            textAlign = TextAlign.Right
+                        )
+                    }
+                }
+                
+                Button(
+                    onClick = { onNumberSelected(phoneNumber2) },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Phone,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                        Text(
+                            text = "الرقم الثاني: $phoneNumber2",
+                            color = MaterialTheme.colorScheme.onSecondaryContainer,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 15.sp,
+                            textAlign = TextAlign.Right
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {},
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("إلغاء", color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
+            }
+        },
+        containerColor = MaterialTheme.colorScheme.surface,
+        shape = RoundedCornerShape(16.dp)
+    )
+}
+
+fun launchDialerWithNumber(context: android.content.Context, phoneNumber: String) {
+    try {
+        val intent = android.content.Intent(android.content.Intent.ACTION_DIAL, android.net.Uri.parse("tel:$phoneNumber"))
+        intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
+    } catch (e: Exception) {
+        android.widget.Toast.makeText(context, "لا يمكن فتح لوحة الاتصال", android.widget.Toast.LENGTH_SHORT).show()
+    }
+}
+
+fun sendQuickWhatsAppMessageWithNumber(context: android.content.Context, order: Order, phoneNumber: String) {
+    try {
+        val cleanNumber = phoneNumber.replace(Regex("[^0-9]"), "")
+        val formattedNum = if (cleanNumber.startsWith("0")) "2$cleanNumber" else cleanNumber
+        
+        val quickText = "يا فندم مع حضرتك مندوب شحن بوسطة بخصوص الأوردر الخاص بك بمبلغ ${order.amount} ج.م. هل حضرتك متواجد حالياً للاستلام؟"
+        
+        val url = "https://api.whatsapp.com/send?phone=$formattedNum&text=" + java.net.URLEncoder.encode(quickText, "UTF-8")
+        val intent = android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(url))
+        intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
+    } catch (e: Exception) {
+        android.widget.Toast.makeText(context, "تعذر إرسال رسالة سريعة للواتساب", android.widget.Toast.LENGTH_SHORT).show()
+    }
+}
+
+fun sendQuickSMSMessageWithNumber(context: android.content.Context, order: Order, phoneNumber: String) {
+    try {
+        val quickText = "مع حضرتك مندوب شحن بوسطة بخصوص الأوردر الخاص بك بمبلغ ${order.amount} ج.م. هل متواجد حالياً للاستلام؟"
+        val intent = android.content.Intent(android.content.Intent.ACTION_SENDTO, android.net.Uri.parse("smsto:$phoneNumber"))
+        intent.putExtra("sms_body", quickText)
+        intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
+    } catch (e: Exception) {
+        android.widget.Toast.makeText(context, "تعذر إرسال رسالة SMS سريعة!", android.widget.Toast.LENGTH_SHORT).show()
+    }
+}
+
+fun executeCommunication(
+    context: android.content.Context,
+    actionType: String,
+    phoneNumber: String,
+    order: Order
+) {
+    when (actionType) {
+        "CALL" -> launchDialerWithNumber(context, phoneNumber)
+        "SMS" -> sendQuickSMSMessageWithNumber(context, order, phoneNumber)
+        "WHATSAPP" -> sendQuickWhatsAppMessageWithNumber(context, order, phoneNumber)
     }
 }
