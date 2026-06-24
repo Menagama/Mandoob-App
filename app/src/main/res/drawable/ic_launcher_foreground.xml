@@ -3,6 +3,6 @@
     <item
         android:width="66dp"
         android:height="66dp"
-        android:drawable="@drawable/img_delivery_icon"
+        android:drawable="@drawable/ic_mandoob_logo"
         android:gravity="center" />
 </layer-list>

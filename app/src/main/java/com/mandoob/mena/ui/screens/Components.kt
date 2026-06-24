@@ -11,6 +11,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -97,7 +98,7 @@ fun CaptainAvatarView(avatar: String, modifier: Modifier = Modifier) {
     when (avatar) {
         "delivery" -> {
             Image(
-                painter = painterResource(id = R.drawable.img_delivery_icon),
+                painter = painterResource(id = R.drawable.ic_mandoob_logo),
                 contentDescription = "صورة الكابتن",
                 modifier = modifier
                     .clip(CircleShape)
@@ -191,12 +192,31 @@ fun HeaderCard(
 // ---------------- NET REMITTANCE CARD ----------------
 @Composable
 fun NetRemittanceCard(netRemittance: Double) {
+    val isDark = isSystemInDarkTheme()
+    val gradientBrush = if (isDark) {
+        Brush.linearGradient(
+            colors = listOf(
+                Color(0xFF1E293B),
+                Color(0xFF0F172A)
+            )
+        )
+    } else {
+        Brush.linearGradient(
+            colors = listOf(
+                Color(0xFF0EA5E9),
+                Color(0xFF0284C7)
+            )
+        )
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .height(120.dp)
-            .shadow(6.dp, RoundedCornerShape(24.dp)),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF006399)),
+            .shadow(6.dp, RoundedCornerShape(24.dp))
+            .background(brush = gradientBrush, shape = RoundedCornerShape(24.dp)),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         shape = RoundedCornerShape(24.dp)
     ) {
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
@@ -328,14 +348,14 @@ private val Int.ddp: androidx.compose.ui.unit.Dp get() = this.dp
 @Composable
 fun InteractiveRouteProgressCard(completed: Int, total: Int) {
     val progress = if (total > 0) completed.toFloat() / total.toFloat() else 0f
-    val isDark = MaterialTheme.colorScheme.background == Color(0xFF000000)
+    val isDark = isSystemInDarkTheme()
 
-    val cardBg = if (isDark) Color(0xFF121212) else Color(0xFFEAF8FE)
-    val cardBorder = if (isDark) Color(0xFF38BDF8).copy(alpha = 0.4f) else Color(0xFFB1E6F8)
-    val textColor = if (isDark) Color(0xFFF8FAFC) else Color(0xFF1E293B)
-    val highlightColor = if (isDark) Color(0xFF38BDF8) else Color(0xFF139CB5)
-    val trackBg = if (isDark) Color(0xFF262626) else Color(0xFFE2F1F8)
-    val trackCompleted = if (isDark) Color(0xFF0284C7) else Color(0xFF139CB5)
+    val cardBg = if (isDark) Color(0xFF121212) else Color.White
+    val cardBorder = if (isDark) Color(0xFF38BDF8).copy(alpha = 0.4f) else Color(0xFFE2E8F0)
+    val textColor = if (isDark) Color(0xFFF8FAFC) else Color(0xFF0F172A)
+    val highlightColor = if (isDark) Color(0xFF38BDF8) else Color(0xFF0284C7)
+    val trackBg = if (isDark) Color(0xFF262626) else Color(0xFFF1F5F9)
+    val trackCompleted = if (isDark) Color(0xFF0284C7) else Color(0xFF0EA5E9)
     val badgeBorder = if (isDark) Color(0xFF38BDF8) else Color.White
 
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
@@ -345,6 +365,7 @@ fun InteractiveRouteProgressCard(completed: Int, total: Int) {
                 .shadow(1.dp, RoundedCornerShape(24.dp)),
             colors = CardDefaults.cardColors(containerColor = cardBg),
             border = BorderStroke(1.5.dp, cardBorder),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
             shape = RoundedCornerShape(24.dp)
         ) {
             Column(

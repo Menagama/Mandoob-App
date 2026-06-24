@@ -50,7 +50,7 @@ fun RouteReorderScreen(
 ) {
     val allOrders by viewModel.allOrders.collectAsState()
     val context = LocalContext.current
-    val isDark = MaterialTheme.colorScheme.background == Color(0xFF000000)
+    val isDark = isSystemInDarkTheme()
     
     val pendingOrders = remember(allOrders) {
         allOrders.filter { it.status == Order.STATUS_PENDING }
@@ -282,7 +282,7 @@ fun RouteReorderScreen(
                                     }
                                     .background(
                                         color = if (isDragged) {
-                                            if (isDark) Color(0xFF1E293B) else Color(0xFFEAF8FE)
+                                            if (isDark) Color(0xFF1E293B) else Color(0xFFE0F2FE)
                                         } else {
                                             Color.Transparent
                                         },
@@ -303,7 +303,7 @@ fun RouteReorderScreen(
                                             .border(
                                                 1.2.dp,
                                                 if (index > 0) {
-                                                    if (isDark) Color(0xFF38BDF8).copy(alpha = 0.4f) else Color(0xFFB1E6F8)
+                                                    if (isDark) Color(0xFF38BDF8).copy(alpha = 0.4f) else Color(0xFFBAE6FD)
                                                 } else {
                                                     if (isDark) Color(0xFF262626) else Color(0xFFE2E8F0)
                                                 },
@@ -311,7 +311,7 @@ fun RouteReorderScreen(
                                             )
                                             .background(
                                                 if (index > 0) {
-                                                    if (isDark) Color(0xFF0C4A6E).copy(alpha = 0.2f) else Color(0xFFEAF8FE)
+                                                    if (isDark) Color(0xFF0C4A6E).copy(alpha = 0.2f) else Color(0xFFE0F2FE)
                                                 } else {
                                                     if (isDark) Color(0xFF1A1A1E) else Color(0xFFF1F5F9)
                                                 },
@@ -342,8 +342,8 @@ fun RouteReorderScreen(
                                     Box(
                                         modifier = Modifier
                                             .size(40.dp)
-                                            .border(1.2.dp, if (isDark) Color(0xFF38BDF8).copy(alpha = 0.4f) else Color(0xFFB1E6F8), RoundedCornerShape(8.dp))
-                                            .background(if (isDark) Color(0xFF0C4A6E).copy(alpha = 0.2f) else Color(0xFFEAF8FE), RoundedCornerShape(8.dp)),
+                                            .border(1.2.dp, if (isDark) Color(0xFF38BDF8).copy(alpha = 0.4f) else Color(0xFFBAE6FD), RoundedCornerShape(8.dp))
+                                            .background(if (isDark) Color(0xFF0C4A6E).copy(alpha = 0.2f) else Color(0xFFE0F2FE), RoundedCornerShape(8.dp)),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Text(
@@ -364,6 +364,7 @@ fun RouteReorderScreen(
                                         .padding(vertical = 4.dp),
                                     colors = CardDefaults.cardColors(containerColor = cardBg),
                                     border = BorderStroke(1.dp, cardBorderColor),
+                                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
                                     shape = RoundedCornerShape(12.dp)
                                 ) {
                                     Column(
@@ -377,8 +378,8 @@ fun RouteReorderScreen(
                                             verticalAlignment = Alignment.CenterVertically
                                         ) {
                                             // "تسليم" tag is shown first dynamically inside RTL row
-                                            val deliveryBg = if (isDark) Color(0xFF0B2545) else Color(0xFFEAF8FE)
-                                            val deliveryBorder = if (isDark) Color(0xFF139CB5).copy(alpha = 0.5f) else Color(0xFFB1E6F8)
+                                            val deliveryBg = if (isDark) Color(0xFF0B2545) else Color(0xFFE0F2FE)
+                                            val deliveryBorder = if (isDark) Color(0xFF139CB5).copy(alpha = 0.5f) else Color(0xFFBAE6FD)
                                             val deliveryText = if (isDark) Color(0xFF38BDF8) else Color(0xFF139CB5)
 
                                             Row(
@@ -459,7 +460,7 @@ fun RouteReorderScreen(
                                             .border(
                                                 1.2.dp,
                                                 if (index < itemsList.size - 1) {
-                                                    if (isDark) Color(0xFF38BDF8).copy(alpha = 0.4f) else Color(0xFFB1E6F8)
+                                                    if (isDark) Color(0xFF38BDF8).copy(alpha = 0.4f) else Color(0xFFBAE6FD)
                                                 } else {
                                                     if (isDark) Color(0xFF262626) else Color(0xFFE2E8F0)
                                                 },
@@ -467,7 +468,7 @@ fun RouteReorderScreen(
                                             )
                                             .background(
                                                 if (index < itemsList.size - 1) {
-                                                    if (isDark) Color(0xFF0C4A6E).copy(alpha = 0.2f) else Color(0xFFEAF8FE)
+                                                    if (isDark) Color(0xFF0C4A6E).copy(alpha = 0.2f) else Color(0xFFE0F2FE)
                                                 } else {
                                                     if (isDark) Color(0xFF1A1A1E) else Color(0xFFF1F5F9)
                                                 },
@@ -498,8 +499,8 @@ fun RouteReorderScreen(
                                     Box(
                                         modifier = Modifier
                                             .size(40.dp)
-                                            .border(1.2.dp, if (isDark) Color(0xFF38BDF8).copy(alpha = 0.4f) else Color(0xFFB1E6F8), RoundedCornerShape(8.dp))
-                                            .background(if (isDark) Color(0xFF0C4A6E).copy(alpha = 0.2f) else Color(0xFFEAF8FE), RoundedCornerShape(8.dp)),
+                                            .border(1.2.dp, if (isDark) Color(0xFF38BDF8).copy(alpha = 0.4f) else Color(0xFFBAE6FD), RoundedCornerShape(8.dp))
+                                            .background(if (isDark) Color(0xFF0C4A6E).copy(alpha = 0.2f) else Color(0xFFE0F2FE), RoundedCornerShape(8.dp)),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Icon(

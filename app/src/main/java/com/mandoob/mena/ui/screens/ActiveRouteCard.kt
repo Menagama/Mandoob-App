@@ -46,7 +46,7 @@ fun ActiveRouteCard(
     onMoveDown: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
-    val isDark = MaterialTheme.colorScheme.background == Color(0xFF000000)
+    val isDark = isSystemInDarkTheme()
     val statusGreen = if (isDark) Color(0xFF34D399) else Color(0xFF127C41)
     val statusRed = if (isDark) Color(0xFFEF4444) else CancelledRed
     var showDropdown by remember(order.id) { mutableStateOf(false) }
@@ -605,7 +605,7 @@ fun OrderDetailsFullScreenPage(
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surface)
                     .navigationBarsPadding()
-                    .padding(start = 16.dp, end = 16.dp, top = 14.dp, bottom = 34.dp)
+                    .padding(start = 16.dp, end = 16.dp, top = 14.dp, bottom = 64.dp)
             ) {
                 if (order.status == Order.STATUS_PENDING) {
                     Row(
@@ -647,14 +647,17 @@ fun OrderDetailsFullScreenPage(
                                 .weight(1f)
                                 .height(54.dp),
                             shape = RoundedCornerShape(12.dp),
-                            border = BorderStroke(1.dp, if (isDark) Color(0xFF4B5563) else Color(0xFFCBD5E1)),
-                            colors = ButtonDefaults.outlinedButtonColors(contentColor = if (isDark) Color.White else Color(0xFF334155))
+                            border = BorderStroke(1.5.dp, if (isDark) Color(0xFFEF4444).copy(alpha = 0.5f) else Color(0xFFFCA5A5)),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = if (isDark) Color(0xFF7F1D1D).copy(alpha = 0.3f) else Color(0xFFFEF2F2),
+                                contentColor = if (isDark) Color(0xFFF87171) else Color(0xFFDC2626)
+                            )
                         ) {
                             Text(
-                                text = "إلغاء",
-                                fontSize = 16.sp,
+                                text = "إلغاء / خيارات أخرى",
+                                fontSize = 15.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = if (isDark) Color.White else Color(0xFF334155)
+                                color = if (isDark) Color(0xFFF87171) else Color(0xFFDC2626)
                             )
                         }
                     }
@@ -719,8 +722,9 @@ fun OrderDetailsFullScreenPage(
                             }
                         },
                     shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF1E1E1E) else Color.White),
-                    border = BorderStroke(1.dp, if (isDark) Color(0xFF374151) else Color(0xFFE2E8F0))
+                    colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF1E1E1E) else Color(0xFFE8F5E9)),
+                    border = BorderStroke(1.dp, if (isDark) Color(0xFF374151) else Color(0xFFA5D6A7)),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                 ) {
                     Row(
                         modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
@@ -730,7 +734,7 @@ fun OrderDetailsFullScreenPage(
                         Icon(
                             imageVector = Icons.Default.Phone,
                             contentDescription = "اتصال",
-                            tint = if (isDark) Color(0xFF34D399) else Color(0xFF475569),
+                            tint = if (isDark) Color(0xFF34D399) else Color(0xFF2E7D32),
                             modifier = Modifier.size(18.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
@@ -738,7 +742,7 @@ fun OrderDetailsFullScreenPage(
                             text = "إتصال",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
-                            color = if (isDark) Color(0xFFF3F4F6) else Color(0xFF334155)
+                            color = if (isDark) Color(0xFF34D399) else Color(0xFF2E7D32)
                         )
                     }
                 }
@@ -757,8 +761,9 @@ fun OrderDetailsFullScreenPage(
                             }
                         },
                     shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF1E1E1E) else Color.White),
-                    border = BorderStroke(1.dp, if (isDark) Color(0xFF374151) else Color(0xFFE2E8F0))
+                    colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF1E1E1E) else Color(0xFFEBF5FF)),
+                    border = BorderStroke(1.dp, if (isDark) Color(0xFF374151) else Color(0xFFC0E0FF)),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                 ) {
                     Row(
                         modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
@@ -768,7 +773,7 @@ fun OrderDetailsFullScreenPage(
                         Icon(
                             imageVector = Icons.Default.Sms,
                             contentDescription = "SMS",
-                            tint = if (isDark) Color(0xFF38BDF8) else Color(0xFF475569),
+                            tint = if (isDark) Color(0xFF38BDF8) else Color(0xFF0084FF),
                             modifier = Modifier.size(18.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
@@ -776,7 +781,7 @@ fun OrderDetailsFullScreenPage(
                             text = "رسالة",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
-                            color = if (isDark) Color(0xFFF3F4F6) else Color(0xFF334155)
+                            color = if (isDark) Color(0xFF38BDF8) else Color(0xFF0084FF)
                         )
                     }
                 }
@@ -795,8 +800,9 @@ fun OrderDetailsFullScreenPage(
                             }
                         },
                     shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF1E1E1E) else Color.White),
-                    border = BorderStroke(1.dp, if (isDark) Color(0xFF374151) else Color(0xFFE2E8F0))
+                    colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF1E1E1E) else Color(0xFFEBFDF5)),
+                    border = BorderStroke(1.dp, if (isDark) Color(0xFF374151) else Color(0xFFA5D6A7)),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                 ) {
                     Row(
                         modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
@@ -814,7 +820,7 @@ fun OrderDetailsFullScreenPage(
                             text = "واتساب",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
-                            color = if (isDark) Color(0xFFF3F4F6) else Color(0xFF334155)
+                            color = if (isDark) Color(0xFF10B981) else Color(0xFF0EA371)
                         )
                     }
                 }
@@ -823,10 +829,11 @@ fun OrderDetailsFullScreenPage(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
-                    containerColor = if (isDark) Color(0xFF0F172A).copy(alpha = 0.5f) else Color(0xFFE0F2FE)
+                    containerColor = if (isDark) Color(0xFF0F172A).copy(alpha = 0.5f) else Color(0xFFEFF6FF)
                 ),
                 shape = RoundedCornerShape(12.dp),
-                border = BorderStroke(1.dp, if (isDark) Color(0xFF0369A1).copy(alpha = 0.4f) else Color(0xFFBAE6FD))
+                border = BorderStroke(1.5.dp, if (isDark) Color(0xFF0369A1).copy(alpha = 0.4f) else Color(0xFFBFDBFE)),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
             ) {
                 Row(
                     modifier = Modifier
@@ -840,7 +847,7 @@ fun OrderDetailsFullScreenPage(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Text(
-                            text = "المبلغ المطلوب",
+                            text = "المبلغ المطلوب للتجميع",
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Bold,
                             color = if (isDark) Color(0xFFE2E8F0) else Color(0xFF1E293B)
@@ -848,7 +855,7 @@ fun OrderDetailsFullScreenPage(
                         Icon(
                             imageVector = Icons.Default.Payments,
                             contentDescription = null,
-                            tint = if (isDark) Color(0xFF38BDF8) else Color(0xFF0284C7),
+                            tint = if (isDark) Color(0xFF38BDF8) else Color(0xFF1D4ED8),
                             modifier = Modifier.size(22.dp)
                         )
                     }
@@ -856,9 +863,9 @@ fun OrderDetailsFullScreenPage(
                     Column(horizontalAlignment = Alignment.End) {
                         Text(
                             text = "${order.amount.toInt()} ج.م",
-                            fontSize = 20.sp,
+                            fontSize = 24.sp,
                             fontWeight = FontWeight.Black,
-                            color = if (isDark) Color(0xFF38BDF8) else Color(0xFF0369A1)
+                            color = if (isDark) Color(0xFF38BDF8) else Color(0xFF1D4ED8)
                         )
                         if (order.status == Order.STATUS_PARTIAL) {
                             Text(
@@ -996,12 +1003,64 @@ fun OrderDetailsFullScreenPage(
 
                 Divider(color = if (isDark) Color(0xFF374151) else Color(0xFFF1F5F9), thickness = 1.dp)
 
+                // 1. Shipper / Shipment Notes Block (تفاصيل الشحنة / ملاحظات الراسل)
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            color = if (isDark) Color(0xFF1E293B).copy(alpha = 0.4f) else Color(0xFFEFF6FF),
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                        .border(
+                            width = 1.dp,
+                            color = if (isDark) Color(0xFF38BDF8).copy(alpha = 0.3f) else Color(0xFFBFDBFE),
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                        .padding(12.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Inventory,
+                            contentDescription = null,
+                            tint = if (isDark) Color(0xFF38BDF8) else Color(0xFF1D4ED8),
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "تفاصيل الشحنة والراسل",
+                            fontSize = 14.sp,
+                            color = if (isDark) Color(0xFF38BDF8) else Color(0xFF1D4ED8),
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    Text(
+                        text = order.notes ?: "لا توجد تفاصيل أو ملاحظات إضافية من العميل حالياً.",
+                        fontSize = 14.sp,
+                        color = if (order.notes != null) (if (isDark) Color.White else Color(0xFF1E293B)) else (if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B)),
+                        fontWeight = if (order.notes != null) FontWeight.Bold else FontWeight.Normal,
+                        textAlign = TextAlign.Right,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
                 // 2. Rider Notes Block (ملاحظات المندوب)
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(
-                            color = if (isDark) Color(0xFF1E293B).copy(alpha = 0.4f) else Color(0xFFF1F5F9),
+                            color = if (isDark) Color(0xFF064E3B).copy(alpha = 0.1f) else Color(0xFFF0FDF4),
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                        .border(
+                            width = 1.dp,
+                            color = if (isDark) Color(0xFF065F46).copy(alpha = 0.3f) else Color(0xFFBBF7D0),
                             shape = RoundedCornerShape(12.dp)
                         )
                         .padding(12.dp)
@@ -1018,13 +1077,13 @@ fun OrderDetailsFullScreenPage(
                             Icon(
                                 imageVector = Icons.Default.Notes,
                                 contentDescription = null,
-                                tint = if (isDark) Color(0xFF34D399) else Color(0xFF10B981),
+                                tint = if (isDark) Color(0xFF34D399) else Color(0xFF16A34A),
                                 modifier = Modifier.size(20.dp)
                             )
                             Text(
                                 text = "ملاحظات المندوب",
                                 fontSize = 14.sp,
-                                color = if (isDark) Color(0xFF34D399) else Color(0xFF10B981),
+                                color = if (isDark) Color(0xFF34D399) else Color(0xFF16A34A),
                                 fontWeight = FontWeight.Bold
                             )
                         }
@@ -1038,7 +1097,7 @@ fun OrderDetailsFullScreenPage(
                             Icon(
                                 imageVector = Icons.Default.Edit,
                                 contentDescription = "تعديل ملاحظات المندوب",
-                                tint = if (isDark) Color(0xFF34D399) else Color(0xFF10B981),
+                                tint = if (isDark) Color(0xFF34D399) else Color(0xFF16A34A),
                                 modifier = Modifier.size(16.dp)
                             )
                         }
@@ -1049,7 +1108,7 @@ fun OrderDetailsFullScreenPage(
                     Text(
                         text = order.courierNotes ?: "لا توجد ملاحظات مسجلة للمندوب حالياً.",
                         fontSize = 14.sp,
-                        color = if (order.courierNotes != null) MaterialTheme.colorScheme.onSurface else if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B),
+                        color = if (order.courierNotes != null) (if (isDark) Color.White else Color(0xFF1E293B)) else (if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B)),
                         fontWeight = if (order.courierNotes != null) FontWeight.Bold else FontWeight.Normal,
                         textAlign = TextAlign.Right,
                         modifier = Modifier.fillMaxWidth()

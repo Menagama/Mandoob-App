@@ -3,6 +3,7 @@ package com.mandoob.mena.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -102,68 +104,93 @@ fun HomeScreen(
                 )
             }
 
-            // Margin bottom to clear overlapping floating action buttons
-            item { Spacer(modifier = Modifier.height(140.dp)) }
+            // Margin bottom to clear overlapping floating action bar
+            item { Spacer(modifier = Modifier.height(110.dp)) }
         }
 
-        // Floating stacked action buttons matching the layout perfectly
-        Column(
+        // Beautiful glassmorphic modern floating action bar containing both actions
+        Row(
             modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(bottom = 20.dp, start = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalAlignment = Alignment.Start
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
+                .shadow(12.dp, RoundedCornerShape(20.dp))
+                .background(
+                    if (isSystemInDarkTheme()) Color(0xFF1E293B) else Color.White,
+                    RoundedCornerShape(20.dp)
+                )
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f),
+                    shape = RoundedCornerShape(20.dp)
+                )
+                .padding(10.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            // First FAB: Add New Order
+            // First Button: Add New Order (Vibrant blue background with custom gradient)
             Row(
                 modifier = Modifier
-                    .shadow(8.dp, RoundedCornerShape(16.dp))
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(MaterialTheme.colorScheme.primary)
+                    .weight(1.2f)
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(
+                        Brush.horizontalGradient(
+                            colors = listOf(
+                                Color(0xFF0EA5E9),
+                                Color(0xFF38BDF8)
+                            )
+                        )
+                    )
                     .clickable { onOpenAddOrder() }
-                    .padding(horizontal = 24.dp, vertical = 14.dp),
+                    .padding(vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                Text(
-                    text = "إضافة أوردر جديد",
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
-                )
-                Spacer(modifier = Modifier.width(8.dp))
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = null,
                     tint = Color.White,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "إضافة أوردر",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp
                 )
             }
 
-            // Second FAB: Import from Excel
+            // Second Button: Import from Excel (Sleek professional green gradient)
             Row(
                 modifier = Modifier
-                    .shadow(8.dp, RoundedCornerShape(16.dp))
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(Color(0xFF1B5E20)) // Dark green matching excel style
-                    .border(1.dp, Color(0xFF81C784), RoundedCornerShape(16.dp))
+                    .weight(1f)
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(
+                        Brush.horizontalGradient(
+                            colors = listOf(
+                                Color(0xFF10B981),
+                                Color(0xFF34D399)
+                            )
+                        )
+                    )
                     .clickable { onOpenImportExcel() }
-                    .padding(horizontal = 24.dp, vertical = 14.dp),
+                    .padding(vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                Text(
-                    text = "استيراد من إكسيل",
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
-                )
-                Spacer(modifier = Modifier.width(8.dp))
                 Icon(
                     imageVector = Icons.Default.FileUpload,
                     contentDescription = null,
                     tint = Color.White,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "استيراد إكسيل",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp
                 )
             }
         }

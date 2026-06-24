@@ -64,17 +64,10 @@ fun MainScreen(viewModel: OrderViewModel) {
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                // Animated container for switching between screens smoothly and with high performance
-                AnimatedContent(
-                    targetState = currentTab,
-                    transitionSpec = {
-                        (fadeIn(animationSpec = androidx.compose.animation.core.tween(120)) +
-                                scaleIn(initialScale = 0.98f, animationSpec = androidx.compose.animation.core.tween(120)))
-                            .togetherWith(fadeOut(animationSpec = androidx.compose.animation.core.tween(120)))
-                    },
-                    label = "TabTransition"
-                ) { tab ->
-                    when (tab) {
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    when (currentTab) {
                         0 -> HomeScreen(
                             viewModel = viewModel,
                             onOpenAddOrder = { showAddDialog = true },

@@ -23,8 +23,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import com.mandoob.mena.data.Order
 import com.mandoob.mena.ui.theme.BlueLight
 import com.mandoob.mena.ui.theme.BluePrimary
@@ -77,11 +75,12 @@ fun ActiveRouteScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit) {
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp)
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
+        ) {
         Spacer(modifier = Modifier.height(12.dp))
 
         // 1. Header Card with profile context info and settings cog
@@ -332,13 +331,9 @@ fun ActiveRouteScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit) {
                 Toast.makeText(context, "تم تعديل بيانات الأوردر بنجاح!", Toast.LENGTH_SHORT).show()
             }
         )
-    }
+        }
 
-    if (showReorderScreen) {
-        Dialog(
-            onDismissRequest = { showReorderScreen = false },
-            properties = DialogProperties(usePlatformDefaultWidth = false)
-        ) {
+        if (showReorderScreen) {
             RouteReorderScreen(
                 viewModel = viewModel,
                 onDismiss = { showReorderScreen = false }

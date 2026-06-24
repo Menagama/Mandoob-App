@@ -307,22 +307,6 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun updateOrderStatus(orderId: Int, status: String) {
-        viewModelScope.launch {
-            val currentList = allOrders.value
-            val order = currentList.find { it.id == orderId }
-            if (order != null) {
-                val updated = order.copy(
-                    status = status,
-                    collectedAmount = if (status == Order.STATUS_PARTIAL) order.amount else null,
-                    deliveryFeeAmount = null,
-                    commission = getCommissionForStatus(status)
-                )
-                repository.updateOrder(updated)
-            }
-        }
-    }
-
     fun updateOrderStatusWithValues(orderId: Int, status: String, collectedAmount: Double? = null, deliveryFeeAmount: Double? = null) {
         viewModelScope.launch {
             val currentList = allOrders.value
@@ -384,12 +368,6 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
     fun deleteOrder(orderId: Int) {
         viewModelScope.launch {
             repository.deleteOrderById(orderId)
-        }
-    }
-
-    fun resetAllData() {
-        viewModelScope.launch {
-            repository.clearAll()
         }
     }
 
