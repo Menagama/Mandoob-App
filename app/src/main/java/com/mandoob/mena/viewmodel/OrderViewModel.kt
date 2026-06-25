@@ -51,9 +51,6 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
     private val _isFirstLaunch = MutableStateFlow(prefs.getBoolean("is_first_launch", true))
     val isFirstLaunch: StateFlow<Boolean> = _isFirstLaunch.asStateFlow()
 
-    private val _licenseStatus = MutableStateFlow<LicenseStatus>(LicenseStatus.Loading)
-    val licenseStatus: StateFlow<LicenseStatus> = _licenseStatus.asStateFlow()
-
     fun completeOnboarding() {
         _isFirstLaunch.value = false
         prefs.edit().putBoolean("is_first_launch", false).apply()
@@ -122,11 +119,6 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
                 started = SharingStarted.WhileSubscribed(5000),
                 initialValue = emptyList()
             )
-
-        viewModelScope.launch {
-            val deviceId = LicenseManager.getOrCreateDeviceId(application)
-            _licenseStatus.value = LicenseManager.checkLicense(deviceId)
-        }
     }
 
     // Financial Metrics - Wallet collect sums
