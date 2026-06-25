@@ -11,7 +11,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -43,7 +42,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.isSystemInDarkTheme
 import com.mandoob.mena.R
 import com.mandoob.mena.data.Order
 import com.mandoob.mena.ui.theme.*
@@ -192,7 +190,7 @@ fun HeaderCard(
 // ---------------- NET REMITTANCE CARD ----------------
 @Composable
 fun NetRemittanceCard(netRemittance: Double) {
-    val isDark = isSystemInDarkTheme()
+    val isDark = MaterialTheme.colorScheme.surface == Color(0xFF121212)
     val gradientBrush = if (isDark) {
         Brush.linearGradient(
             colors = listOf(
@@ -348,7 +346,7 @@ private val Int.ddp: androidx.compose.ui.unit.Dp get() = this.dp
 @Composable
 fun InteractiveRouteProgressCard(completed: Int, total: Int) {
     val progress = if (total > 0) completed.toFloat() / total.toFloat() else 0f
-    val isDark = isSystemInDarkTheme()
+    val isDark = MaterialTheme.colorScheme.surface == Color(0xFF121212)
 
     val cardBg = if (isDark) Color(0xFF121212) else Color.White
     val cardBorder = if (isDark) Color(0xFF38BDF8).copy(alpha = 0.4f) else Color(0xFFE2E8F0)
@@ -620,17 +618,17 @@ fun launchWhatsApp(context: Context, phoneNumber: String) {
 fun shareOrderToWhatsApp(context: Context, order: Order) {
     try {
         val statusText = when (order.status) {
-            Order.STATUS_PARTIAL -> "${order.status} (تم تحصيل ${order.collectedAmount ?: 0.0} ج.م)"
-            Order.STATUS_REJECTED_WITH_FEE -> "${order.status} (تم دفع مصاريف الشحن ${order.deliveryFeeAmount ?: 0.0} ج.م)"
+            Order.STATUS_PARTIAL -> "تسليم جزئي — تم تحصيل ${order.collectedAmount?.toInt() ?: 0} ج.م فقط"
+            Order.STATUS_REJECTED_WITH_FEE -> "رفض ودفع مصاريف شحن — تم دفع ${order.deliveryFeeAmount?.toInt() ?: 0} ج.م"
             else -> order.status
         }
 
         val templateText = """
-            👤 *العميل:* ${order.clientName}
-            📞 *رقم الموبايل:* ${order.phoneNumber}
-            📍 *العنوان:* ${order.address}
-            💰 *المطلوب دفعه وتحصيله:* ${order.amount} ج.م
-            📊 *حالة الأوردر:* $statusText
+            اسم العميل: ${order.clientName}
+            رقم الموبايل: ${order.phoneNumber}
+            العنوان: ${order.address}
+            مبلغ التحصيل: ${order.amount.toInt()} ج.م
+            حالة الأوردر: $statusText
         """.trimIndent()
         
         val url = "https://api.whatsapp.com/send?text=" + java.net.URLEncoder.encode(templateText, "UTF-8")

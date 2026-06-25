@@ -42,11 +42,19 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
         prefs.edit().putString("app_theme_settings", theme).apply()
     }
 
-    private val _captainName = MutableStateFlow(prefs.getString("captain_name", "كابتن مينا") ?: "كابتن مينا")
+    private val _captainName = MutableStateFlow(prefs.getString("captain_name", "") ?: "")
     val captainName: StateFlow<String> = _captainName.asStateFlow()
 
-    private val _captainAvatar = MutableStateFlow(prefs.getString("captain_avatar", "default") ?: "default")
+    private val _captainAvatar = MutableStateFlow(prefs.getString("captain_avatar", "") ?: "")
     val captainAvatar: StateFlow<String> = _captainAvatar.asStateFlow()
+
+    private val _isFirstLaunch = MutableStateFlow(prefs.getBoolean("is_first_launch", true))
+    val isFirstLaunch: StateFlow<Boolean> = _isFirstLaunch.asStateFlow()
+
+    fun completeOnboarding() {
+        _isFirstLaunch.value = false
+        prefs.edit().putBoolean("is_first_launch", false).apply()
+    }
 
     private val _commissionCat1 = MutableStateFlow(prefs.getFloat("commission_cat1", 0.0f).toDouble())
     val commissionCat1: StateFlow<Double> = _commissionCat1.asStateFlow()
@@ -111,76 +119,6 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
                 started = SharingStarted.WhileSubscribed(5000),
                 initialValue = emptyList()
             )
-
-        // Pre-populate sample orders on first launch if the database is empty and we've never populated them
-        viewModelScope.launch {
-            val hasPopulated = prefs.getBoolean("has_populated_samples_v5", false)
-            if (!hasPopulated) {
-                populateSampleOrders()
-                prefs.edit().putBoolean("has_populated_samples_v5", true).apply()
-            }
-        }
-    }
-
-    private suspend fun populateSampleOrders() {
-        val samples = listOf(
-            Order(
-                clientName = "أحمد محمد عبد الله",
-                phoneNumber = "01012345678",
-                phoneNumber2 = "01287654321",
-                address = "شارع التسعين، التجمع الخامس، القاهرة",
-                amount = 450.0,
-                commission = 30.0,
-                notes = "الرجاء الاتصال قبل الوصول بنصف ساعة",
-                status = Order.STATUS_PENDING
-            ),
-            Order(
-                clientName = "مينا سمير جرجس",
-                phoneNumber = "01123456789",
-                address = "دوران شبرا، بجوار محطة المترو، القاهرة",
-                amount = 250.0,
-                commission = 25.0,
-                notes = "الدفع كاش، تم التسليم بنجاح",
-                status = Order.STATUS_DELIVERED
-            ),
-            Order(
-                clientName = "سارة أحمد النجار",
-                phoneNumber = "01512345678",
-                address = "شارع جلال الدسوقي، وابور المياه، الإسكندرية",
-                amount = -150.0, // Refund
-                commission = 20.0,
-                notes = "مرتجع شحنة ملابس مقاس غير مناسب",
-                status = Order.STATUS_DELIVERED // Delivered refund (cash returned to client)
-            ),
-            Order(
-                clientName = "محمد علي",
-                phoneNumber = "01128669096",
-                address = "سوهاج الجديد عند الموقف تومور",
-                amount = 310.0,
-                commission = 35.0,
-                notes = "تسليم عاجل اليوم",
-                status = Order.STATUS_PENDING
-            ),
-            Order(
-                clientName = "مدام الدكتور مصطفى أبو الدهب",
-                phoneNumber = "01092534399",
-                address = "محافظة سوهاج / سوهاج الجديدة كمبوند ريتاج 1 / فيلا 25A",
-                amount = 650.0,
-                commission = 45.0,
-                notes = "الدفع كاش عند المعاينة",
-                status = Order.STATUS_PENDING
-            ),
-            Order(
-                clientName = "كريم محمود عبد العزيز",
-                phoneNumber = "01234567890",
-                address = "المجاورة الثالثة، الشيخ زايد، الجيزة",
-                amount = 800.0,
-                commission = 40.0,
-                notes = "العميل لم يقم بالرد على الهاتف متكرراً",
-                status = Order.STATUS_CANCELLED
-            )
-        )
-        repository.insertOrders(samples)
     }
 
     // Financial Metrics - Wallet collect sums

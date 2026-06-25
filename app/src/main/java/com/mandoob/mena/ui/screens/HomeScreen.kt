@@ -3,7 +3,6 @@ package com.mandoob.mena.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -37,6 +36,7 @@ fun HomeScreen(
     onOpenImportExcel: () -> Unit,
     onOpenSettings: () -> Unit
 ) {
+    val isDark = MaterialTheme.colorScheme.surface == Color(0xFF121212)
     // Collect from ViewModel
     val netRemittance by viewModel.netRemittanceToOffice.collectAsState()
     val walletCash by viewModel.totalCashInWallet.collectAsState()
@@ -115,7 +115,7 @@ fun HomeScreen(
                 .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
                 .shadow(12.dp, RoundedCornerShape(20.dp))
                 .background(
-                    if (isSystemInDarkTheme()) Color(0xFF1E293B) else Color.White,
+                    if (isDark) Color(0xFF1E293B) else Color.White,
                     RoundedCornerShape(20.dp)
                 )
                 .border(

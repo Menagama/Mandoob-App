@@ -7,7 +7,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -50,7 +49,7 @@ fun RouteReorderScreen(
 ) {
     val allOrders by viewModel.allOrders.collectAsState()
     val context = LocalContext.current
-    val isDark = isSystemInDarkTheme()
+    val isDark = MaterialTheme.colorScheme.surface == Color(0xFF121212)
     
     val pendingOrders = remember(allOrders) {
         allOrders.filter { it.status == Order.STATUS_PENDING }

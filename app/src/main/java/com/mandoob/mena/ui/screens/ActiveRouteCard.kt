@@ -3,7 +3,6 @@ package com.mandoob.mena.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -46,7 +45,7 @@ fun ActiveRouteCard(
     onMoveDown: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
-    val isDark = isSystemInDarkTheme()
+    val isDark = MaterialTheme.colorScheme.surface == Color(0xFF121212)
     val statusGreen = if (isDark) Color(0xFF34D399) else Color(0xFF127C41)
     val statusRed = if (isDark) Color(0xFFEF4444) else CancelledRed
     var showDropdown by remember(order.id) { mutableStateOf(false) }
@@ -1578,7 +1577,7 @@ fun sendQuickWhatsAppMessageWithNumber(context: android.content.Context, order: 
         val cleanNumber = phoneNumber.replace(Regex("[^0-9]"), "")
         val formattedNum = if (cleanNumber.startsWith("0")) "2$cleanNumber" else cleanNumber
         
-        val quickText = "يا فندم مع حضرتك مندوب شحن بوسطة بخصوص الأوردر الخاص بك بمبلغ ${order.amount} ج.م. هل حضرتك متواجد حالياً للاستلام؟"
+        val quickText = "مرحبا ${order.clientName} مندوب شركة الشحن يتواصل معك لايصال شحنتك ${order.amount.toInt()} ج.م"
         
         val url = "https://api.whatsapp.com/send?phone=$formattedNum&text=" + java.net.URLEncoder.encode(quickText, "UTF-8")
         val intent = android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(url))
@@ -1591,7 +1590,7 @@ fun sendQuickWhatsAppMessageWithNumber(context: android.content.Context, order: 
 
 fun sendQuickSMSMessageWithNumber(context: android.content.Context, order: Order, phoneNumber: String) {
     try {
-        val quickText = "مع حضرتك مندوب شحن بوسطة بخصوص الأوردر الخاص بك بمبلغ ${order.amount} ج.م. هل متواجد حالياً للاستلام؟"
+        val quickText = "مرحبا ${order.clientName} مندوب شركة الشحن يتواصل معك لايصال شحنتك ${order.amount.toInt()} ج.م"
         val intent = android.content.Intent(android.content.Intent.ACTION_SENDTO, android.net.Uri.parse("smsto:$phoneNumber"))
         intent.putExtra("sms_body", quickText)
         intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
