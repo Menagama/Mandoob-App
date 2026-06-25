@@ -56,79 +56,122 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mandoob.mena.viewmodel.OrderViewModel
+import com.mandoob.mena.viewmodel.LicenseStatus
 
 @Composable
 fun MainScreen(viewModel: OrderViewModel) {
     val isFirstLaunch by viewModel.isFirstLaunch.collectAsState()
+    val licenseStatus by viewModel.licenseStatus.collectAsState()
 
     // Enforce Arabic RTL layout direction for the entire interface
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-        if (isFirstLaunch) {
-            OnboardingScreen(viewModel)
-        } else {
-            var currentTab by rememberSaveable { mutableStateOf(0) }
-            val context = LocalContext.current
-
-            var showAddDialog by remember { mutableStateOf(false) }
-            var showImportDialog by remember { mutableStateOf(false) }
-
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                bottomBar = {
-                    BottomBar(
-                        selectedTab = currentTab,
-                        onTabSelected = { currentTab = it }
-                    )
-                },
-                containerColor = MaterialTheme.colorScheme.background
-            ) { innerPadding ->
+        when (licenseStatus) {
+            is LicenseStatus.Loading -> {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(innerPadding)
+                        .background(MaterialTheme.colorScheme.background),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Box(
-                        modifier = Modifier.fillMaxSize()
+                    CircularProgressIndicator()
+                }
+            }
+            is LicenseStatus.Expired, is LicenseStatus.NotFound -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(24.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        when (currentTab) {
-                            0 -> HomeScreen(
-                                viewModel = viewModel,
-                                onOpenAddOrder = { showAddDialog = true },
-                                onOpenImportExcel = { showImportDialog = true },
-                                onOpenSettings = { currentTab = 2 }
-                            )
-                            1 -> ActiveRouteScreen(
-                                viewModel = viewModel,
-                                onOpenSettings = { currentTab = 2 }
-                            )
-                            2 -> SettingsScreen(
-                                viewModel = viewModel,
-                                onBack = { currentTab = 0 }
-                            )
-                        }
+                        Text(
+                            text = "⚠️",
+                            fontSize = 72.sp,
+                            textAlign = TextAlign.Center
+                        )
+                        Text(
+                            text = "انتهت فترة الاشتراك، تواصل مع المورد",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.error,
+                            textAlign = TextAlign.Center
+                        )
                     }
+                }
+            }
+            is LicenseStatus.Active -> {
+                if (isFirstLaunch) {
+                    OnboardingScreen(viewModel)
+                } else {
+                    var currentTab by rememberSaveable { mutableStateOf(0) }
+                    val context = LocalContext.current
 
-                    // Add Dialog Implementation
-                    if (showAddDialog) {
-                        AddOrderDialog(
-                            onDismiss = { showAddDialog = false },
-                            onSave = { name, phone, phone2, address, amount, notes ->
-                                viewModel.addNewOrder(
-                                    name, phone, phone2?.ifBlank { null },
-                                    address, amount, 0.0, notes?.ifBlank { null }
-                                )
-                                showAddDialog = false
-                                Toast.makeText(context, "تم إضافة الأوردر بنجاح!", Toast.LENGTH_SHORT).show()
+                    var showAddDialog by remember { mutableStateOf(false) }
+                    var showImportDialog by remember { mutableStateOf(false) }
+
+                    Scaffold(
+                        modifier = Modifier.fillMaxSize(),
+                        bottomBar = {
+                            BottomBar(
+                                selectedTab = currentTab,
+                                onTabSelected = { currentTab = it }
+                            )
+                        },
+                        containerColor = MaterialTheme.colorScheme.background
+                    ) { innerPadding ->
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding)
+                        ) {
+                            Box(
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                when (currentTab) {
+                                    0 -> HomeScreen(
+                                        viewModel = viewModel,
+                                        onOpenAddOrder = { showAddDialog = true },
+                                        onOpenImportExcel = { showImportDialog = true },
+                                        onOpenSettings = { currentTab = 2 }
+                                    )
+                                    1 -> ActiveRouteScreen(
+                                        viewModel = viewModel,
+                                        onOpenSettings = { currentTab = 2 }
+                                    )
+                                    2 -> SettingsScreen(
+                                        viewModel = viewModel,
+                                        onBack = { currentTab = 0 }
+                                    )
+                                }
                             }
-                        )
-                    }
 
-                    // Import Dialog Implementation
-                    if (showImportDialog) {
-                        ImportExcelDialog(
-                            viewModel = viewModel,
-                            onDismiss = { showImportDialog = false }
-                        )
+                            // Add Dialog Implementation
+                            if (showAddDialog) {
+                                AddOrderDialog(
+                                    onDismiss = { showAddDialog = false },
+                                    onSave = { name, phone, phone2, address, amount, notes ->
+                                        viewModel.addNewOrder(
+                                            name, phone, phone2?.ifBlank { null },
+                                            address, amount, 0.0, notes?.ifBlank { null }
+                                        )
+                                        showAddDialog = false
+                                        Toast.makeText(context, "تم إضافة الأوردر بنجاح!", Toast.LENGTH_SHORT).show()
+                                    }
+                                )
+                            }
+
+                            // Import Dialog Implementation
+                            if (showImportDialog) {
+                                ImportExcelDialog(
+                                    viewModel = viewModel,
+                                    onDismiss = { showImportDialog = false }
+                                )
+                            }
+                        }
                     }
                 }
             }
