@@ -275,7 +275,8 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
                     status = status,
                     collectedAmount = collectedAmount,
                     deliveryFeeAmount = deliveryFeeAmount,
-                    commission = getCommissionForStatus(status)
+                    commission = getCommissionForStatus(status),
+                    updatedAt = System.currentTimeMillis()
                 )
                 repository.updateOrder(updated)
             }

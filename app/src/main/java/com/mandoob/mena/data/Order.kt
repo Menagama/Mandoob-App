@@ -19,7 +19,8 @@ data class Order(
     val deliveryFeeAmount: Double? = null, // Used in STATUS_REJECTED_WITH_FEE (رفض ودفع مصاريف شحن)
     val isSequenceArranged: Boolean = false, // Sequence sorting toggle
     val sequenceNumber: Int = 0, // Order sequence index
-    val createdAt: Long = System.currentTimeMillis()
+    val createdAt: Long = System.currentTimeMillis(),
+    val updatedAt: Long = System.currentTimeMillis()
 ) {
     fun isCancelledOrPostponed(): Boolean {
         return status == STATUS_CANCELLED ||

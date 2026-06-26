@@ -76,7 +76,7 @@ fun ActiveRouteScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit) {
             if (isSortingEnabled) {
                 filtered.sortedWith(compareBy({ it.address }, { it.id }))
             } else {
-                filtered.sortedBy { it.createdAt }
+                filtered.sortedBy { it.updatedAt }
             }
         }
     }
