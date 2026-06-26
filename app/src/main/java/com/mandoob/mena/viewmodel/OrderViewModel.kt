@@ -244,6 +244,10 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
         notes: String?
     ) {
         viewModelScope.launch {
+            val currentList = repository.allOrders.first()
+            val anyArranged = currentList.any { it.isSequenceArranged }
+            val maxSeq = currentList.maxOfOrNull { it.sequenceNumber } ?: 0
+
             val order = Order(
                 clientName = clientName,
                 phoneNumber = formatEgyptianPhoneNumber(phoneNumber),
@@ -252,7 +256,9 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
                 amount = amount,
                 commission = commission,
                 notes = notes,
-                status = Order.STATUS_PENDING
+                status = Order.STATUS_PENDING,
+                isSequenceArranged = anyArranged,
+                sequenceNumber = if (anyArranged) maxSeq + 1 else 0
             )
             repository.insertOrder(order)
         }
@@ -267,7 +273,8 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
                     status = status,
                     collectedAmount = collectedAmount,
                     deliveryFeeAmount = deliveryFeeAmount,
-                    commission = getCommissionForStatus(status)
+                    commission = getCommissionForStatus(status),
+                    createdAt = System.currentTimeMillis()
                 )
                 repository.updateOrder(updated)
             }
@@ -373,7 +380,19 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
 
         if (newOrders.isNotEmpty()) {
             viewModelScope.launch {
-                repository.insertOrders(newOrders)
+                val currentList = repository.allOrders.first()
+                val anyArranged = currentList.any { it.isSequenceArranged }
+                var maxSeq = currentList.maxOfOrNull { it.sequenceNumber } ?: 0
+
+                val updatedNewOrders = if (anyArranged) {
+                    newOrders.map { ord ->
+                        maxSeq++
+                        ord.copy(isSequenceArranged = true, sequenceNumber = maxSeq)
+                    }
+                } else {
+                    newOrders
+                }
+                repository.insertOrders(updatedNewOrders)
             }
         }
         return importedCount
@@ -447,7 +466,19 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
 
         if (newOrders.isNotEmpty()) {
             viewModelScope.launch {
-                repository.insertOrders(newOrders)
+                val currentList = repository.allOrders.first()
+                val anyArranged = currentList.any { it.isSequenceArranged }
+                var maxSeq = currentList.maxOfOrNull { it.sequenceNumber } ?: 0
+
+                val updatedNewOrders = if (anyArranged) {
+                    newOrders.map { ord ->
+                        maxSeq++
+                        ord.copy(isSequenceArranged = true, sequenceNumber = maxSeq)
+                    }
+                } else {
+                    newOrders
+                }
+                repository.insertOrders(updatedNewOrders)
             }
         }
         return importedCount

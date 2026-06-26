@@ -37,6 +37,12 @@ fun ActiveRouteScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit) {
     val searchQuery by viewModel.searchQuery.collectAsState()
     val context = LocalContext.current
 
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.setSearchQuery("")
+        }
+    }
+
     var editingOrder by remember { mutableStateOf<Order?>(null) }
     var showReorderScreen by remember { mutableStateOf(false) }
     var selectedSubTab by remember { mutableStateOf(0) } // 0 = جاري العمل, 1 = الناجحة, 2 = الملغاة

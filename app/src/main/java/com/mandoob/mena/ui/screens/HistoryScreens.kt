@@ -34,7 +34,7 @@ fun SuccessfulOrdersScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit
     val context = LocalContext.current
     var editingOrder by remember { mutableStateOf<Order?>(null) }
 
-    val successfulOrders = allOrders.filter { it.status == Order.STATUS_DELIVERED || it.status == Order.STATUS_PARTIAL }
+    val successfulOrders = allOrders.filter { it.status == Order.STATUS_DELIVERED || it.status == Order.STATUS_PARTIAL }.sortedBy { it.createdAt }
 
     val filteredOrders = remember(successfulOrders, searchQuery) {
         successfulOrders.filter { order ->
@@ -218,7 +218,7 @@ fun CancelledOrdersScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit)
     val context = LocalContext.current
     var editingOrder by remember { mutableStateOf<Order?>(null) }
 
-    val cancelledOrders = allOrders.filter { it.isCancelledOrPostponed() }
+    val cancelledOrders = allOrders.filter { it.isCancelledOrPostponed() }.sortedBy { it.createdAt }
 
     val filteredOrders = remember(cancelledOrders, searchQuery) {
         cancelledOrders.filter { order ->
