@@ -71,6 +71,7 @@ fun MainScreen(viewModel: OrderViewModel) {
 
             var showAddDialog by remember { mutableStateOf(false) }
             var showImportDialog by remember { mutableStateOf(false) }
+            val commissionCat1 by viewModel.commissionCat1.collectAsState()
 
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -115,7 +116,7 @@ fun MainScreen(viewModel: OrderViewModel) {
                             onSave = { name, phone, phone2, address, amount, notes ->
                                 viewModel.addNewOrder(
                                     name, phone, phone2?.ifBlank { null },
-                                    address, amount, 0.0, notes?.ifBlank { null }
+                                    address, amount, commissionCat1, notes?.ifBlank { null }
                                 )
                                 showAddDialog = false
                                 Toast.makeText(context, "تم إضافة الأوردر بنجاح!", Toast.LENGTH_SHORT).show()

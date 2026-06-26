@@ -149,7 +149,8 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
         orders.filter { 
             it.status == Order.STATUS_DELIVERED || 
             it.status == Order.STATUS_PARTIAL || 
-            it.status == Order.STATUS_REJECTED_WITH_FEE 
+            it.status == Order.STATUS_REJECTED_WITH_FEE ||
+            it.status == Order.STATUS_REJECTED_NO_FEE
         }.sumOf { it.commission }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0.0)
 
@@ -259,7 +260,7 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
 
     fun updateOrderStatusWithValues(orderId: Int, status: String, collectedAmount: Double? = null, deliveryFeeAmount: Double? = null) {
         viewModelScope.launch {
-            val currentList = allOrders.value
+            val currentList = repository.allOrders.first()
             val order = currentList.find { it.id == orderId }
             if (order != null) {
                 val updated = order.copy(
@@ -284,7 +285,7 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
         notes: String?
     ) {
         viewModelScope.launch {
-            val currentList = allOrders.value
+            val currentList = repository.allOrders.first()
             val order = currentList.find { it.id == orderId }
             if (order != null) {
                 val updated = order.copy(
@@ -303,7 +304,7 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
 
     fun updateOrderNotes(orderId: Int, notes: String?, courierNotes: String?) {
         viewModelScope.launch {
-            val currentList = allOrders.value
+            val currentList = repository.allOrders.first()
             val order = currentList.find { it.id == orderId }
             if (order != null) {
                 val updated = order.copy(
