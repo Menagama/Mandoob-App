@@ -435,7 +435,7 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
                             address = address,
                             amount = amount,
                             commission = commission,
-                            notes = "\u0645\u0633\u062A\u0648\u0631\u062F \u0645\u0646 \u0625\u0643\u0633\u064A\u0644",
+                            notes = "",
                             status = Order.STATUS_PENDING
                         )
                     )
@@ -514,7 +514,7 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
                                     address = address,
                                     amount = amount,
                                     commission = commission,
-                                    notes = "\u0645\u0633\u062A\u0648\u0631\u062F \u0645\u0646 \u0625\u0643\u0633\u064A\u0644 XLSX",
+                                    notes = "",
                                     status = Order.STATUS_PENDING
                                 )
                             )

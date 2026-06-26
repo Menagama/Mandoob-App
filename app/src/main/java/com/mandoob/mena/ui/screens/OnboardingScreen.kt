@@ -149,7 +149,7 @@ fun OnboardingScreen(viewModel: OrderViewModel) {
                     )
 
                     Text(
-                        text = "أهلاً بك في Mandoob",
+                        text = "أهلاً بك في تطبيق المندوب 🚀",
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Black,
                         color = MaterialTheme.colorScheme.primary,
@@ -157,7 +157,7 @@ fun OnboardingScreen(viewModel: OrderViewModel) {
                     )
 
                     Text(
-                        text = "يرجى إدخال اسمك وصورتك للبدء في تنظيم رحلات التوصيل الخاصة بك.",
+                        text = "رفيقك الذكي لتنظيم خط السير، تتبع الأوردرات، وحساب أرباحك وتوريداتك بسهولة تامة. دعنا نبدأ بالتعرف عليك!",
                         fontSize = 15.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
@@ -234,7 +234,7 @@ fun OnboardingScreen(viewModel: OrderViewModel) {
                     )
 
                     Text(
-                        text = "أدخل قيم عمولاتك",
+                        text = "كيف تحسب أرباحك؟ 💰",
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Black,
                         color = MaterialTheme.colorScheme.primary,
@@ -242,7 +242,7 @@ fun OnboardingScreen(viewModel: OrderViewModel) {
                     )
 
                     Text(
-                        text = "حدد قيم العمولات الافتراضية لكل حالة توصيل لحساب أرباحك تلقائياً.",
+                        text = "أدخل قيم العمولات الافتراضية لكل حالة ليقوم التطبيق بحساب أرباحك وصافي التوريد للمكتب تلقائياً.",
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,

@@ -72,13 +72,17 @@ fun MainScreen(viewModel: OrderViewModel) {
             var showAddDialog by remember { mutableStateOf(false) }
             var showImportDialog by remember { mutableStateOf(false) }
             val commissionCat1 by viewModel.commissionCat1.collectAsState()
+            val totalOrdersCount by viewModel.totalOrdersCount.collectAsState()
+            val completedOrdersCount by viewModel.completedOrdersCount.collectAsState()
+            val pendingOrdersCount = totalOrdersCount - completedOrdersCount
 
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 bottomBar = {
                     BottomBar(
                         selectedTab = currentTab,
-                        onTabSelected = { currentTab = it }
+                        onTabSelected = { currentTab = it },
+                        pendingOrdersCount = pendingOrdersCount
                     )
                 },
                 containerColor = MaterialTheme.colorScheme.background
@@ -138,7 +142,7 @@ fun MainScreen(viewModel: OrderViewModel) {
 }
 
 @Composable
-fun BottomBar(selectedTab: Int, onTabSelected: (Int) -> Unit) {
+fun BottomBar(selectedTab: Int, onTabSelected: (Int) -> Unit, pendingOrdersCount: Int = 0) {
     NavigationBar(
         containerColor = MaterialTheme.colorScheme.surface,
         modifier = Modifier
@@ -184,10 +188,23 @@ fun BottomBar(selectedTab: Int, onTabSelected: (Int) -> Unit) {
                 )
             },
             icon = {
-                Icon(
-                    imageVector = if (selectedTab == 1) Icons.Filled.Navigation else Icons.Outlined.Navigation,
-                    contentDescription = "خط السير"
-                )
+                BadgedBox(
+                    badge = {
+                        if (pendingOrdersCount > 0) {
+                            Badge(containerColor = MaterialTheme.colorScheme.error) {
+                                Text(
+                                    text = pendingOrdersCount.toString(),
+                                    color = MaterialTheme.colorScheme.onError
+                                )
+                            }
+                        }
+                    }
+                ) {
+                    Icon(
+                        imageVector = if (selectedTab == 1) Icons.Filled.Navigation else Icons.Outlined.Navigation,
+                        contentDescription = "خط السير"
+                    )
+                }
             },
             colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = MaterialTheme.colorScheme.primary,

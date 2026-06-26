@@ -130,9 +130,9 @@ fun HeaderCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .shadow(2.dp, RoundedCornerShape(16.dp)),
+            .shadow(4.dp, RoundedCornerShape(12.dp)),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(12.dp)
     ) {
         Row(
             modifier = Modifier
@@ -211,11 +211,11 @@ fun NetRemittanceCard(netRemittance: Double) {
         modifier = Modifier
             .fillMaxWidth()
             .height(120.dp)
-            .shadow(6.dp, RoundedCornerShape(24.dp))
-            .background(brush = gradientBrush, shape = RoundedCornerShape(24.dp)),
+            .shadow(4.dp, RoundedCornerShape(12.dp))
+            .background(brush = gradientBrush, shape = RoundedCornerShape(12.dp)),
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        shape = RoundedCornerShape(24.dp)
+        shape = RoundedCornerShape(12.dp)
     ) {
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
             Row(
@@ -251,7 +251,9 @@ fun NetRemittanceCard(netRemittance: Double) {
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White.copy(alpha = 0.9f),
-                        textAlign = TextAlign.End
+                        textAlign = TextAlign.End,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                     
                     Spacer(modifier = Modifier.height(4.dp))
@@ -261,7 +263,9 @@ fun NetRemittanceCard(netRemittance: Double) {
                         fontSize = 32.sp,
                         fontWeight = FontWeight.Black,
                         color = Color.White,
-                        textAlign = TextAlign.End
+                        textAlign = TextAlign.End,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                     
                     Spacer(modifier = Modifier.height(4.dp))
@@ -271,7 +275,9 @@ fun NetRemittanceCard(netRemittance: Double) {
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Normal,
                         color = Color.White.copy(alpha = 0.75f),
-                        textAlign = TextAlign.End
+                        textAlign = TextAlign.End,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }
@@ -293,10 +299,10 @@ fun StatCard(
         modifier = Modifier
             .fillMaxWidth()
             .height(95.dp)
-            .shadow(4.dp, RoundedCornerShape(16.dp))
+            .shadow(4.dp, RoundedCornerShape(12.dp))
             .testTag("${testTagPrefix}_card"),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(12.dp)
     ) {
         Column(
             modifier = Modifier
@@ -314,7 +320,9 @@ fun StatCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Icon(
                     imageVector = icon,
@@ -328,13 +336,17 @@ fun StatCard(
                 text = value,
                 color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 18.sp,
-                fontWeight = FontWeight.Black
+                fontWeight = FontWeight.Black,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
 
             Text(
                 text = subtext,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-                fontSize = 10.sp
+                fontSize = 10.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }
@@ -360,11 +372,11 @@ fun InteractiveRouteProgressCard(completed: Int, total: Int) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .shadow(1.dp, RoundedCornerShape(24.dp)),
+                .shadow(4.dp, RoundedCornerShape(12.dp)),
             colors = CardDefaults.cardColors(containerColor = cardBg),
             border = BorderStroke(1.5.dp, cardBorder),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-            shape = RoundedCornerShape(24.dp)
+            shape = RoundedCornerShape(12.dp)
         ) {
             Column(
                 modifier = Modifier
@@ -517,8 +529,17 @@ fun EmptyStateView(message: String) {
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = message,
-            fontSize = 15.sp,
-            fontWeight = FontWeight.Medium,
+            fontSize = 17.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "يمكنك إضافة أوردر جديد أو استيراد ملف Excel من الشاشة الرئيسية للبدء.",
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Normal,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()

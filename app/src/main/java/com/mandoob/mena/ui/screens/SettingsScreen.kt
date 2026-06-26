@@ -66,9 +66,10 @@ fun SettingsMenuItem(
                     modifier = Modifier.size(24.dp)
                 )
             } else if (painter != null) {
-                androidx.compose.foundation.Image(
+                Icon(
                     painter = painter,
                     contentDescription = null,
+                    tint = Color.Unspecified,
                     modifier = Modifier.size(24.dp)
                 )
             }
@@ -212,8 +213,8 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .shadow(4.dp, RoundedCornerShape(24.dp)),
-                        shape = RoundedCornerShape(24.dp),
+                            .shadow(4.dp, RoundedCornerShape(12.dp)),
+                        shape = RoundedCornerShape(12.dp),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                     ) {
                         Column {
@@ -274,8 +275,8 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .shadow(4.dp, RoundedCornerShape(24.dp)),
-                        shape = RoundedCornerShape(24.dp),
+                            .shadow(4.dp, RoundedCornerShape(12.dp)),
+                        shape = RoundedCornerShape(12.dp),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                     ) {
                         Column {
@@ -330,9 +331,9 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                 // EDIT PROFILE SECTION
                 item {
                     Card(
-                        modifier = Modifier.fillMaxWidth().shadow(4.dp, RoundedCornerShape(24.dp)),
+                        modifier = Modifier.fillMaxWidth().shadow(4.dp, RoundedCornerShape(12.dp)),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                        shape = RoundedCornerShape(24.dp)
+                        shape = RoundedCornerShape(12.dp)
                     ) {
                         Column(
                             modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -415,9 +416,9 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                 // EDIT COMMISSIONS SECTION
                 item {
                     Card(
-                        modifier = Modifier.fillMaxWidth().shadow(4.dp, RoundedCornerShape(24.dp)),
+                        modifier = Modifier.fillMaxWidth().shadow(4.dp, RoundedCornerShape(12.dp)),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                        shape = RoundedCornerShape(24.dp)
+                        shape = RoundedCornerShape(12.dp)
                     ) {
                         Column(
                             modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -524,9 +525,9 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                 // APPEARANCE SECTION (Issue 9 & 10)
                 item {
                     Card(
-                        modifier = Modifier.fillMaxWidth().shadow(4.dp, RoundedCornerShape(24.dp)),
+                        modifier = Modifier.fillMaxWidth().shadow(4.dp, RoundedCornerShape(12.dp)),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                        shape = RoundedCornerShape(24.dp)
+                        shape = RoundedCornerShape(12.dp)
                     ) {
                         Column(
                             modifier = Modifier.fillMaxWidth().padding(16.dp),
