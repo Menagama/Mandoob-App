@@ -445,7 +445,7 @@ fun OrderDetailsFullScreenPage(
                     textAlign = TextAlign.Right
                 )
                 
-                Divider(color = if (isDark) Color(0xFF374151) else Color(0xFFF1F5F9), thickness = 1.dp)
+                HorizontalDivider(color = if (isDark) Color(0xFF374151) else Color(0xFFF1F5F9), thickness = 1.dp)
 
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
@@ -545,7 +545,7 @@ fun OrderDetailsFullScreenPage(
                     textAlign = TextAlign.Right
                 )
 
-                Divider(color = if (isDark) Color(0xFF374151) else Color(0xFFF1F5F9), thickness = 1.dp)
+                HorizontalDivider(color = if (isDark) Color(0xFF374151) else Color(0xFFF1F5F9), thickness = 1.dp)
 
                 // 2. Rider Notes Block (ملاحظات المندوب)
                 Column(
