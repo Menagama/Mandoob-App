@@ -55,6 +55,17 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
     private val dataStore = application.dataStore
 
     companion object {
+        val Factory: androidx.lifecycle.ViewModelProvider.Factory = object : androidx.lifecycle.ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : androidx.lifecycle.ViewModel> create(
+                modelClass: Class<T>,
+                extras: androidx.lifecycle.viewmodel.CreationExtras
+            ): T {
+                val application = checkNotNull(extras[androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
+                return OrderViewModel(application) as T
+            }
+        }
+
         private val THEME_KEY = stringPreferencesKey("app_theme_settings")
         private val CAPTAIN_NAME_KEY = stringPreferencesKey("captain_name")
         private val CAPTAIN_AVATAR_KEY = stringPreferencesKey("captain_avatar")
@@ -424,7 +435,7 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
                             address = address,
                             amount = amount,
                             commission = commission,
-                            notes = "مستورد من إكسيل",
+                            notes = "\u0645\u0633\u062A\u0648\u0631\u062F \u0645\u0646 \u0625\u0643\u0633\u064A\u0644",
                             status = Order.STATUS_PENDING
                         )
                     )
@@ -503,7 +514,7 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
                                     address = address,
                                     amount = amount,
                                     commission = commission,
-                                    notes = "مستورد من إكسيل XLSX",
+                                    notes = "\u0645\u0633\u062A\u0648\u0631\u062F \u0645\u0646 \u0625\u0643\u0633\u064A\u0644 XLSX",
                                     status = Order.STATUS_PENDING
                                 )
                             )

@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val application = application
             val viewModel: OrderViewModel = viewModel(
-                factory = androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+                factory = OrderViewModel.Factory
             )
             val themeSettings by viewModel.appThemeSettings.collectAsState()
             val isDarkTheme = when (themeSettings) {

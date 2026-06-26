@@ -318,6 +318,29 @@ fun ImportExcelDialog(
         }
     }
 
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted || android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            filePickerLauncher.launch("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        } else {
+            Toast.makeText(context, "يجب الموافقة على صلاحية قراءة الملفات لاستيراد الإكسيل", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    val launchPicker = {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            filePickerLauncher.launch("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        } else {
+            val permission = android.Manifest.permission.READ_EXTERNAL_STORAGE
+            if (androidx.core.content.ContextCompat.checkSelfPermission(context, permission) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                filePickerLauncher.launch("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            } else {
+                permissionLauncher.launch(permission)
+            }
+        }
+    }
+
     // Default excel-paste template
     val demoTemplate = """اسم العميل,رقم الموبيل,عنوان العميل,قيمة التحصيل
 مصطفى على جابر,0129887766,شارع النزهة مصر الجديدة,400
@@ -441,7 +464,7 @@ fun ImportExcelDialog(
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         Button(
-                            onClick = { filePickerLauncher.launch("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") },
+                            onClick = { launchPicker() },
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1B5E20)),
                             shape = RoundedCornerShape(8.dp)
                         ) {
