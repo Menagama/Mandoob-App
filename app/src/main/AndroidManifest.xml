@@ -2,6 +2,35 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- صلاحية قراءة الملفات والصور للإصدارات الأقدم من أندرويد 13 (API 32 وأقل) -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+
+    <!-- صلاحية قراءة الصور لأندرويد 13 فما فوق (API 33+) -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+
+    <!-- صلاحية الوصول الجزئي المخصص للصور والفيديو لأندرويد 14 فما فوق (API 34+) -->
+    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
+
+    <!-- صلاحية إجراء المكالمات المباشرة (في حال استخدام ACTION_CALL) -->
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+
+    <!-- استعلامات حول التطبيقات الخارجية لضمان عمل الـ Intents بشكل سليم في أندرويد 11 فما فوق -->
+    <queries>
+        <!-- للتحقق من وجود تطبيق واتساب العادي وواتساب للأعمال والقدرة على فتحهما -->
+        <package android:name="com.whatsapp" />
+        <package android:name="com.whatsapp.w4b" />
+        <!-- لإجراء المكالمات الهاتفية وفتح لوحة الاتصال -->
+        <intent>
+            <action android:name="android.intent.action.DIAL" />
+            <data android:scheme="tel" />
+        </intent>
+        <!-- لفتح روابط الويب والتواصل مع الخوادم/المتصفح -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+    </queries>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
