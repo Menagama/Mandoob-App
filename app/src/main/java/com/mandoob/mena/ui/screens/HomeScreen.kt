@@ -15,6 +15,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import android.widget.Toast
+import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,6 +28,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mandoob.mena.ui.theme.BlueDark
@@ -48,6 +55,8 @@ fun HomeScreen(
     val commissions by viewModel.totalCommissions.collectAsState()
     val completedCount by viewModel.completedOrdersCount.collectAsState()
     val totalCount by viewModel.totalOrdersCount.collectAsState()
+
+    var showDeleteAllConfirm by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
@@ -110,11 +119,11 @@ fun HomeScreen(
             }
 
             // Margin bottom to clear overlapping floating action bar
-            item { Spacer(modifier = Modifier.height(110.dp)) }
+            item { Spacer(modifier = Modifier.height(160.dp)) }
         }
 
-        // Beautiful glassmorphic modern floating action bar containing both actions
-        Row(
+        // Beautiful glassmorphic modern floating action bar containing all three actions
+        Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
@@ -130,74 +139,157 @@ fun HomeScreen(
                 )
                 .padding(10.dp)
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // First Button: Add New Order (Vibrant blue background with custom gradient)
+            // New "حذف الكل" Button (Red gradient, full width, above the other two buttons)
             Row(
                 modifier = Modifier
-                    .weight(1.2f)
+                    .fillMaxWidth()
                     .clip(RoundedCornerShape(14.dp))
                     .background(
                         Brush.horizontalGradient(
                             colors = listOf(
-                                Color(0xFF0EA5E9),
-                                Color(0xFF38BDF8)
+                                Color(0xFFEF4444),
+                                Color(0xFFF87171)
                             )
                         )
                     )
-                    .clickable { onOpenAddOrder() }
+                    .clickable { showDeleteAllConfirm = true }
                     .padding(vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
                 Icon(
-                    imageVector = Icons.Default.Add,
+                    imageVector = Icons.Default.DeleteSweep,
                     contentDescription = null,
                     tint = Color.White,
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "إضافة أوردر",
+                    text = "حذف الكل",
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
                     fontSize = 14.sp
                 )
             }
 
-            // Second Button: Import from Excel (Sleek professional green gradient)
+            // Existing Row of Buttons
             Row(
-                modifier = Modifier
-                    .weight(1f)
-                    .clip(RoundedCornerShape(14.dp))
-                    .background(
-                        Brush.horizontalGradient(
-                            colors = listOf(
-                                Color(0xFF10B981),
-                                Color(0xFF34D399)
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // First Button: Add New Order (Vibrant blue background with custom gradient)
+                Row(
+                    modifier = Modifier
+                        .weight(1.2f)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(
+                            Brush.horizontalGradient(
+                                colors = listOf(
+                                    Color(0xFF0EA5E9),
+                                    Color(0xFF38BDF8)
+                                )
                             )
                         )
+                        .clickable { onOpenAddOrder() }
+                        .padding(vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(18.dp)
                     )
-                    .clickable { onOpenImportExcel() }
-                    .padding(vertical = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.FileUpload,
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier.size(18.dp)
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    text = "استيراد إكسيل",
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp
-                )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "إضافة أوردر",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp
+                    )
+                }
+
+                // Second Button: Import from Excel (Sleek professional green gradient)
+                Row(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(
+                            Brush.horizontalGradient(
+                                colors = listOf(
+                                    Color(0xFF10B981),
+                                    Color(0xFF34D399)
+                                )
+                            )
+                        )
+                        .clickable { onOpenImportExcel() }
+                        .padding(vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.FileUpload,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "استيراد إكسيل",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp
+                    )
+                }
             }
+        }
+
+        // Confirmation dialog for deleting all orders
+        if (showDeleteAllConfirm) {
+            val context = LocalContext.current
+            AlertDialog(
+                onDismissRequest = { showDeleteAllConfirm = false },
+                title = {
+                    Text(
+                        text = "تأكيد مسح خط السير ؟ ⚠️",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Right
+                    )
+                },
+                text = {
+                    Text(
+                        text = "هل أنت متأكد من تفريغ خط السير بالكامل؟ سيتم حذف جميع الطلبات الحالية والناجحة والملغاة نهائياً. لا يمكن التراجع عن هذا الإجراء.",
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Right
+                    )
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            viewModel.clearItinerary()
+                            showDeleteAllConfirm = false
+                            Toast.makeText(context, "تم مسح وتفريغ خط السير بنجاح! ويبدأ الآن من جديد 🚀", Toast.LENGTH_LONG).show()
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEF4444))
+                    ) {
+                        Text("نعم، امسح خط السير", color = Color.White)
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDeleteAllConfirm = false }) {
+                        Text("إلغاء", color = MaterialTheme.colorScheme.onSurface)
+                    }
+                }
+            )
         }
     }
 }

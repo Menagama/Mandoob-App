@@ -1,6 +1,8 @@
 package com.mandoob.mena.ui.screens
 
 import android.widget.Toast
+import android.content.Intent
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -19,11 +21,13 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mandoob.mena.R
 import com.mandoob.mena.ui.theme.BlueDark
 import com.mandoob.mena.ui.theme.BluePrimary
 import com.mandoob.mena.ui.theme.CancelledRed
@@ -34,7 +38,8 @@ import com.mandoob.mena.viewmodel.OrderViewModel
 fun SettingsMenuItem(
     title: String,
     subtitle: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    icon: androidx.compose.ui.graphics.vector.ImageVector? = null,
+    painter: androidx.compose.ui.graphics.painter.Painter? = null,
     iconBackgroundColor: Color,
     iconColor: Color,
     onClick: () -> Unit
@@ -53,12 +58,21 @@ fun SettingsMenuItem(
                 .background(iconBackgroundColor, CircleShape),
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = iconColor,
-                modifier = Modifier.size(24.dp)
-            )
+            if (icon != null) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = iconColor,
+                    modifier = Modifier.size(24.dp)
+                )
+            } else if (painter != null) {
+                Icon(
+                    painter = painter,
+                    contentDescription = null,
+                    tint = iconColor,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
         }
 
         Spacer(modifier = Modifier.width(16.dp))
@@ -114,8 +128,6 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
     var inputCat1 by remember { mutableStateOf(commissionCat1.toString()) }
     var inputCat2 by remember { mutableStateOf(commissionCat2.toString()) }
     var inputCat3 by remember { mutableStateOf(commissionCat3.toString()) }
-
-    var showClearConfirm by remember { mutableStateOf(false) }
 
     LaunchedEffect(captainName) { inputName = captainName }
     LaunchedEffect(captainAvatar) { selectedAvatar = captainAvatar }
@@ -241,18 +253,76 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                                 iconColor = Color(0xFFF9AB00),
                                 onClick = { activeSection = "appearance" }
                             )
+                        }
+                    }
+                }
+
+                // Section: Rights & Copyright ("حقوق الملكية")
+                item {
+                    Text(
+                        text = "حقوق الملكية",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp, bottom = 8.dp, start = 8.dp, end = 8.dp),
+                        textAlign = TextAlign.Right
+                    )
+                }
+
+                item {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .shadow(4.dp, RoundedCornerShape(24.dp)),
+                        shape = RoundedCornerShape(24.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                    ) {
+                        Column {
+                            // Element 1: App Version Number (Read dynamically from BuildConfig.VERSION_NAME)
+                            SettingsMenuItem(
+                                title = "إصدار التطبيق",
+                                subtitle = "الإصدار ${com.mandoob.mena.BuildConfig.VERSION_NAME}",
+                                icon = Icons.Default.Info,
+                                iconBackgroundColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+                                iconColor = MaterialTheme.colorScheme.primary,
+                                onClick = {
+                                    Toast.makeText(context, "إصدار التطبيق الحالي: ${com.mandoob.mena.BuildConfig.VERSION_NAME}", Toast.LENGTH_SHORT).show()
+                                }
+                            )
 
                             // Separator
                             Box(modifier = Modifier.fillMaxWidth().height(1.dp).background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)))
 
-                            // Section 5: Clear Itinerary
+                            // Element 2: Contact Developer (Direct WhatsApp Chat)
                             SettingsMenuItem(
-                                title = "إفراغ خط السير",
-                                subtitle = "حذف جميع الطلبات الحالية والبدء من جديد",
-                                icon = Icons.Default.Delete,
-                                iconBackgroundColor = Color(0xFFFFECEE),
-                                iconColor = CancelledRed,
-                                onClick = { showClearConfirm = true }
+                                title = "تواصل مع المطور",
+                                subtitle = "راسل المطور مباشرة عبر تطبيق واتساب",
+                                painter = painterResource(id = R.drawable.ic_whatsapp),
+                                iconBackgroundColor = Color(0xFFE8F5E9),
+                                iconColor = Color(0xFF25D366),
+                                onClick = {
+                                    val pm = context.packageManager
+                                    val isWhatsappInstalled = try {
+                                        pm.getPackageInfo("com.whatsapp", 0)
+                                        true
+                                    } catch (e: Exception) {
+                                        try {
+                                            pm.getPackageInfo("com.whatsapp.w4b", 0)
+                                            true
+                                        } catch (e2: Exception) {
+                                            false
+                                        }
+                                    }
+
+                                    if (isWhatsappInstalled) {
+                                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://wa.me/201064139779"))
+                                        context.startActivity(intent)
+                                    } else {
+                                        Toast.makeText(context, "واتساب غير مثبت على جهازك", Toast.LENGTH_LONG).show()
+                                    }
+                                }
                             )
                         }
                     }
@@ -531,48 +601,6 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
             }
 
             item { Spacer(modifier = Modifier.height(100.dp)) }
-        }
-
-        // Confirmation dialog for clearing
-        if (showClearConfirm) {
-            AlertDialog(
-                onDismissRequest = { showClearConfirm = false },
-                title = {
-                    Text(
-                        text = "تأكيد مسح خط السير ؟ ⚠️",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Right
-                    )
-                },
-                text = {
-                    Text(
-                        text = "هل أنت متأكد من تفريغ خط السير بالكامل؟ سيتم حذف جميع الطلبات الحالية والناجحة والملغاة نهائياً. لا يمكن التراجع عن هذا الإجراء.",
-                        fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Right
-                    )
-                },
-                confirmButton = {
-                    Button(
-                        onClick = {
-                            viewModel.clearItinerary()
-                            showClearConfirm = false
-                            Toast.makeText(context, "تم مسح وتفريغ خط السير بنجاح! ويبدأ الآن من جديد 🚀", Toast.LENGTH_LONG).show()
-                        },
-                        colors = ButtonDefaults.buttonColors(containerColor = CancelledRed)
-                    ) {
-                        Text("نعم، امسح خط السير", color = Color.White)
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = { showClearConfirm = false }) {
-                        Text("إلغاء", color = MaterialTheme.colorScheme.onSurface)
-                    }
-                }
-            )
         }
     }
 }
