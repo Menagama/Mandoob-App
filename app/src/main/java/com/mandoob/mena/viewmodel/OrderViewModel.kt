@@ -19,9 +19,27 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.floatPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
+import androidx.datastore.preferences.SharedPreferencesMigration
+
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
+    name = "courier_preferences",
+    produceMigrations = { context ->
+        listOf(SharedPreferencesMigration(context, "courier_prefs"))
+    }
+)
 
 class OrderViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: OrderRepository
+    private val routeMutex = Mutex()
 
     val allOrders: StateFlow<List<Order>>
 
@@ -34,77 +52,106 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
-    private val prefs = application.getSharedPreferences("courier_prefs", Context.MODE_PRIVATE)
+    private val dataStore = application.dataStore
 
-    private val _appThemeSettings = MutableStateFlow(prefs.getString("app_theme_settings", "system") ?: "system")
-    val appThemeSettings: StateFlow<String> = _appThemeSettings.asStateFlow()
+    companion object {
+        private val THEME_KEY = stringPreferencesKey("app_theme_settings")
+        private val CAPTAIN_NAME_KEY = stringPreferencesKey("captain_name")
+        private val CAPTAIN_AVATAR_KEY = stringPreferencesKey("captain_avatar")
+        private val FIRST_LAUNCH_KEY = booleanPreferencesKey("is_first_launch")
+        private val CAT1_STR_KEY = stringPreferencesKey("commission_cat1")
+        private val CAT1_FLT_KEY = floatPreferencesKey("commission_cat1")
+        private val CAT2_STR_KEY = stringPreferencesKey("commission_cat2")
+        private val CAT2_FLT_KEY = floatPreferencesKey("commission_cat2")
+        private val CAT3_STR_KEY = stringPreferencesKey("commission_cat3")
+        private val CAT3_FLT_KEY = floatPreferencesKey("commission_cat3")
+    }
+
+    val appThemeSettings: StateFlow<String> = dataStore.data
+        .map { it[THEME_KEY] ?: "system" }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, "system")
 
     fun updateAppTheme(theme: String) {
-        _appThemeSettings.value = theme
-        prefs.edit().putString("app_theme_settings", theme).apply()
+        viewModelScope.launch {
+            dataStore.edit { it[THEME_KEY] = theme }
+        }
     }
 
     fun setAppThemeRuntime(theme: String) {
         updateAppTheme(theme)
     }
 
-    private val _captainName = MutableStateFlow(prefs.getString("captain_name", "") ?: "")
-    val captainName: StateFlow<String> = _captainName.asStateFlow()
+    val captainName: StateFlow<String> = dataStore.data
+        .map { it[CAPTAIN_NAME_KEY] ?: "" }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, "")
 
-    private val _captainAvatar = MutableStateFlow(prefs.getString("captain_avatar", "") ?: "")
-    val captainAvatar: StateFlow<String> = _captainAvatar.asStateFlow()
+    val captainAvatar: StateFlow<String> = dataStore.data
+        .map { it[CAPTAIN_AVATAR_KEY] ?: "" }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, "")
 
-    private val _isFirstLaunch = MutableStateFlow(prefs.getBoolean("is_first_launch", true))
-    val isFirstLaunch: StateFlow<Boolean> = _isFirstLaunch.asStateFlow()
+    val isFirstLaunch: StateFlow<Boolean> = dataStore.data
+        .map { it[FIRST_LAUNCH_KEY] ?: true }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, true)
 
     fun completeOnboarding() {
-        _isFirstLaunch.value = false
-        prefs.edit().putBoolean("is_first_launch", false).apply()
-    }
-
-    private fun getCommissionFromPrefs(key: String): Double {
-        return try {
-            prefs.getString(key, "0.0")?.toDoubleOrNull() ?: 0.0
-        } catch (e: ClassCastException) {
-            prefs.getFloat(key, 0.0f).toDouble()
+        viewModelScope.launch {
+            dataStore.edit { it[FIRST_LAUNCH_KEY] = false }
         }
     }
 
-    private val _commissionCat1 = MutableStateFlow(getCommissionFromPrefs("commission_cat1"))
-    val commissionCat1: StateFlow<Double> = _commissionCat1.asStateFlow()
+    private fun getCommissionFallback(pref: Preferences, strKey: Preferences.Key<String>, fltKey: Preferences.Key<Float>): Double {
+        return try {
+            pref[strKey]?.toDoubleOrNull()
+        } catch (e: ClassCastException) {
+            null
+        } ?: try {
+            pref[fltKey]?.toDouble()
+        } catch (e: ClassCastException) {
+            null
+        } ?: 0.0
+    }
 
-    private val _commissionCat2 = MutableStateFlow(getCommissionFromPrefs("commission_cat2"))
-    val commissionCat2: StateFlow<Double> = _commissionCat2.asStateFlow()
+    val commissionCat1: StateFlow<Double> = dataStore.data
+        .map { getCommissionFallback(it, CAT1_STR_KEY, CAT1_FLT_KEY) }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, 0.0)
 
-    private val _commissionCat3 = MutableStateFlow(getCommissionFromPrefs("commission_cat3"))
-    val commissionCat3: StateFlow<Double> = _commissionCat3.asStateFlow()
+    val commissionCat2: StateFlow<Double> = dataStore.data
+        .map { getCommissionFallback(it, CAT2_STR_KEY, CAT2_FLT_KEY) }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, 0.0)
+
+    val commissionCat3: StateFlow<Double> = dataStore.data
+        .map { getCommissionFallback(it, CAT3_STR_KEY, CAT3_FLT_KEY) }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, 0.0)
 
     fun updateCaptainInfo(name: String, avatar: String) {
-        _captainName.value = name
-        _captainAvatar.value = avatar
-        prefs.edit()
-            .putString("captain_name", name)
-            .putString("captain_avatar", avatar)
-            .apply()
+        viewModelScope.launch {
+            dataStore.edit {
+                it[CAPTAIN_NAME_KEY] = name
+                it[CAPTAIN_AVATAR_KEY] = avatar
+            }
+        }
     }
 
     fun updateCommissionRates(cat1: Double, cat2: Double, cat3: Double) {
-        _commissionCat1.value = cat1
-        _commissionCat2.value = cat2
-        _commissionCat3.value = cat3
-        prefs.edit()
-            .putString("commission_cat1", cat1.toString())
-            .putString("commission_cat2", cat2.toString())
-            .putString("commission_cat3", cat3.toString())
-            .apply()
-
-        // Recalculate and update commissions for all stored non-pending orders in database
         viewModelScope.launch {
+            dataStore.edit {
+                it[CAT1_STR_KEY] = cat1.toString()
+                it[CAT2_STR_KEY] = cat2.toString()
+                it[CAT3_STR_KEY] = cat3.toString()
+            }
+
+            // Recalculate and update commissions for all stored non-pending orders in database
             try {
                 val list = repository.allOrders.first()
                 list.forEach { order ->
                     if (order.status != Order.STATUS_PENDING) {
-                        val updated = order.copy(commission = getCommissionForStatus(order.status))
+                        val newCommission = when (order.status) {
+                            Order.STATUS_DELIVERED, Order.STATUS_PARTIAL -> cat1
+                            Order.STATUS_REJECTED_WITH_FEE -> cat2
+                            Order.STATUS_REJECTED_NO_FEE -> cat3
+                            else -> 0.0
+                        }
+                        val updated = order.copy(commission = newCommission)
                         repository.updateOrder(updated)
                     }
                 }
@@ -181,53 +228,59 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
 
     fun moveOrder(orderId: Int, up: Boolean, isFast: Boolean, currentFilteredList: List<Order>) {
         viewModelScope.launch {
-            val latestOrdersFromDb = repository.allOrders.first()
-            val latestOrdersMap = latestOrdersFromDb.associateBy { it.id }
-            val listToUpdate = currentFilteredList.mapNotNull { latestOrdersMap[it.id] }.toMutableList()
-            
-            val index = listToUpdate.indexOfFirst { it.id == orderId }
-            if (index == -1) return@launch
+            routeMutex.withLock {
+                val latestOrdersFromDb = repository.allOrders.first()
+                val latestOrdersMap = latestOrdersFromDb.associateBy { it.id }
+                val listToUpdate = currentFilteredList.mapNotNull { latestOrdersMap[it.id] }.toMutableList()
+                
+                val index = listToUpdate.indexOfFirst { it.id == orderId }
+                if (index == -1) return@withLock
 
-            if (isFast) {
-                if (up) {
-                    if (index > 0) {
-                        val item = listToUpdate.removeAt(index)
-                        listToUpdate.add(0, item)
+                if (isFast) {
+                    if (up) {
+                        if (index > 0) {
+                            val item = listToUpdate.removeAt(index)
+                            listToUpdate.add(0, item)
+                        }
+                    } else {
+                        if (index < listToUpdate.size - 1) {
+                            val item = listToUpdate.removeAt(index)
+                            listToUpdate.add(item)
+                        }
                     }
                 } else {
-                    if (index < listToUpdate.size - 1) {
-                        val item = listToUpdate.removeAt(index)
-                        listToUpdate.add(item)
+                    if (up) {
+                        if (index > 0) {
+                            val temp = listToUpdate[index]
+                            listToUpdate[index] = listToUpdate[index - 1]
+                            listToUpdate[index - 1] = temp
+                        }
+                    } else {
+                        if (index < listToUpdate.size - 1) {
+                            val temp = listToUpdate[index]
+                            listToUpdate[index] = listToUpdate[index + 1]
+                            listToUpdate[index + 1] = temp
+                        }
                     }
                 }
-            } else {
-                if (up) {
-                    if (index > 0) {
-                        val temp = listToUpdate[index]
-                        listToUpdate[index] = listToUpdate[index - 1]
-                        listToUpdate[index - 1] = temp
-                    }
-                } else {
-                    if (index < listToUpdate.size - 1) {
-                        val temp = listToUpdate[index]
-                        listToUpdate[index] = listToUpdate[index + 1]
-                        listToUpdate[index + 1] = temp
-                    }
-                }
-            }
 
-            listToUpdate.forEachIndexed { i, ord ->
-                val updated = ord.copy(sequenceNumber = i, isSequenceArranged = true)
-                repository.updateOrder(updated)
+                val currentTime = System.currentTimeMillis()
+                listToUpdate.forEachIndexed { i, ord ->
+                    val updated = ord.copy(sequenceNumber = i, isSequenceArranged = true, updatedAt = currentTime)
+                    repository.updateOrder(updated)
+                }
             }
         }
     }
 
     fun saveRouteSequence(orderedList: List<Order>) {
         viewModelScope.launch {
-            orderedList.forEachIndexed { index, order ->
-                val updated = order.copy(sequenceNumber = index, isSequenceArranged = true)
-                repository.updateOrder(updated)
+            routeMutex.withLock {
+                val currentTime = System.currentTimeMillis()
+                orderedList.forEachIndexed { index, order ->
+                    val updated = order.copy(sequenceNumber = index, isSequenceArranged = true, updatedAt = currentTime)
+                    repository.updateOrder(updated)
+                }
             }
         }
     }

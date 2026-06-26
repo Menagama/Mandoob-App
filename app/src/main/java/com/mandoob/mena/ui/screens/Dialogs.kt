@@ -32,13 +32,92 @@ import com.mandoob.mena.viewmodel.OrderViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
+@Composable
+fun OrderFormFields(
+    name: String, onNameChange: (String) -> Unit,
+    phone: String, onPhoneChange: (String) -> Unit,
+    phone2: String, onPhone2Change: (String) -> Unit,
+    address: String, onAddressChange: (String) -> Unit,
+    amountValue: String, onAmountChange: (String) -> Unit,
+    notes: String, onNotesChange: (String) -> Unit,
+    nameTestTag: String,
+    phoneTestTag: String,
+    addressTestTag: String,
+    amountTestTag: String
+) {
+    val BluePrimary = MaterialTheme.colorScheme.primary
+    val colors = OutlinedTextFieldDefaults.colors(
+        focusedTextColor = MaterialTheme.colorScheme.onSurface,
+        unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+        focusedLabelColor = BluePrimary,
+        unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        focusedBorderColor = BluePrimary,
+        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+    )
+
+    OutlinedTextField(
+        value = name,
+        onValueChange = onNameChange,
+        label = { Text("اسم العميل") },
+        modifier = Modifier.fillMaxWidth().testTag(nameTestTag),
+        singleLine = true,
+        colors = colors
+    )
+    Spacer(modifier = Modifier.height(12.dp))
+    OutlinedTextField(
+        value = phone,
+        onValueChange = onPhoneChange,
+        label = { Text("رقم تليفون العميل (أساسي)") },
+        modifier = Modifier.fillMaxWidth().testTag(phoneTestTag),
+        singleLine = true,
+        colors = colors
+    )
+    Spacer(modifier = Modifier.height(12.dp))
+    OutlinedTextField(
+        value = phone2,
+        onValueChange = onPhone2Change,
+        label = { Text("رقم تليفون ثانى (اختياري)") },
+        modifier = Modifier.fillMaxWidth(),
+        singleLine = true,
+        colors = colors
+    )
+    Spacer(modifier = Modifier.height(12.dp))
+    OutlinedTextField(
+        value = address,
+        onValueChange = onAddressChange,
+        label = { Text("العنوان بالتفصيل") },
+        modifier = Modifier.fillMaxWidth().testTag(addressTestTag),
+        singleLine = false,
+        maxLines = 3,
+        colors = colors
+    )
+    Spacer(modifier = Modifier.height(12.dp))
+    OutlinedTextField(
+        value = amountValue,
+        onValueChange = onAmountChange,
+        label = { Text("مبلغ التحصيل (ج.م)") },
+        modifier = Modifier.fillMaxWidth().testTag(amountTestTag),
+        singleLine = true,
+        colors = colors
+    )
+    Spacer(modifier = Modifier.height(12.dp))
+    OutlinedTextField(
+        value = notes,
+        onValueChange = onNotesChange,
+        label = { Text("الملاحظات") },
+        modifier = Modifier.fillMaxWidth(),
+        singleLine = false,
+        maxLines = 2,
+        colors = colors
+    )
+}
+
 // ---------------- ADD NEW ORDER DIALOG ----------------
 @Composable
 fun AddOrderDialog(
     onDismiss: () -> Unit,
     onSave: (name: String, phone: String, phone2: String?, address: String, amount: Double, notes: String?) -> Unit
 ) {
-    val BluePrimary = MaterialTheme.colorScheme.primary
     var name by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
     var phone2 by remember { mutableStateOf("") }
@@ -72,118 +151,18 @@ fun AddOrderDialog(
                     )
                 }
 
-                // Client Name Input
                 item {
-                    OutlinedTextField(
-                        value = name,
-                        onValueChange = { name = it },
-                        label = { Text("اسم العميل") },
-                        modifier = Modifier.fillMaxWidth().testTag("add_name_field"),
-                        singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            focusedLabelColor = BluePrimary,
-                            unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            focusedBorderColor = BluePrimary,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-                        )
-                    )
-                }
-
-                // Phone numbers
-                item {
-                    OutlinedTextField(
-                        value = phone,
-                        onValueChange = { phone = it },
-                        label = { Text("رقم تليفون العميل (أساسي)") },
-                        modifier = Modifier.fillMaxWidth().testTag("add_phone_field"),
-                        singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            focusedLabelColor = BluePrimary,
-                            unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            focusedBorderColor = BluePrimary,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-                        )
-                    )
-                }
-
-                item {
-                    OutlinedTextField(
-                        value = phone2,
-                        onValueChange = { phone2 = it },
-                        label = { Text("رقم تليفون ثانى (اختياري)") },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            focusedLabelColor = BluePrimary,
-                            unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            focusedBorderColor = BluePrimary,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-                        )
-                    )
-                }
-
-                // Address Input
-                item {
-                    OutlinedTextField(
-                        value = address,
-                        onValueChange = { address = it },
-                        label = { Text("العنوان بالتفصيل") },
-                        modifier = Modifier.fillMaxWidth().testTag("add_address_field"),
-                        singleLine = false,
-                        maxLines = 3,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            focusedLabelColor = BluePrimary,
-                            unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            focusedBorderColor = BluePrimary,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-                        )
-                    )
-                }
-
-                // Collection Amount input
-                item {
-                    OutlinedTextField(
-                        value = amountValue,
-                        onValueChange = { amountValue = it },
-                        label = { Text("مبلغ التحصيل (ج.م)") },
-                        modifier = Modifier.fillMaxWidth().testTag("add_amount_field"),
-                        singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            focusedLabelColor = BluePrimary,
-                            unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            focusedBorderColor = BluePrimary,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-                        )
-                    )
-                }
-
-                // Notes Input
-                item {
-                    OutlinedTextField(
-                        value = notes,
-                        onValueChange = { notes = it },
-                        label = { Text("الملاحظات") },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = false,
-                        maxLines = 2,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            focusedLabelColor = BluePrimary,
-                            unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            focusedBorderColor = BluePrimary,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-                        )
+                    OrderFormFields(
+                        name = name, onNameChange = { name = it },
+                        phone = phone, onPhoneChange = { phone = it },
+                        phone2 = phone2, onPhone2Change = { phone2 = it },
+                        address = address, onAddressChange = { address = it },
+                        amountValue = amountValue, onAmountChange = { amountValue = it },
+                        notes = notes, onNotesChange = { notes = it },
+                        nameTestTag = "add_name_field",
+                        phoneTestTag = "add_phone_field",
+                        addressTestTag = "add_address_field",
+                        amountTestTag = "add_amount_field"
                     )
                 }
 
@@ -262,118 +241,18 @@ fun EditOrderDialog(
                     )
                 }
 
-                // Client Name Input
                 item {
-                    OutlinedTextField(
-                        value = name,
-                        onValueChange = { name = it },
-                        label = { Text("اسم العميل") },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            focusedLabelColor = BluePrimary,
-                            unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            focusedBorderColor = BluePrimary,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-                        )
-                    )
-                }
-
-                // Phone numbers
-                item {
-                    OutlinedTextField(
-                        value = phone,
-                        onValueChange = { phone = it },
-                        label = { Text("رقم تليفون العميل (أساسي)") },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            focusedLabelColor = BluePrimary,
-                            unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            focusedBorderColor = BluePrimary,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-                        )
-                    )
-                }
-
-                item {
-                    OutlinedTextField(
-                        value = phone2,
-                        onValueChange = { phone2 = it },
-                        label = { Text("رقم تليفون ثانى (اختياري)") },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            focusedLabelColor = BluePrimary,
-                            unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            focusedBorderColor = BluePrimary,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-                        )
-                    )
-                }
-
-                // Address Input
-                item {
-                    OutlinedTextField(
-                        value = address,
-                        onValueChange = { address = it },
-                        label = { Text("العنوان بالتفصيل") },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = false,
-                        maxLines = 3,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            focusedLabelColor = BluePrimary,
-                            unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            focusedBorderColor = BluePrimary,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-                        )
-                    )
-                }
-
-                // Collection Amount input
-                item {
-                    OutlinedTextField(
-                        value = amountValue,
-                        onValueChange = { amountValue = it },
-                        label = { Text("مبلغ التحصيل (ج.م)") },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            focusedLabelColor = BluePrimary,
-                            unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            focusedBorderColor = BluePrimary,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-                        )
-                    )
-                }
-
-                // Notes Input
-                item {
-                    OutlinedTextField(
-                        value = notes,
-                        onValueChange = { notes = it },
-                        label = { Text("الملاحظات") },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = false,
-                        maxLines = 2,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            focusedLabelColor = BluePrimary,
-                            unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            focusedBorderColor = BluePrimary,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-                        )
+                    OrderFormFields(
+                        name = name, onNameChange = { name = it },
+                        phone = phone, onPhoneChange = { phone = it },
+                        phone2 = phone2, onPhone2Change = { phone2 = it },
+                        address = address, onAddressChange = { address = it },
+                        amountValue = amountValue, onAmountChange = { amountValue = it },
+                        notes = notes, onNotesChange = { notes = it },
+                        nameTestTag = "edit_name_field",
+                        phoneTestTag = "edit_phone_field",
+                        addressTestTag = "edit_address_field",
+                        amountTestTag = "edit_amount_field"
                     )
                 }
 

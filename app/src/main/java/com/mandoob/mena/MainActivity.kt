@@ -27,7 +27,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         
         setContent {
-            val viewModel: OrderViewModel = viewModel()
+            val application = application
+            val viewModel: OrderViewModel = viewModel(
+                factory = androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+            )
             val themeSettings by viewModel.appThemeSettings.collectAsState()
             val isDarkTheme = when (themeSettings) {
                 "dark" -> true

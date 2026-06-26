@@ -66,10 +66,9 @@ fun SettingsMenuItem(
                     modifier = Modifier.size(24.dp)
                 )
             } else if (painter != null) {
-                Icon(
+                androidx.compose.foundation.Image(
                     painter = painter,
                     contentDescription = null,
-                    tint = iconColor,
                     modifier = Modifier.size(24.dp)
                 )
             }

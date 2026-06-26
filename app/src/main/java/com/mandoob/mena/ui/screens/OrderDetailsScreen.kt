@@ -32,6 +32,365 @@ import com.mandoob.mena.data.Order
 import com.mandoob.mena.ui.theme.CancelledRed
 
 @Composable
+fun OrderDetailsTopBar(order: Order, isDark: Boolean, onDismiss: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .statusBarsPadding()
+            .padding(horizontal = 16.dp, vertical = 20.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            IconButton(
+                onClick = onDismiss,
+                modifier = Modifier
+                    .size(36.dp)
+                    .background(
+                        color = if (isDark) Color(0xFF2D2D2D) else Color(0xFFF1F5F9),
+                        shape = CircleShape
+                    )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowForward,
+                    contentDescription = "رجوع",
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+
+            Column(
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    text = "تسليم شحنة",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = "#${5924692390L + order.id}",
+                    fontSize = 14.sp,
+                    color = if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B),
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+
+        val statusText = order.status
+        val (badgeBg, badgeTextColor) = when (statusText) {
+            Order.STATUS_PENDING -> {
+                if (isDark) Pair(Color(0xFF78350F).copy(alpha = 0.4f), Color(0xFFFBBF24))
+                else Pair(Color(0xFFFFFBEB), Color(0xFFD97706))
+            }
+            Order.STATUS_DELIVERED -> {
+                if (isDark) Pair(Color(0xFF064E3B).copy(alpha = 0.4f), Color(0xFF34D399))
+                else Pair(Color(0xFFECFDF5), Color(0xFF047857))
+            }
+            Order.STATUS_PARTIAL -> {
+                if (isDark) Pair(Color(0xFF0C4A6E).copy(alpha = 0.4f), Color(0xFF38BDF8))
+                else Pair(Color(0xFFF0F9FF), Color(0xFF0284C7))
+            }
+            else -> {
+                if (isDark) Pair(Color(0xFF450A0A).copy(alpha = 0.4f), Color(0xFFF87171))
+                else Pair(Color(0xFFFEF2F2), Color(0xFFDC2626))
+            }
+        }
+
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(30.dp))
+                .background(badgeBg)
+                .padding(horizontal = 14.dp, vertical = 6.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = statusText,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                color = badgeTextColor
+            )
+        }
+    }
+}
+
+@Composable
+fun OrderDetailsBottomBar(
+    order: Order,
+    isDark: Boolean,
+    onSuccessClick: () -> Unit,
+    onAdditionalOptionsClick: () -> Unit,
+    onResetStatusClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surface)
+            .navigationBarsPadding()
+            .padding(start = 16.dp, end = 16.dp, top = 14.dp, bottom = 64.dp)
+    ) {
+        if (order.status == Order.STATUS_PENDING) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Button(
+                    onClick = onSuccessClick,
+                    modifier = Modifier
+                        .weight(1.5f)
+                        .height(54.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0097A7)),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Check,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "تسليم الشحنة",
+                            color = Color.White,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+
+                OutlinedButton(
+                    onClick = onAdditionalOptionsClick,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(54.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    border = BorderStroke(1.5.dp, if (isDark) Color(0xFFEF4444).copy(alpha = 0.5f) else Color(0xFFFCA5A5)),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        containerColor = if (isDark) Color(0xFF7F1D1D).copy(alpha = 0.3f) else Color(0xFFFEF2F2),
+                        contentColor = if (isDark) Color(0xFFF87171) else Color(0xFFDC2626)
+                    )
+                ) {
+                    Text(
+                        text = "إلغاء / خيارات أخرى",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = if (isDark) Color(0xFFF87171) else Color(0xFFDC2626)
+                    )
+                }
+            }
+        } else {
+            Button(
+                onClick = onResetStatusClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(54.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "إعادة بدء التوصيل",
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun OrderDetailsActionCards(
+    order: Order,
+    isDark: Boolean,
+    context: Context,
+    onCallClick: () -> Unit,
+    onSmsClick: () -> Unit,
+    onWhatsAppClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Card(
+            modifier = Modifier
+                .weight(1f)
+                .height(54.dp)
+                .clickable(onClick = onCallClick),
+            shape = RoundedCornerShape(12.dp),
+            colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF1E1E1E) else Color(0xFFE8F5E9)),
+            border = BorderStroke(1.dp, if (isDark) Color(0xFF374151) else Color(0xFFA5D6A7)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Phone,
+                    contentDescription = "اتصال",
+                    tint = if (isDark) Color(0xFF34D399) else Color(0xFF2E7D32),
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "إتصال",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = if (isDark) Color(0xFF34D399) else Color(0xFF2E7D32)
+                )
+            }
+        }
+
+        Card(
+            modifier = Modifier
+                .weight(1f)
+                .height(54.dp)
+                .clickable(onClick = onSmsClick),
+            shape = RoundedCornerShape(12.dp),
+            colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF1E1E1E) else Color(0xFFEBF5FF)),
+            border = BorderStroke(1.dp, if (isDark) Color(0xFF374151) else Color(0xFFC0E0FF)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Sms,
+                    contentDescription = "SMS",
+                    tint = if (isDark) Color(0xFF38BDF8) else Color(0xFF0084FF),
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "رسالة",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = if (isDark) Color(0xFF38BDF8) else Color(0xFF0084FF)
+                )
+            }
+        }
+
+        Card(
+            modifier = Modifier
+                .weight(1f)
+                .height(54.dp)
+                .clickable(onClick = onWhatsAppClick),
+            shape = RoundedCornerShape(12.dp),
+            colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF1E1E1E) else Color(0xFFEBFDF5)),
+            border = BorderStroke(1.dp, if (isDark) Color(0xFF374151) else Color(0xFFA5D6A7)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_whatsapp),
+                    contentDescription = "WhatsApp",
+                    tint = Color.Unspecified,
+                    modifier = Modifier.size(22.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "واتساب",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = if (isDark) Color(0xFF10B981) else Color(0xFF0EA371)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun OrderDetailsAmountCard(order: Order, isDark: Boolean) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isDark) Color(0xFF0F172A).copy(alpha = 0.5f) else Color(0xFFEFF6FF)
+        ),
+        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(1.5.dp, if (isDark) Color(0xFF0369A1).copy(alpha = 0.4f) else Color(0xFFBFDBFE)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = "المبلغ المطلوب للتجميع",
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = if (isDark) Color(0xFFE2E8F0) else Color(0xFF1E293B)
+                )
+                Icon(
+                    imageVector = Icons.Default.Payments,
+                    contentDescription = null,
+                    tint = if (isDark) Color(0xFF38BDF8) else Color(0xFF1D4ED8),
+                    modifier = Modifier.size(22.dp)
+                )
+            }
+
+            Column(horizontalAlignment = Alignment.End) {
+                Text(
+                    text = "${order.amount.toInt()} ج.م",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Black,
+                    color = if (isDark) Color(0xFF38BDF8) else Color(0xFF1D4ED8)
+                )
+                if (order.status == Order.STATUS_PARTIAL) {
+                    Text(
+                        text = "التسليم الجزئى (${order.collectedAmount?.toInt() ?: 0} ج.م)",
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                } else if (order.status == Order.STATUS_REJECTED_WITH_FEE) {
+                    Text(
+                        text = "مصاريف شحن (${order.deliveryFeeAmount?.toInt() ?: 0} ج.م)",
+                        color = CancelledRed,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun OrderDetailsFullScreenPage(
     order: Order,
     isDark: Boolean,
@@ -59,185 +418,19 @@ fun OrderDetailsFullScreenPage(
 
     Scaffold(
         topBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding()
-                    .padding(horizontal = 16.dp, vertical = 20.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    IconButton(
-                        onClick = onDismiss,
-                        modifier = Modifier
-                            .size(36.dp)
-                            .background(
-                                color = if (isDark) Color(0xFF2D2D2D) else Color(0xFFF1F5F9),
-                                shape = CircleShape
-                            )
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowForward,
-                            contentDescription = "رجوع",
-                            tint = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-
-                    Column(
-                        horizontalAlignment = Alignment.Start
-                    ) {
-                        Text(
-                            text = "تسليم شحنة",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Spacer(modifier = Modifier.height(2.dp))
-                        Text(
-                            text = "#${5924692390L + order.id}",
-                            fontSize = 14.sp,
-                            color = if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B),
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-
-                val statusText = order.status
-                val (badgeBg, badgeTextColor) = when (statusText) {
-                    Order.STATUS_PENDING -> {
-                        if (isDark) Pair(Color(0xFF78350F).copy(alpha = 0.4f), Color(0xFFFBBF24))
-                        else Pair(Color(0xFFFFFBEB), Color(0xFFD97706))
-                    }
-                    Order.STATUS_DELIVERED -> {
-                        if (isDark) Pair(Color(0xFF064E3B).copy(alpha = 0.4f), Color(0xFF34D399))
-                        else Pair(Color(0xFFECFDF5), Color(0xFF047857))
-                    }
-                    Order.STATUS_PARTIAL -> {
-                        if (isDark) Pair(Color(0xFF0C4A6E).copy(alpha = 0.4f), Color(0xFF38BDF8))
-                        else Pair(Color(0xFFF0F9FF), Color(0xFF0284C7))
-                    }
-                    else -> {
-                        if (isDark) Pair(Color(0xFF450A0A).copy(alpha = 0.4f), Color(0xFFF87171))
-                        else Pair(Color(0xFFFEF2F2), Color(0xFFDC2626))
-                    }
-                }
-
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(30.dp))
-                        .background(badgeBg)
-                        .padding(horizontal = 14.dp, vertical = 6.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = statusText,
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = badgeTextColor
-                    )
-                }
-            }
+            OrderDetailsTopBar(order = order, isDark = isDark, onDismiss = onDismiss)
         },
         bottomBar = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surface)
-                    .navigationBarsPadding()
-                    .padding(start = 16.dp, end = 16.dp, top = 14.dp, bottom = 64.dp)
-            ) {
-                if (order.status == Order.STATUS_PENDING) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Button(
-                            onClick = { showSuccessConfirmation = true },
-                            modifier = Modifier
-                                .weight(1.5f)
-                                .height(54.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0097A7)),
-                            shape = RoundedCornerShape(12.dp)
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Check,
-                                    contentDescription = null,
-                                    tint = Color.White,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = "تسليم الشحنة",
-                                    color = Color.White,
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                        }
-
-                        OutlinedButton(
-                            onClick = { showAdditionalStatusOptions = true },
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(54.dp),
-                            shape = RoundedCornerShape(12.dp),
-                            border = BorderStroke(1.5.dp, if (isDark) Color(0xFFEF4444).copy(alpha = 0.5f) else Color(0xFFFCA5A5)),
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                containerColor = if (isDark) Color(0xFF7F1D1D).copy(alpha = 0.3f) else Color(0xFFFEF2F2),
-                                contentColor = if (isDark) Color(0xFFF87171) else Color(0xFFDC2626)
-                            )
-                        ) {
-                            Text(
-                                text = "إلغاء / خيارات أخرى",
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = if (isDark) Color(0xFFF87171) else Color(0xFFDC2626)
-                            )
-                        }
-                    }
-                } else {
-                    Button(
-                        onClick = {
-                            onStatusChanged(Order.STATUS_PENDING, null, null, false)
-                            onDismiss()
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(54.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Refresh,
-                                contentDescription = null,
-                                tint = Color.White,
-                                modifier = Modifier.size(20.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = "إعادة بدء التوصيل",
-                                color = Color.White,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
+            OrderDetailsBottomBar(
+                order = order,
+                isDark = isDark,
+                onSuccessClick = { showSuccessConfirmation = true },
+                onAdditionalOptionsClick = { showAdditionalStatusOptions = true },
+                onResetStatusClick = {
+                    onStatusChanged(Order.STATUS_PENDING, null, null, false)
+                    onDismiss()
                 }
-            }
+            )
         }
     ) { innerPadding ->
         Column(
@@ -248,187 +441,40 @@ fun OrderDetailsFullScreenPage(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Card(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(54.dp)
-                        .clickable {
-                            val hasSecondPhone = !order.phoneNumber2.isNullOrEmpty()
-                            if (hasSecondPhone) {
-                                pendingActionType = "CALL"
-                                showPhoneSelectorDialog = true
-                            } else {
-                                launchDialerWithNumber(context, order.phoneNumber)
-                            }
-                        },
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF1E1E1E) else Color(0xFFE8F5E9)),
-                    border = BorderStroke(1.dp, if (isDark) Color(0xFF374151) else Color(0xFFA5D6A7)),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Phone,
-                            contentDescription = "اتصال",
-                            tint = if (isDark) Color(0xFF34D399) else Color(0xFF2E7D32),
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = "إتصال",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = if (isDark) Color(0xFF34D399) else Color(0xFF2E7D32)
-                        )
+            OrderDetailsActionCards(
+                order = order,
+                isDark = isDark,
+                context = context,
+                onCallClick = {
+                    val hasSecondPhone = !order.phoneNumber2.isNullOrEmpty()
+                    if (hasSecondPhone) {
+                        pendingActionType = "CALL"
+                        showPhoneSelectorDialog = true
+                    } else {
+                        launchDialerWithNumber(context, order.phoneNumber)
+                    }
+                },
+                onSmsClick = {
+                    val hasSecondPhone = !order.phoneNumber2.isNullOrEmpty()
+                    if (hasSecondPhone) {
+                        pendingActionType = "SMS"
+                        showPhoneSelectorDialog = true
+                    } else {
+                        sendQuickSMSMessageWithNumber(context, order, order.phoneNumber)
+                    }
+                },
+                onWhatsAppClick = {
+                    val hasSecondPhone = !order.phoneNumber2.isNullOrEmpty()
+                    if (hasSecondPhone) {
+                        pendingActionType = "WHATSAPP"
+                        showPhoneSelectorDialog = true
+                    } else {
+                        sendQuickWhatsAppMessageWithNumber(context, order, order.phoneNumber)
                     }
                 }
+            )
 
-                Card(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(54.dp)
-                        .clickable {
-                            val hasSecondPhone = !order.phoneNumber2.isNullOrEmpty()
-                            if (hasSecondPhone) {
-                                pendingActionType = "SMS"
-                                showPhoneSelectorDialog = true
-                            } else {
-                                sendQuickSMSMessageWithNumber(context, order, order.phoneNumber)
-                            }
-                        },
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF1E1E1E) else Color(0xFFEBF5FF)),
-                    border = BorderStroke(1.dp, if (isDark) Color(0xFF374151) else Color(0xFFC0E0FF)),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Sms,
-                            contentDescription = "SMS",
-                            tint = if (isDark) Color(0xFF38BDF8) else Color(0xFF0084FF),
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = "رسالة",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = if (isDark) Color(0xFF38BDF8) else Color(0xFF0084FF)
-                        )
-                    }
-                }
-
-                Card(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(54.dp)
-                        .clickable {
-                            val hasSecondPhone = !order.phoneNumber2.isNullOrEmpty()
-                            if (hasSecondPhone) {
-                                pendingActionType = "WHATSAPP"
-                                showPhoneSelectorDialog = true
-                            } else {
-                                sendQuickWhatsAppMessageWithNumber(context, order, order.phoneNumber)
-                            }
-                        },
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF1E1E1E) else Color(0xFFEBFDF5)),
-                    border = BorderStroke(1.dp, if (isDark) Color(0xFF374151) else Color(0xFFA5D6A7)),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_whatsapp),
-                            contentDescription = "WhatsApp",
-                            tint = Color.Unspecified,
-                            modifier = Modifier.size(22.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = "واتساب",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = if (isDark) Color(0xFF10B981) else Color(0xFF0EA371)
-                        )
-                    }
-                }
-            }
-
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = if (isDark) Color(0xFF0F172A).copy(alpha = 0.5f) else Color(0xFFEFF6FF)
-                ),
-                shape = RoundedCornerShape(12.dp),
-                border = BorderStroke(1.5.dp, if (isDark) Color(0xFF0369A1).copy(alpha = 0.4f) else Color(0xFFBFDBFE)),
-                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Text(
-                            text = "المبلغ المطلوب للتجميع",
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = if (isDark) Color(0xFFE2E8F0) else Color(0xFF1E293B)
-                        )
-                        Icon(
-                            imageVector = Icons.Default.Payments,
-                            contentDescription = null,
-                            tint = if (isDark) Color(0xFF38BDF8) else Color(0xFF1D4ED8),
-                            modifier = Modifier.size(22.dp)
-                        )
-                    }
-
-                    Column(horizontalAlignment = Alignment.End) {
-                        Text(
-                            text = "${order.amount.toInt()} ج.م",
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Black,
-                            color = if (isDark) Color(0xFF38BDF8) else Color(0xFF1D4ED8)
-                        )
-                        if (order.status == Order.STATUS_PARTIAL) {
-                            Text(
-                                text = "التسليم الجزئى (${order.collectedAmount?.toInt() ?: 0} ج.م)",
-                                color = MaterialTheme.colorScheme.primary,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        } else if (order.status == Order.STATUS_REJECTED_WITH_FEE) {
-                            Text(
-                                text = "مصاريف شحن (${order.deliveryFeeAmount?.toInt() ?: 0} ج.م)",
-                                color = CancelledRed,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
-                }
-            }
+            OrderDetailsAmountCard(order = order, isDark = isDark)
 
             Spacer(modifier = Modifier.height(4.dp))
 

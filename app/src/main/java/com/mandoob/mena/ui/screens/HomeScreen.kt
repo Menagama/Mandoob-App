@@ -44,11 +44,7 @@ fun HomeScreen(
     onOpenSettings: () -> Unit
 ) {
     val themeSettings by viewModel.appThemeSettings.collectAsState()
-    val isDark = when (themeSettings) {
-        "dark" -> true
-        "light" -> false
-        else -> androidx.compose.foundation.isSystemInDarkTheme()
-    }
+    
     // Collect from ViewModel
     val netRemittance by viewModel.netRemittanceToOffice.collectAsState()
     val walletCash by viewModel.totalCashInWallet.collectAsState()
@@ -129,7 +125,7 @@ fun HomeScreen(
                 .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
                 .shadow(12.dp, RoundedCornerShape(20.dp))
                 .background(
-                    if (isDark) Color(0xFF1E293B) else Color.White,
+                    MaterialTheme.colorScheme.surface,
                     RoundedCornerShape(20.dp)
                 )
                 .border(
