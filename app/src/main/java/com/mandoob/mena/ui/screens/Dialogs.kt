@@ -29,6 +29,8 @@ import com.mandoob.mena.data.Order
 import com.mandoob.mena.ui.theme.BluePrimary
 import com.mandoob.mena.ui.theme.CancelledRed
 import com.mandoob.mena.viewmodel.OrderViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 
 // ---------------- ADD NEW ORDER DIALOG ----------------
 @Composable
@@ -425,12 +427,14 @@ fun ImportExcelDialog(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
-            val count = viewModel.importOrdersFromExcelUri(context, uri)
-            if (count >= 0) {
-                Toast.makeText(context, "تم استيراد $count أوردر بنجاح من شيت الإكسيل! 🎉", Toast.LENGTH_LONG).show()
-                onDismiss()
-            } else {
-                Toast.makeText(context, "فشل قراءة ملف الإكسيل المرفق، تأكد أنه ملف .xlsx صحيح وبنفس نسق الأعمدة", Toast.LENGTH_LONG).show()
+            viewModel.viewModelScope.launch {
+                val count = viewModel.importOrdersFromExcelUri(context, uri)
+                if (count >= 0) {
+                    Toast.makeText(context, "تم استيراد $count أوردر بنجاح من شيت الإكسيل! 🎉", Toast.LENGTH_LONG).show()
+                    onDismiss()
+                } else {
+                    Toast.makeText(context, "فشل قراءة ملف الإكسيل المرفق، تأكد أنه ملف .xlsx صحيح وبنفس نسق الأعمدة", Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
@@ -589,13 +593,15 @@ fun ImportExcelDialog(
                         Button(
                             onClick = {
                                 if (pastedText.isBlank()) return@Button
-                                val count = viewModel.importOrdersFromCsv(pastedText)
-                                Toast.makeText(
-                                    context,
-                                    "تم استيراد $count أوردر من النص المنسوخ بنجاح! 🚀",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                                onDismiss()
+                                viewModel.viewModelScope.launch {
+                                    val count = viewModel.importOrdersFromCsv(pastedText)
+                                    Toast.makeText(
+                                        context,
+                                        "تم استيراد $count أوردر من النص المنسوخ بنجاح! 🚀",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                    onDismiss()
+                                }
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1B5E20)),
                             enabled = pastedText.isNotBlank(),

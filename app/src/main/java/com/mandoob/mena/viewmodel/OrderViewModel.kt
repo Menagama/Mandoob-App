@@ -17,6 +17,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class OrderViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: OrderRepository
@@ -43,7 +45,7 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun setAppThemeRuntime(theme: String) {
-        _appThemeSettings.value = theme
+        updateAppTheme(theme)
     }
 
     private val _captainName = MutableStateFlow(prefs.getString("captain_name", "") ?: "")
@@ -273,8 +275,7 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
                     status = status,
                     collectedAmount = collectedAmount,
                     deliveryFeeAmount = deliveryFeeAmount,
-                    commission = getCommissionForStatus(status),
-                    createdAt = System.currentTimeMillis()
+                    commission = getCommissionForStatus(status)
                 )
                 repository.updateOrder(updated)
             }
@@ -336,9 +337,9 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     // Parse Excel CSV import
-    fun importOrdersFromCsv(csvText: String): Int {
+    suspend fun importOrdersFromCsv(csvText: String): Int = withContext(Dispatchers.IO) {
         val lines = csvText.lines()
-        if (lines.isEmpty()) return 0
+        if (lines.isEmpty()) return@withContext 0
         
         val newOrders = mutableListOf<Order>()
         var importedCount = 0
@@ -379,23 +380,21 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
         }
 
         if (newOrders.isNotEmpty()) {
-            viewModelScope.launch {
-                val currentList = repository.allOrders.first()
-                val anyArranged = currentList.any { it.isSequenceArranged }
-                var maxSeq = currentList.maxOfOrNull { it.sequenceNumber } ?: 0
+            val currentList = repository.allOrders.first()
+            val anyArranged = currentList.any { it.isSequenceArranged }
+            var maxSeq = currentList.maxOfOrNull { it.sequenceNumber } ?: 0
 
-                val updatedNewOrders = if (anyArranged) {
-                    newOrders.map { ord ->
-                        maxSeq++
-                        ord.copy(isSequenceArranged = true, sequenceNumber = maxSeq)
-                    }
-                } else {
-                    newOrders
+            val updatedNewOrders = if (anyArranged) {
+                newOrders.map { ord ->
+                    maxSeq++
+                    ord.copy(isSequenceArranged = true, sequenceNumber = maxSeq)
                 }
-                repository.insertOrders(updatedNewOrders)
+            } else {
+                newOrders
             }
+            repository.insertOrders(updatedNewOrders)
         }
-        return importedCount
+        importedCount
     }
 
     // Normalizes or fixes phone numbers starting with '0' and having 11 digits
@@ -419,7 +418,7 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     // Import from Excel Sheet Uri using our clean custom parser
-    fun importOrdersFromExcelUri(context: Context, uri: Uri): Int {
+    suspend fun importOrdersFromExcelUri(context: Context, uri: Uri): Int = withContext(Dispatchers.IO) {
         val newOrders = mutableListOf<Order>()
         var importedCount = 0
 
@@ -427,7 +426,7 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
             val contentResolver = context.contentResolver
             contentResolver.openInputStream(uri)?.use { inputStream ->
                 val rows = com.mandoob.mena.util.ExcelReader.readXlsx(inputStream)
-                if (rows.isEmpty()) return 0
+                if (rows.isEmpty()) return@withContext 0
 
                 val dataRows = rows.drop(1)
                 for (row in dataRows) {
@@ -461,26 +460,24 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
             }
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
-            return -1
+            return@withContext -1
         }
 
         if (newOrders.isNotEmpty()) {
-            viewModelScope.launch {
-                val currentList = repository.allOrders.first()
-                val anyArranged = currentList.any { it.isSequenceArranged }
-                var maxSeq = currentList.maxOfOrNull { it.sequenceNumber } ?: 0
+            val currentList = repository.allOrders.first()
+            val anyArranged = currentList.any { it.isSequenceArranged }
+            var maxSeq = currentList.maxOfOrNull { it.sequenceNumber } ?: 0
 
-                val updatedNewOrders = if (anyArranged) {
-                    newOrders.map { ord ->
-                        maxSeq++
-                        ord.copy(isSequenceArranged = true, sequenceNumber = maxSeq)
-                    }
-                } else {
-                    newOrders
+            val updatedNewOrders = if (anyArranged) {
+                newOrders.map { ord ->
+                    maxSeq++
+                    ord.copy(isSequenceArranged = true, sequenceNumber = maxSeq)
                 }
-                repository.insertOrders(updatedNewOrders)
+            } else {
+                newOrders
             }
+            repository.insertOrders(updatedNewOrders)
         }
-        return importedCount
+        importedCount
     }
 }
