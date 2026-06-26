@@ -10,7 +10,23 @@ import org.junit.Test
  */
 class ExampleUnitTest {
   @Test
-  fun addition_isCorrect() {
-    assertEquals(4, 2 + 2)
+  fun detectLogoColor() {
+    val file = java.io.File("./src/main/res/drawable/ic_mandoob_logo.png")
+    if (file.exists()) {
+      val img = javax.imageio.ImageIO.read(file)
+      val rgb = img.getRGB(10, 10)
+      val color = java.awt.Color(rgb)
+      val hex = String.format("#%02X%02X%02X", color.red, color.green, color.blue)
+      println("LOGO_COLOR_HEX: $hex")
+    } else {
+      println("File not found!")
+    }
   }
 }
+
+
+
+
+
+
+

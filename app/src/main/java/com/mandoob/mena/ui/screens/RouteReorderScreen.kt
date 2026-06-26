@@ -295,7 +295,23 @@ fun RouteReorderScreen(
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                     verticalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
-                                    // Up arrow button
+                                    // Index box (Order number at top)
+                                    Box(
+                                        modifier = Modifier
+                                            .size(40.dp)
+                                            .border(1.2.dp, if (isDark) Color(0xFF38BDF8).copy(alpha = 0.4f) else Color(0xFFBAE6FD), RoundedCornerShape(8.dp))
+                                            .background(if (isDark) Color(0xFF0C4A6E).copy(alpha = 0.2f) else Color(0xFFE0F2FE), RoundedCornerShape(8.dp)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = (index + 1).toString(),
+                                            fontSize = 14.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = if (isDark) Color(0xFF38BDF8) else Color(0xFF0284C7)
+                                        )
+                                    }
+
+                                    // Up arrow button (at bottom)
                                     Box(
                                         modifier = Modifier
                                             .size(40.dp)
@@ -334,22 +350,6 @@ fun RouteReorderScreen(
                                                 if (isDark) Color(0xFF404040) else Color(0xFFCBD5E1)
                                             },
                                             modifier = Modifier.size(20.dp)
-                                        )
-                                    }
-
-                                    // Index box
-                                    Box(
-                                        modifier = Modifier
-                                            .size(40.dp)
-                                            .border(1.2.dp, if (isDark) Color(0xFF38BDF8).copy(alpha = 0.4f) else Color(0xFFBAE6FD), RoundedCornerShape(8.dp))
-                                            .background(if (isDark) Color(0xFF0C4A6E).copy(alpha = 0.2f) else Color(0xFFE0F2FE), RoundedCornerShape(8.dp)),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Text(
-                                            text = (index + 1).toString(),
-                                            fontSize = 14.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            color = if (isDark) Color(0xFF38BDF8) else Color(0xFF0284C7)
                                         )
                                     }
                                 }
@@ -396,36 +396,6 @@ fun RouteReorderScreen(
                                                     color = deliveryText
                                                 )
                                             }
-
-                                            Spacer(modifier = Modifier.width(6.dp))
-
-                                            // "فتح الشحنة" tag
-                                            val openBoxBg = if (isDark) Color(0xFF042F1A) else Color(0xFFECFDF5)
-                                            val openBoxBorder = if (isDark) Color(0xFF059669).copy(alpha = 0.5f) else Color(0xFF10B981)
-                                            val openBoxText = if (isDark) Color(0xFF34D399) else Color(0xFF10B981)
-
-                                            Row(
-                                                modifier = Modifier
-                                                    .border(1.dp, openBoxBorder, RoundedCornerShape(100.dp))
-                                                    .background(openBoxBg, RoundedCornerShape(100.dp))
-                                                    .padding(horizontal = 8.dp, vertical = 2.dp),
-                                                verticalAlignment = Alignment.CenterVertically,
-                                                horizontalArrangement = Arrangement.Center
-                                            ) {
-                                                Icon(
-                                                    imageVector = Icons.Default.Check,
-                                                    contentDescription = null,
-                                                    tint = openBoxText,
-                                                    modifier = Modifier.size(11.dp)
-                                                )
-                                                Spacer(modifier = Modifier.width(3.dp))
-                                                Text(
-                                                    text = "فتح الشحنة",
-                                                    fontSize = 10.sp,
-                                                    fontWeight = FontWeight.Bold,
-                                                    color = openBoxText
-                                                )
-                                            }
                                         }
 
                                         Spacer(modifier = Modifier.height(8.dp))
@@ -452,7 +422,23 @@ fun RouteReorderScreen(
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                     verticalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
-                                    // Down arrow button
+                                    // Drag visual indicator (at top)
+                                    Box(
+                                        modifier = Modifier
+                                            .size(40.dp)
+                                            .border(1.2.dp, if (isDark) Color(0xFF38BDF8).copy(alpha = 0.4f) else Color(0xFFBAE6FD), RoundedCornerShape(8.dp))
+                                            .background(if (isDark) Color(0xFF0C4A6E).copy(alpha = 0.2f) else Color(0xFFE0F2FE), RoundedCornerShape(8.dp)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Menu,
+                                            contentDescription = "اسحب للترتيب",
+                                            tint = if (isDark) Color(0xFF38BDF8) else Color(0xFF0284C7),
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    }
+
+                                    // Down arrow button (at bottom)
                                     Box(
                                         modifier = Modifier
                                             .size(40.dp)
@@ -490,22 +476,6 @@ fun RouteReorderScreen(
                                             } else {
                                                 if (isDark) Color(0xFF404040) else Color(0xFFCBD5E1)
                                             },
-                                            modifier = Modifier.size(20.dp)
-                                        )
-                                    }
-
-                                    // Drag visual indicator
-                                    Box(
-                                        modifier = Modifier
-                                            .size(40.dp)
-                                            .border(1.2.dp, if (isDark) Color(0xFF38BDF8).copy(alpha = 0.4f) else Color(0xFFBAE6FD), RoundedCornerShape(8.dp))
-                                            .background(if (isDark) Color(0xFF0C4A6E).copy(alpha = 0.2f) else Color(0xFFE0F2FE), RoundedCornerShape(8.dp)),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Menu,
-                                            contentDescription = "اسحب للترتيب",
-                                            tint = if (isDark) Color(0xFF38BDF8) else Color(0xFF0284C7),
                                             modifier = Modifier.size(20.dp)
                                         )
                                     }
