@@ -44,6 +44,10 @@ fun OnboardingScreen(viewModel: OrderViewModel) {
     // Step 2 variables
     var selectedTheme by remember { mutableStateOf("system") }
 
+    LaunchedEffect(Unit) {
+        viewModel.setAppThemeRuntime("system")
+    }
+
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
@@ -87,7 +91,7 @@ fun OnboardingScreen(viewModel: OrderViewModel) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                for (i in 0..3) {
+                for (i in 0..2) {
                     Box(
                         modifier = Modifier
                             .weight(1f)
@@ -123,7 +127,7 @@ fun OnboardingScreen(viewModel: OrderViewModel) {
                 }
                 
                 Text(
-                    text = "الخطوة ${currentOnboardingStep + 1} من 4",
+                    text = "الخطوة ${currentOnboardingStep + 1} من 3",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
@@ -350,7 +354,10 @@ fun OnboardingScreen(viewModel: OrderViewModel) {
                             Card(
                                 modifier = Modifier
                                     .weight(1f)
-                                    .clickable { selectedTheme = themeKey }
+                                    .clickable { 
+                                        selectedTheme = themeKey 
+                                        viewModel.setAppThemeRuntime(themeKey)
+                                    }
                                     .border(
                                         width = 2.dp,
                                         color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
@@ -383,47 +390,6 @@ fun OnboardingScreen(viewModel: OrderViewModel) {
                     }
 
                     Spacer(modifier = Modifier.height(24.dp))
-
-                    Button(
-                        onClick = { currentOnboardingStep++ },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp)
-                            .testTag("next_button_step_2"),
-                        shape = RoundedCornerShape(14.dp)
-                    ) {
-                        Text(
-                            text = "التالي",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-                3 -> {
-                    // Step 4: Completion
-                    Text(
-                        text = "🎉",
-                        fontSize = 72.sp,
-                        textAlign = TextAlign.Center
-                    )
-
-                    Text(
-                        text = "كل شيء جاهز يا كابتن",
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.Black,
-                        color = MaterialTheme.colorScheme.primary,
-                        textAlign = TextAlign.Center
-                    )
-
-                    Text(
-                        text = "تم إعداد ملفك الشخصي وعمولاتك ومظهر التطبيق بنجاح. نتمنى لك رحلات توصيل موفقة وآمنة!",
-                        fontSize = 15.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
-
-                    Spacer(modifier = Modifier.height(32.dp))
 
                     Button(
                         onClick = {

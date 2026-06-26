@@ -36,7 +36,12 @@ fun HomeScreen(
     onOpenImportExcel: () -> Unit,
     onOpenSettings: () -> Unit
 ) {
-    val isDark = MaterialTheme.colorScheme.surface == Color(0xFF121212)
+    val themeSettings by viewModel.appThemeSettings.collectAsState()
+    val isDark = when (themeSettings) {
+        "dark" -> true
+        "light" -> false
+        else -> androidx.compose.foundation.isSystemInDarkTheme()
+    }
     // Collect from ViewModel
     val netRemittance by viewModel.netRemittanceToOffice.collectAsState()
     val walletCash by viewModel.totalCashInWallet.collectAsState()

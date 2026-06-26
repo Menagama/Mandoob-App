@@ -42,6 +42,10 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
         prefs.edit().putString("app_theme_settings", theme).apply()
     }
 
+    fun setAppThemeRuntime(theme: String) {
+        _appThemeSettings.value = theme
+    }
+
     private val _captainName = MutableStateFlow(prefs.getString("captain_name", "") ?: "")
     val captainName: StateFlow<String> = _captainName.asStateFlow()
 
@@ -56,13 +60,21 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
         prefs.edit().putBoolean("is_first_launch", false).apply()
     }
 
-    private val _commissionCat1 = MutableStateFlow(prefs.getFloat("commission_cat1", 0.0f).toDouble())
+    private fun getCommissionFromPrefs(key: String): Double {
+        return try {
+            prefs.getString(key, "0.0")?.toDoubleOrNull() ?: 0.0
+        } catch (e: ClassCastException) {
+            prefs.getFloat(key, 0.0f).toDouble()
+        }
+    }
+
+    private val _commissionCat1 = MutableStateFlow(getCommissionFromPrefs("commission_cat1"))
     val commissionCat1: StateFlow<Double> = _commissionCat1.asStateFlow()
 
-    private val _commissionCat2 = MutableStateFlow(prefs.getFloat("commission_cat2", 0.0f).toDouble())
+    private val _commissionCat2 = MutableStateFlow(getCommissionFromPrefs("commission_cat2"))
     val commissionCat2: StateFlow<Double> = _commissionCat2.asStateFlow()
 
-    private val _commissionCat3 = MutableStateFlow(prefs.getFloat("commission_cat3", 0.0f).toDouble())
+    private val _commissionCat3 = MutableStateFlow(getCommissionFromPrefs("commission_cat3"))
     val commissionCat3: StateFlow<Double> = _commissionCat3.asStateFlow()
 
     fun updateCaptainInfo(name: String, avatar: String) {
@@ -79,9 +91,9 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
         _commissionCat2.value = cat2
         _commissionCat3.value = cat3
         prefs.edit()
-            .putFloat("commission_cat1", cat1.toFloat())
-            .putFloat("commission_cat2", cat2.toFloat())
-            .putFloat("commission_cat3", cat3.toFloat())
+            .putString("commission_cat1", cat1.toString())
+            .putString("commission_cat2", cat2.toString())
+            .putString("commission_cat3", cat3.toString())
             .apply()
 
         // Recalculate and update commissions for all stored non-pending orders in database
@@ -340,7 +352,7 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
                     val cleanPhone = formatEgyptianPhoneNumber(phoneRaw)
                     val cleanAmountRaw = amountRaw.replace(Regex("[^0-9.-]"), "")
                     val amount = cleanAmountRaw.toDoubleOrNull() ?: 0.0
-                    val commission = 25.0
+                    val commission = commissionCat1.value
 
                     newOrders.add(
                         Order(
@@ -409,7 +421,7 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
                             val cleanPhone = formatEgyptianPhoneNumber(phoneRaw)
                             val cleanAmountRaw = amountRaw.replace(Regex("[^0-9.-]"), "")
                             val amount = cleanAmountRaw.toDoubleOrNull() ?: 0.0
-                            val commission = 25.0
+                            val commission = commissionCat1.value
 
                             newOrders.add(
                                 Order(
