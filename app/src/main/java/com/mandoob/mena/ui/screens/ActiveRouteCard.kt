@@ -69,7 +69,9 @@ fun ActiveRouteCardHeader(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
-                    textAlign = TextAlign.Right
+                    textAlign = TextAlign.Right,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -247,7 +249,6 @@ fun ActiveRouteCard(
     val isDark = MaterialTheme.colorScheme.surface == Color(0xFF121212)
     val statusGreen = if (isDark) Color(0xFF34D399) else Color(0xFF127C41)
     val statusRed = if (isDark) Color(0xFFEF4444) else CancelledRed
-
     var showDropdown by remember(order.id) { mutableStateOf(false) }
     var showPartialInput by remember(order.id) { mutableStateOf(false) }
     var showFeeInput by remember(order.id) { mutableStateOf(false) }

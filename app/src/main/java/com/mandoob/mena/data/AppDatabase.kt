@@ -18,8 +18,8 @@ abstract class AppDatabase : RoomDatabase() {
         // Safe Migration from version 1 to 2 to prevent destructive wipes
         val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(db: SupportSQLiteDatabase) {
-                // لم يتم إضافة أي تغييرات على الـ Schema في هذه النسخة.
-                // هذه الـ migration موجودة فقط لضمان عدم حذف بيانات المستخدمين القادمين من v1.
+                // If any schema adjustments were made in version 2, apply here.
+                // Room will execute this block during upgrade from version 1, keeping user data safe!
             }
         }
 

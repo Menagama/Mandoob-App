@@ -96,7 +96,7 @@ fun CaptainAvatarView(avatar: String, modifier: Modifier = Modifier) {
     when (avatar) {
         "delivery" -> {
             Image(
-                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                painter = painterResource(id = R.drawable.ic_mandoob_logo),
                 contentDescription = "صورة الكابتن",
                 modifier = modifier
                     .clip(CircleShape)
@@ -518,7 +518,10 @@ fun EmptyStateView(message: String) {
         Text(
             text = message,
             fontSize = 15.sp,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }

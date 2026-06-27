@@ -18,7 +18,7 @@ object ExcelReader {
                 val name = entry.name
                 if (name == "xl/sharedStrings.xml") {
                     sharedStringsBytes = zip.readBytes()
-                } else if (name.startsWith("xl/worksheets/") && name.endsWith(".xml") && sheetBytes == null) {
+                } else if (name == "xl/worksheets/sheet1.xml") {
                     sheetBytes = zip.readBytes()
                 }
                 zip.closeEntry()
@@ -27,11 +27,6 @@ object ExcelReader {
             zip.close()
         } catch (e: Exception) {
             e.printStackTrace()
-            return emptyList()
-        }
-
-        if (sheetBytes == null) {
-            android.util.Log.e("ExcelReader", "لم يتم العثور على أي Sheet في ملف الإكسيل")
             return emptyList()
         }
 

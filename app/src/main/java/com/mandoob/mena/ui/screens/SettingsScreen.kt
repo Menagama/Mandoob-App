@@ -357,7 +357,7 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                             Button(
                                 onClick = { galleryLauncher.launch("image/*") },
                                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
-                                shape = RoundedCornerShape(24.dp),
+                                shape = RoundedCornerShape(12.dp),
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Icon(Icons.Default.FileUpload, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
@@ -396,7 +396,7 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                                     },
                                     colors = ButtonDefaults.buttonColors(containerColor = GreenSuccess),
                                     modifier = Modifier.weight(1f),
-                                    shape = RoundedCornerShape(24.dp)
+                                    shape = RoundedCornerShape(12.dp)
                                 ) {
                                     Text("حفظ التعديلات ✅", color = Color.White, fontWeight = FontWeight.Bold)
                                 }
@@ -404,7 +404,7 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                                 OutlinedButton(
                                     onClick = { activeSection = null },
                                     modifier = Modifier.weight(1f),
-                                    shape = RoundedCornerShape(24.dp)
+                                    shape = RoundedCornerShape(12.dp)
                                 ) {
                                     Text("إلغاء التعديل", color = MaterialTheme.colorScheme.onSurface)
                                 }
@@ -505,7 +505,7 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                                     },
                                     colors = ButtonDefaults.buttonColors(containerColor = GreenSuccess),
                                     modifier = Modifier.weight(1f),
-                                    shape = RoundedCornerShape(24.dp)
+                                    shape = RoundedCornerShape(12.dp)
                                 ) {
                                     Text("حفظ العمولات 💾", color = Color.White, fontWeight = FontWeight.Bold)
                                 }
@@ -513,7 +513,7 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                                 OutlinedButton(
                                     onClick = { activeSection = null },
                                     modifier = Modifier.weight(1f),
-                                    shape = RoundedCornerShape(24.dp)
+                                    shape = RoundedCornerShape(12.dp)
                                 ) {
                                     Text("إلغاء", color = MaterialTheme.colorScheme.onSurface)
                                 }
@@ -590,7 +590,7 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                             Button(
                                 onClick = { activeSection = null },
                                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                                shape = RoundedCornerShape(24.dp),
+                                shape = RoundedCornerShape(12.dp),
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Text("رجوع للقائمة الرئيسية", color = Color.White, fontWeight = FontWeight.Bold)

@@ -19,8 +19,6 @@ import com.mandoob.mena.ui.screens.MainScreen
 import com.mandoob.mena.ui.theme.MyApplicationTheme
 import com.mandoob.mena.viewmodel.OrderViewModel
 
-
-
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
