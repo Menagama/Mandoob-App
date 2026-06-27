@@ -13,6 +13,7 @@
 
     <!-- صلاحية إجراء المكالمات المباشرة (في حال استخدام ACTION_CALL) -->
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-feature android:name="android.hardware.telephony" android:required="false" />
 
     <!-- استعلامات حول التطبيقات الخارجية لضمان عمل الـ Intents بشكل سليم في أندرويد 11 فما فوق -->
     <queries>

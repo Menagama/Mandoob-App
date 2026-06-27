@@ -69,9 +69,7 @@ fun ActiveRouteCardHeader(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
-                    textAlign = TextAlign.Right,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    textAlign = TextAlign.Right
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -189,9 +187,7 @@ fun ActiveRouteCardFinancialRow(order: Order, onEditClick: () -> Unit) {
                 text = "${order.amount.toInt()} ج.م",
                 color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 20.sp,
-                fontWeight = FontWeight.Black,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                fontWeight = FontWeight.Black
             )
             if (order.status == Order.STATUS_PARTIAL) {
                 Text(
@@ -199,9 +195,7 @@ fun ActiveRouteCardFinancialRow(order: Order, onEditClick: () -> Unit) {
                     color = MaterialTheme.colorScheme.primary,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(top = 2.dp),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    modifier = Modifier.padding(top = 2.dp)
                 )
             } else if (order.status == Order.STATUS_REJECTED_WITH_FEE) {
                 Text(
@@ -209,9 +203,7 @@ fun ActiveRouteCardFinancialRow(order: Order, onEditClick: () -> Unit) {
                     color = CancelledRed,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(top = 2.dp),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    modifier = Modifier.padding(top = 2.dp)
                 )
             }
         }
@@ -256,15 +248,6 @@ fun ActiveRouteCard(
     val statusGreen = if (isDark) Color(0xFF34D399) else Color(0xFF127C41)
     val statusRed = if (isDark) Color(0xFFEF4444) else CancelledRed
 
-    val statusColor = when (order.status) {
-        Order.STATUS_PENDING -> MaterialTheme.colorScheme.primary
-        Order.STATUS_DELIVERED -> statusGreen
-        Order.STATUS_PARTIAL -> Color(0xFFF59E0B) // Amber
-        Order.STATUS_CANCELLED, Order.STATUS_REJECTED_WITH_FEE, Order.STATUS_REJECTED_NO_FEE -> statusRed
-        Order.STATUS_POSTPONED, Order.STATUS_NO_ANSWER -> Color(0xFF8B5CF6) // Purple
-        else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
-    }
-
     var showDropdown by remember(order.id) { mutableStateOf(false) }
     var showPartialInput by remember(order.id) { mutableStateOf(false) }
     var showFeeInput by remember(order.id) { mutableStateOf(false) }
@@ -280,11 +263,11 @@ fun ActiveRouteCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .shadow(4.dp, RoundedCornerShape(12.dp))
-            .border(2.dp, statusColor, RoundedCornerShape(12.dp))
+            .shadow(4.dp, RoundedCornerShape(16.dp))
+            .border(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), RoundedCornerShape(16.dp))
             .clickable { showDetailsPage = true },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(16.dp)
     ) {
         Column(
             modifier = Modifier

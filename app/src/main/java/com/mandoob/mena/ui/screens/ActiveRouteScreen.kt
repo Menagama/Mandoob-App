@@ -304,10 +304,10 @@ fun ActiveRouteScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit) {
                         isSortingEnabled = isSortingEnabled,
                         isFastMoveEnabled = isFastMoveEnabled,
                         onMoveUp = {
-                            viewModel.moveOrder(order.id, true, isFastMoveEnabled, filteredAndSortedOrders)
+                            viewModel.moveOrder(order.id, true, isFastMoveEnabled)
                         },
                         onMoveDown = {
-                            viewModel.moveOrder(order.id, false, isFastMoveEnabled, filteredAndSortedOrders)
+                            viewModel.moveOrder(order.id, false, isFastMoveEnabled)
                         }
                     )
                 }

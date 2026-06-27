@@ -71,11 +71,11 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
         private val CAPTAIN_AVATAR_KEY = stringPreferencesKey("captain_avatar")
         private val FIRST_LAUNCH_KEY = booleanPreferencesKey("is_first_launch")
         private val CAT1_STR_KEY = stringPreferencesKey("commission_cat1")
-        private val CAT1_FLT_KEY = floatPreferencesKey("commission_cat1")
+        private val CAT1_FLT_KEY = floatPreferencesKey("commission_cat1_flt")
         private val CAT2_STR_KEY = stringPreferencesKey("commission_cat2")
-        private val CAT2_FLT_KEY = floatPreferencesKey("commission_cat2")
+        private val CAT2_FLT_KEY = floatPreferencesKey("commission_cat2_flt")
         private val CAT3_STR_KEY = stringPreferencesKey("commission_cat3")
-        private val CAT3_FLT_KEY = floatPreferencesKey("commission_cat3")
+        private val CAT3_FLT_KEY = floatPreferencesKey("commission_cat3_flt")
     }
 
     val appThemeSettings: StateFlow<String> = dataStore.data
@@ -186,6 +186,7 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
         repository = OrderRepository(database.orderDao())
         
         allOrders = repository.allOrders
+            .map { list -> list.sortedBy { it.sequenceNumber } }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
@@ -237,12 +238,11 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
         _isFastMoveEnabled.value = !_isFastMoveEnabled.value
     }
 
-    fun moveOrder(orderId: Int, up: Boolean, isFast: Boolean, currentFilteredList: List<Order>) {
+    fun moveOrder(orderId: Int, up: Boolean, isFast: Boolean) {
         viewModelScope.launch {
             routeMutex.withLock {
-                val latestOrdersFromDb = repository.allOrders.first()
-                val latestOrdersMap = latestOrdersFromDb.associateBy { it.id }
-                val listToUpdate = currentFilteredList.mapNotNull { latestOrdersMap[it.id] }.toMutableList()
+                val latestOrdersFromDb = repository.allOrders.first().sortedBy { it.sequenceNumber }
+                val listToUpdate = latestOrdersFromDb.toMutableList()
                 
                 val index = listToUpdate.indexOfFirst { it.id == orderId }
                 if (index == -1) return@withLock
@@ -277,8 +277,10 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
 
                 val currentTime = System.currentTimeMillis()
                 listToUpdate.forEachIndexed { i, ord ->
-                    val updated = ord.copy(sequenceNumber = i, isSequenceArranged = true, updatedAt = currentTime)
-                    repository.updateOrder(updated)
+                    if (ord.sequenceNumber != i) {
+                        val updated = ord.copy(sequenceNumber = i, isSequenceArranged = true, updatedAt = currentTime)
+                        repository.updateOrder(updated)
+                    }
                 }
             }
         }
@@ -382,7 +384,8 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
             if (order != null) {
                 val updated = order.copy(
                     notes = notes,
-                    courierNotes = courierNotes
+                    courierNotes = courierNotes,
+                    updatedAt = System.currentTimeMillis()
                 )
                 repository.updateOrder(updated)
             }
@@ -464,8 +467,9 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
 
     // Normalizes or fixes phone numbers starting with '0' and having 11 digits
     private fun formatEgyptianPhoneNumber(rawPhone: String): String {
-        var digits = rawPhone.filter { it.isDigit() }
-        if (digits.isEmpty()) return rawPhone
+        val processedPhone = rawPhone.removePrefix("+")
+        var digits = processedPhone.filter { it.isDigit() }
+        if (digits.isEmpty()) return processedPhone
         
         if (digits.startsWith("20") && digits.length > 11) {
             digits = digits.substring(2)
@@ -473,6 +477,10 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
         
         if (!digits.startsWith("0")) {
             digits = "0$digits"
+        }
+        
+        if (digits.length < 11) {
+            return rawPhone
         }
         
         return if (digits.length > 11) {

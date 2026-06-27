@@ -96,7 +96,7 @@ fun CaptainAvatarView(avatar: String, modifier: Modifier = Modifier) {
     when (avatar) {
         "delivery" -> {
             Image(
-                painter = painterResource(id = R.drawable.ic_mandoob_logo),
+                painter = painterResource(id = R.drawable.ic_launcher_foreground),
                 contentDescription = "صورة الكابتن",
                 modifier = modifier
                     .clip(CircleShape)
@@ -130,9 +130,9 @@ fun HeaderCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .shadow(4.dp, RoundedCornerShape(12.dp)),
+            .shadow(2.dp, RoundedCornerShape(16.dp)),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(16.dp)
     ) {
         Row(
             modifier = Modifier
@@ -211,11 +211,11 @@ fun NetRemittanceCard(netRemittance: Double) {
         modifier = Modifier
             .fillMaxWidth()
             .height(120.dp)
-            .shadow(4.dp, RoundedCornerShape(12.dp))
-            .background(brush = gradientBrush, shape = RoundedCornerShape(12.dp)),
+            .shadow(6.dp, RoundedCornerShape(24.dp))
+            .background(brush = gradientBrush, shape = RoundedCornerShape(24.dp)),
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(24.dp)
     ) {
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
             Row(
@@ -251,9 +251,7 @@ fun NetRemittanceCard(netRemittance: Double) {
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White.copy(alpha = 0.9f),
-                        textAlign = TextAlign.End,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        textAlign = TextAlign.End
                     )
                     
                     Spacer(modifier = Modifier.height(4.dp))
@@ -263,9 +261,7 @@ fun NetRemittanceCard(netRemittance: Double) {
                         fontSize = 32.sp,
                         fontWeight = FontWeight.Black,
                         color = Color.White,
-                        textAlign = TextAlign.End,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        textAlign = TextAlign.End
                     )
                     
                     Spacer(modifier = Modifier.height(4.dp))
@@ -275,9 +271,7 @@ fun NetRemittanceCard(netRemittance: Double) {
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Normal,
                         color = Color.White.copy(alpha = 0.75f),
-                        textAlign = TextAlign.End,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        textAlign = TextAlign.End
                     )
                 }
             }
@@ -299,10 +293,10 @@ fun StatCard(
         modifier = Modifier
             .fillMaxWidth()
             .height(95.dp)
-            .shadow(4.dp, RoundedCornerShape(12.dp))
+            .shadow(4.dp, RoundedCornerShape(16.dp))
             .testTag("${testTagPrefix}_card"),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(16.dp)
     ) {
         Column(
             modifier = Modifier
@@ -320,9 +314,7 @@ fun StatCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.weight(1f),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    modifier = Modifier.weight(1f)
                 )
                 Icon(
                     imageVector = icon,
@@ -336,17 +328,13 @@ fun StatCard(
                 text = value,
                 color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 18.sp,
-                fontWeight = FontWeight.Black,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                fontWeight = FontWeight.Black
             )
 
             Text(
                 text = subtext,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-                fontSize = 10.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                fontSize = 10.sp
             )
         }
     }
@@ -372,11 +360,11 @@ fun InteractiveRouteProgressCard(completed: Int, total: Int) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .shadow(4.dp, RoundedCornerShape(12.dp)),
+                .shadow(1.dp, RoundedCornerShape(24.dp)),
             colors = CardDefaults.cardColors(containerColor = cardBg),
             border = BorderStroke(1.5.dp, cardBorder),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(24.dp)
         ) {
             Column(
                 modifier = Modifier
@@ -529,20 +517,8 @@ fun EmptyStateView(message: String) {
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = message,
-            fontSize = 17.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "يمكنك إضافة أوردر جديد أو استيراد ملف Excel من الشاشة الرئيسية للبدء.",
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Normal,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
+            fontSize = 15.sp,
+            fontWeight = FontWeight.Medium
         )
     }
 }
