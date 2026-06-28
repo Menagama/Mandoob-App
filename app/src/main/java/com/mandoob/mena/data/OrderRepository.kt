@@ -11,8 +11,6 @@ class OrderRepository(private val orderDao: OrderDao) {
 
     suspend fun updateOrder(order: Order) = orderDao.updateOrder(order)
 
-    suspend fun updateOrderStatus(orderId: Int, status: String) = orderDao.updateOrderStatus(orderId, status)
-
     suspend fun deleteOrderById(orderId: Int) = orderDao.deleteOrderById(orderId)
 
     suspend fun clearAll() = orderDao.clearAll()

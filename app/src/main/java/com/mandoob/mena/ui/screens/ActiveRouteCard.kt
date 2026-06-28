@@ -3,6 +3,7 @@ package com.mandoob.mena.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -246,7 +247,7 @@ fun ActiveRouteCard(
     onMoveDown: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
-    val isDark = MaterialTheme.colorScheme.surface == Color(0xFF121212)
+    val isDark = isSystemInDarkTheme()
     val statusGreen = if (isDark) Color(0xFF34D399) else Color(0xFF127C41)
     val statusRed = if (isDark) Color(0xFFEF4444) else CancelledRed
     var showDropdown by remember(order.id) { mutableStateOf(false) }

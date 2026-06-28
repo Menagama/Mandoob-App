@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface OrderDao {
-    @Query("SELECT * FROM orders ORDER BY id ASC")
+    @Query("SELECT * FROM orders ORDER BY isSequenceArranged DESC, sequenceNumber ASC, id ASC")
     fun getAllOrders(): Flow<List<Order>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -20,9 +20,6 @@ interface OrderDao {
 
     @Update
     suspend fun updateOrder(order: Order)
-
-    @Query("UPDATE orders SET status = :status WHERE id = :orderId")
-    suspend fun updateOrderStatus(orderId: Int, status: String)
 
     @Query("DELETE FROM orders WHERE id = :orderId")
     suspend fun deleteOrderById(orderId: Int)

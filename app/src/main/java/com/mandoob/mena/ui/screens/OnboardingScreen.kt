@@ -45,7 +45,7 @@ fun OnboardingScreen(viewModel: OrderViewModel) {
     var selectedTheme by remember { mutableStateOf("system") }
 
     LaunchedEffect(Unit) {
-        viewModel.setAppThemeRuntime("system")
+        viewModel.updateAppTheme("system")
     }
 
     val galleryLauncher = rememberLauncherForActivityResult(
@@ -356,7 +356,7 @@ fun OnboardingScreen(viewModel: OrderViewModel) {
                                     .weight(1f)
                                     .clickable { 
                                         selectedTheme = themeKey 
-                                        viewModel.setAppThemeRuntime(themeKey)
+                                        viewModel.updateAppTheme(themeKey)
                                     }
                                     .border(
                                         width = 2.dp,

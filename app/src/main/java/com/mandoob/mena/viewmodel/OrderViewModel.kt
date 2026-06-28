@@ -88,10 +88,6 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun setAppThemeRuntime(theme: String) {
-        updateAppTheme(theme)
-    }
-
     val captainName: StateFlow<String> = dataStore.data
         .map { it[CAPTAIN_NAME_KEY] ?: "" }
         .stateIn(viewModelScope, SharingStarted.Eagerly, "")

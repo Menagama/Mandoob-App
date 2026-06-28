@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -190,7 +191,7 @@ fun HeaderCard(
 // ---------------- NET REMITTANCE CARD ----------------
 @Composable
 fun NetRemittanceCard(netRemittance: Double) {
-    val isDark = MaterialTheme.colorScheme.surface == Color(0xFF121212)
+    val isDark = isSystemInDarkTheme()
     val gradientBrush = if (isDark) {
         Brush.linearGradient(
             colors = listOf(
@@ -346,7 +347,7 @@ private val Int.ddp: androidx.compose.ui.unit.Dp get() = this.dp
 @Composable
 fun InteractiveRouteProgressCard(completed: Int, total: Int) {
     val progress = if (total > 0) completed.toFloat() / total.toFloat() else 0f
-    val isDark = MaterialTheme.colorScheme.surface == Color(0xFF121212)
+    val isDark = isSystemInDarkTheme()
 
     val cardBg = if (isDark) Color(0xFF121212) else Color.White
     val cardBorder = if (isDark) Color(0xFF38BDF8).copy(alpha = 0.4f) else Color(0xFFE2E8F0)
