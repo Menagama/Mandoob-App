@@ -71,11 +71,11 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
         private val CAPTAIN_AVATAR_KEY = stringPreferencesKey("captain_avatar")
         private val FIRST_LAUNCH_KEY = booleanPreferencesKey("is_first_launch")
         private val CAT1_STR_KEY = stringPreferencesKey("commission_cat1")
-        private val CAT1_FLT_KEY = floatPreferencesKey("commission_cat1")
+        private val CAT1_FLT_KEY = floatPreferencesKey("commission_cat1_float")
         private val CAT2_STR_KEY = stringPreferencesKey("commission_cat2")
-        private val CAT2_FLT_KEY = floatPreferencesKey("commission_cat2")
+        private val CAT2_FLT_KEY = floatPreferencesKey("commission_cat2_float")
         private val CAT3_STR_KEY = stringPreferencesKey("commission_cat3")
-        private val CAT3_FLT_KEY = floatPreferencesKey("commission_cat3")
+        private val CAT3_FLT_KEY = floatPreferencesKey("commission_cat3_float")
     }
 
     val appThemeSettings: StateFlow<String> = dataStore.data
@@ -368,7 +368,8 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
                     address = address,
                     amount = amount,
                     commission = commission,
-                    notes = notes
+                    notes = notes,
+                    updatedAt = System.currentTimeMillis()
                 )
                 repository.updateOrder(updated)
             }
@@ -382,7 +383,8 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
             if (order != null) {
                 val updated = order.copy(
                     notes = notes,
-                    courierNotes = courierNotes
+                    courierNotes = courierNotes,
+                    updatedAt = System.currentTimeMillis()
                 )
                 repository.updateOrder(updated)
             }

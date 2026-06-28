@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface OrderDao {
-    @Query("SELECT * FROM orders ORDER BY updatedAt DESC")
+    @Query("SELECT * FROM orders ORDER BY id ASC")
     fun getAllOrders(): Flow<List<Order>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
