@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mandoob.mena.data.Order
+import com.mandoob.mena.data.OrderStatus
 import com.mandoob.mena.ui.theme.BlueLight
 import com.mandoob.mena.ui.theme.BluePrimary
 import com.mandoob.mena.viewmodel.OrderViewModel
@@ -48,21 +49,21 @@ fun ActiveRouteScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit) {
     var selectedSubTab by remember { mutableStateOf(0) } // 0 = جاري العمل, 1 = الناجحة, 2 = الملغاة
 
     // Count pending, success and cancelled categories
-    val countPending = allOrders.count { it.status == Order.STATUS_PENDING }
-    val countSuccess = allOrders.count { it.status == Order.STATUS_DELIVERED || it.status == Order.STATUS_PARTIAL }
+    val countPending = allOrders.count { it.status == OrderStatus.PENDING.value }
+    val countSuccess = allOrders.count { it.status == OrderStatus.DELIVERED.value || it.status == OrderStatus.PARTIAL.value }
     val countCancelled = allOrders.count { it.isCancelledOrPostponed() }
 
     // Filter by the selected sub-tab
     val activeOrders = remember(allOrders, selectedSubTab) {
         when (selectedSubTab) {
-            0 -> allOrders.filter { it.status == Order.STATUS_PENDING }
-            1 -> allOrders.filter { it.status == Order.STATUS_DELIVERED || it.status == Order.STATUS_PARTIAL }
+            0 -> allOrders.filter { it.status == OrderStatus.PENDING.value }
+            1 -> allOrders.filter { it.status == OrderStatus.DELIVERED.value || it.status == OrderStatus.PARTIAL.value }
             else -> allOrders.filter { it.isCancelledOrPostponed() }
         }
     }
 
     // Apply search query and automatic routing sequence
-    val filteredAndSortedOrders = remember(activeOrders, searchQuery, isSortingEnabled) {
+    val filteredAndSortedOrders = remember(activeOrders, searchQuery, isSortingEnabled, selectedSubTab) {
         val filtered = activeOrders.filter { order ->
             if (searchQuery.isBlank()) true
             else {
@@ -70,14 +71,18 @@ fun ActiveRouteScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit) {
                 order.phoneNumber.contains(searchQuery)
             }
         }
-        if (filtered.any { it.isSequenceArranged }) {
-            filtered.sortedWith(compareBy({ it.sequenceNumber }, { it.id }))
-        } else {
-            if (isSortingEnabled) {
-                filtered.sortedWith(compareBy({ it.address }, { it.id }))
+        if (selectedSubTab == 0) {
+            if (filtered.any { it.isSequenceArranged }) {
+                filtered.sortedWith(compareBy({ it.sequenceNumber }, { it.id }))
             } else {
-                filtered.sortedBy { it.updatedAt }
+                if (isSortingEnabled) {
+                    filtered.sortedWith(compareBy({ it.address }, { it.id }))
+                } else {
+                    filtered.sortedBy { it.id }
+                }
             }
+        } else {
+            filtered.sortedBy { it.updatedAt }
         }
     }
 

@@ -32,6 +32,11 @@ class MainActivity : ComponentActivity() {
                 factory = OrderViewModel.Factory
             )
             val themeSettings by viewModel.appThemeSettings.collectAsState()
+            
+            if (themeSettings == null) {
+                return@setContent
+            }
+            
             val isDarkTheme = when (themeSettings) {
                 "dark" -> true
                 "light" -> false
@@ -39,13 +44,11 @@ class MainActivity : ComponentActivity() {
             }
 
             MyApplicationTheme(darkTheme = isDarkTheme) {
-                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-                    Surface(
-                        modifier = Modifier.fillMaxSize(),
-                        color = MaterialTheme.colorScheme.background
-                    ) {
-                        MainScreen(viewModel = viewModel)
-                    }
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    MainScreen(viewModel = viewModel)
                 }
             }
         }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -39,6 +40,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mandoob.mena.data.Order
+import com.mandoob.mena.data.OrderStatus
 import com.mandoob.mena.viewmodel.OrderViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,10 +51,10 @@ fun RouteReorderScreen(
 ) {
     val allOrders by viewModel.allOrders.collectAsState()
     val context = LocalContext.current
-    val isDark = MaterialTheme.colorScheme.surface == Color(0xFF121212)
+    val isDark = MaterialTheme.colorScheme.background == Color(0xFF000000)
     
     val pendingOrders = remember(allOrders) {
-        allOrders.filter { it.status == Order.STATUS_PENDING }
+        allOrders.filter { it.status == OrderStatus.PENDING.value }
             .sortedWith(compareBy({ it.sequenceNumber }, { it.id }))
     }
 

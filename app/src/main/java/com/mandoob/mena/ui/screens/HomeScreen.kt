@@ -31,7 +31,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mandoob.mena.ui.theme.BlueDark
 import com.mandoob.mena.ui.theme.GreenSuccess
 import com.mandoob.mena.ui.theme.PurpleStar
 import com.mandoob.mena.viewmodel.OrderViewModel
@@ -43,8 +42,6 @@ fun HomeScreen(
     onOpenImportExcel: () -> Unit,
     onOpenSettings: () -> Unit
 ) {
-    val themeSettings by viewModel.appThemeSettings.collectAsState()
-    
     // Collect from ViewModel
     val netRemittance by viewModel.netRemittanceToOffice.collectAsState()
     val walletCash by viewModel.totalCashInWallet.collectAsState()

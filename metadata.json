@@ -1,5 +1,5 @@
 {
-  "name": "مندوب الشحن",
+  "name": "Mandoob",
   "description": "تطبيق متكامل لمندوب شحن بوسطة لمتابعة الأوردرات اليومية، حساب الأرباح، الكاش وتحصيل المبالغ بدقة واحترافية.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

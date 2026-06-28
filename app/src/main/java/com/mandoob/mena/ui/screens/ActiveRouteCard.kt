@@ -3,7 +3,6 @@ package com.mandoob.mena.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mandoob.mena.R
 import com.mandoob.mena.data.Order
+import com.mandoob.mena.data.OrderStatus
 import com.mandoob.mena.ui.theme.CancelledRed
 
 @Composable
@@ -192,7 +192,7 @@ fun ActiveRouteCardFinancialRow(order: Order, onEditClick: () -> Unit) {
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Black
             )
-            if (order.status == Order.STATUS_PARTIAL) {
+            if (order.status == OrderStatus.PARTIAL.value) {
                 Text(
                     text = "التسليم الجزئى (${order.collectedAmount?.toInt() ?: 0} ج.م)",
                     color = MaterialTheme.colorScheme.primary,
@@ -200,7 +200,7 @@ fun ActiveRouteCardFinancialRow(order: Order, onEditClick: () -> Unit) {
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(top = 2.dp)
                 )
-            } else if (order.status == Order.STATUS_REJECTED_WITH_FEE) {
+            } else if (order.status == OrderStatus.REJECTED_WITH_FEE.value) {
                 Text(
                     text = "رفض ودفع مصاريف شحن (${order.deliveryFeeAmount?.toInt() ?: 0} ج.م)",
                     color = CancelledRed,
@@ -247,7 +247,7 @@ fun ActiveRouteCard(
     onMoveDown: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
-    val isDark = isSystemInDarkTheme()
+    val isDark = MaterialTheme.colorScheme.background == Color(0xFF000000)
     val statusGreen = if (isDark) Color(0xFF34D399) else Color(0xFF127C41)
     val statusRed = if (isDark) Color(0xFFEF4444) else CancelledRed
     var showDropdown by remember(order.id) { mutableStateOf(false) }

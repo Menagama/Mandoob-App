@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mandoob.mena.R
 import com.mandoob.mena.data.Order
+import com.mandoob.mena.data.OrderStatus
 import com.mandoob.mena.ui.theme.CancelledRed
 
 @Composable
@@ -83,15 +84,15 @@ fun OrderDetailsTopBar(order: Order, isDark: Boolean, onDismiss: () -> Unit) {
 
         val statusText = order.status
         val (badgeBg, badgeTextColor) = when (statusText) {
-            Order.STATUS_PENDING -> {
+            OrderStatus.PENDING.value -> {
                 if (isDark) Pair(Color(0xFF78350F).copy(alpha = 0.4f), Color(0xFFFBBF24))
                 else Pair(Color(0xFFFFFBEB), Color(0xFFD97706))
             }
-            Order.STATUS_DELIVERED -> {
+            OrderStatus.DELIVERED.value -> {
                 if (isDark) Pair(Color(0xFF064E3B).copy(alpha = 0.4f), Color(0xFF34D399))
                 else Pair(Color(0xFFECFDF5), Color(0xFF047857))
             }
-            Order.STATUS_PARTIAL -> {
+            OrderStatus.PARTIAL.value -> {
                 if (isDark) Pair(Color(0xFF0C4A6E).copy(alpha = 0.4f), Color(0xFF38BDF8))
                 else Pair(Color(0xFFF0F9FF), Color(0xFF0284C7))
             }
@@ -133,7 +134,7 @@ fun OrderDetailsBottomBar(
             .navigationBarsPadding()
             .padding(start = 16.dp, end = 16.dp, top = 14.dp, bottom = 64.dp)
     ) {
-        if (order.status == Order.STATUS_PENDING) {
+        if (order.status == OrderStatus.PENDING.value) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -370,14 +371,14 @@ fun OrderDetailsAmountCard(order: Order, isDark: Boolean) {
                     fontWeight = FontWeight.Black,
                     color = if (isDark) Color(0xFF38BDF8) else Color(0xFF1D4ED8)
                 )
-                if (order.status == Order.STATUS_PARTIAL) {
+                if (order.status == OrderStatus.PARTIAL.value) {
                     Text(
                         text = "التسليم الجزئى (${order.collectedAmount?.toInt() ?: 0} ج.م)",
                         color = MaterialTheme.colorScheme.primary,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold
                     )
-                } else if (order.status == Order.STATUS_REJECTED_WITH_FEE) {
+                } else if (order.status == OrderStatus.REJECTED_WITH_FEE.value) {
                     Text(
                         text = "مصاريف شحن (${order.deliveryFeeAmount?.toInt() ?: 0} ج.م)",
                         color = CancelledRed,
@@ -427,7 +428,7 @@ fun OrderDetailsFullScreenPage(
                 onSuccessClick = { showSuccessConfirmation = true },
                 onAdditionalOptionsClick = { showAdditionalStatusOptions = true },
                 onResetStatusClick = {
-                    onStatusChanged(Order.STATUS_PENDING, null, null, false)
+                    onStatusChanged(OrderStatus.PENDING.value, null, null, false)
                     onDismiss()
                 }
             )
@@ -744,7 +745,7 @@ fun OrderDetailsFullScreenPage(
                 ) {
                     Button(
                         onClick = {
-                            onStatusChanged(Order.STATUS_DELIVERED, null, null, false)
+                            onStatusChanged(OrderStatus.DELIVERED.value, null, null, false)
                             showSuccessConfirmation = false
                             onDismiss()
                         },
@@ -806,19 +807,19 @@ fun OrderDetailsFullScreenPage(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     val otherStatuses = listOf(
-                        Pair("رفض بدون مصاريف شحن", Order.STATUS_REJECTED_NO_FEE),
-                        Pair("رفض ودفع مصاريف شحن", Order.STATUS_REJECTED_WITH_FEE),
-                        Pair("لا يرد", Order.STATUS_NO_ANSWER),
-                        Pair("مؤجل", Order.STATUS_POSTPONED),
-                        Pair("لاغى", Order.STATUS_CANCELLED),
-                        Pair("إرجاع لـ جاري العمل", Order.STATUS_PENDING)
-                    ).filter { !(order.status == Order.STATUS_PENDING && it.second == Order.STATUS_PENDING) }
+                        Pair("رفض بدون مصاريف شحن", OrderStatus.REJECTED_NO_FEE.value),
+                        Pair("رفض ودفع مصاريف شحن", OrderStatus.REJECTED_WITH_FEE.value),
+                        Pair("لا يرد", OrderStatus.NO_ANSWER.value),
+                        Pair("مؤجل", OrderStatus.POSTPONED.value),
+                        Pair("لاغى", OrderStatus.CANCELLED.value),
+                        Pair("إرجاع لـ جاري العمل", OrderStatus.PENDING.value)
+                    ).filter { !(order.status == OrderStatus.PENDING.value && it.second == OrderStatus.PENDING.value) }
                     
                     otherStatuses.forEach { (label, statusStr) ->
                         Button(
                             onClick = {
                                 showAdditionalStatusOptions = false
-                                if (statusStr == Order.STATUS_REJECTED_WITH_FEE) {
+                                if (statusStr == OrderStatus.REJECTED_WITH_FEE.value) {
                                     showFeeAmountSelector = true
                                 } else {
                                     onStatusChanged(statusStr, null, null, false)
@@ -827,8 +828,8 @@ fun OrderDetailsFullScreenPage(
                             },
                             modifier = Modifier.fillMaxWidth().height(44.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = if (statusStr == Order.STATUS_CANCELLED) Color(0xFFEF4444) else MaterialTheme.colorScheme.surfaceVariant,
-                                contentColor = if (statusStr == Order.STATUS_CANCELLED) Color.White else MaterialTheme.colorScheme.onSurfaceVariant
+                                containerColor = if (statusStr == OrderStatus.CANCELLED.value) Color(0xFFEF4444) else MaterialTheme.colorScheme.surfaceVariant,
+                                contentColor = if (statusStr == OrderStatus.CANCELLED.value) Color.White else MaterialTheme.colorScheme.onSurfaceVariant
                             ),
                             shape = RoundedCornerShape(8.dp)
                         ) {
@@ -899,7 +900,7 @@ fun OrderDetailsFullScreenPage(
                             if (valAmt >= order.amount) {
                                 android.widget.Toast.makeText(context, "مبلغ التحصيل الجزئي يجب أن يكون أقل من قيمة الأوردر (${order.amount})", android.widget.Toast.LENGTH_LONG).show()
                             } else {
-                                onStatusChanged(Order.STATUS_PARTIAL, valAmt, null, false)
+                                onStatusChanged(OrderStatus.PARTIAL.value, valAmt, null, false)
                                 showPartialAmountSelector = false
                                 onDismiss()
                             }
@@ -969,7 +970,7 @@ fun OrderDetailsFullScreenPage(
                     Button(
                         onClick = {
                             val valAmt = tempFeeAmount.toDoubleOrNull() ?: 0.0
-                            onStatusChanged(Order.STATUS_REJECTED_WITH_FEE, null, valAmt, false)
+                            onStatusChanged(OrderStatus.REJECTED_WITH_FEE.value, null, valAmt, false)
                             showFeeAmountSelector = false
                             onDismiss()
                         },
@@ -1125,8 +1126,8 @@ fun executeCommunication(
 fun shareOrderToWhatsApp(context: Context, order: Order) {
     try {
         val statusText = when (order.status) {
-            Order.STATUS_PARTIAL -> "تسليم جزئي — تم تحصيل ${order.collectedAmount?.toInt() ?: 0} ج.م فقط"
-            Order.STATUS_REJECTED_WITH_FEE -> "رفض ودفع مصاريف شحن — تم دفع ${order.deliveryFeeAmount?.toInt() ?: 0} ج.م"
+            OrderStatus.PARTIAL.value -> "تسليم جزئي — تم تحصيل ${order.collectedAmount?.toInt() ?: 0} ج.م فقط"
+            OrderStatus.REJECTED_WITH_FEE.value -> "رفض ودفع مصاريف شحن — تم دفع ${order.deliveryFeeAmount?.toInt() ?: 0} ج.م"
             else -> order.status
         }
 

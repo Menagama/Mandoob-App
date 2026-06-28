@@ -3,6 +3,21 @@ package com.mandoob.mena.data
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+enum class OrderStatus(val value: String) {
+    PENDING("جاري العمل"),
+    DELIVERED("تم التسليم"),
+    PARTIAL("التسليم الجزئى"),
+    REJECTED_NO_FEE("رفض بدون مصاريف شحن"),
+    REJECTED_WITH_FEE("رفض ودفع مصاريف شحن"),
+    NO_ANSWER("لا يرد"),
+    POSTPONED("مؤجل"),
+    CANCELLED("لاغى");
+
+    companion object {
+        fun fromValue(value: String): OrderStatus? = entries.find { it.value == value }
+    }
+}
+
 @Entity(tableName = "orders")
 data class Order(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
@@ -14,7 +29,7 @@ data class Order(
     val commission: Double, // Amount earned by courier for this delivery
     val notes: String? = null,
     val courierNotes: String? = null,
-    val status: String = STATUS_PENDING,
+    val status: String = OrderStatus.PENDING.value,
     val collectedAmount: Double? = null, // Used in STATUS_PARTIAL (التسليم الجزئي)
     val deliveryFeeAmount: Double? = null, // Used in STATUS_REJECTED_WITH_FEE (رفض ودفع مصاريف شحن)
     val isSequenceArranged: Boolean = false, // Sequence sorting toggle
@@ -23,21 +38,10 @@ data class Order(
     val updatedAt: Long = System.currentTimeMillis()
 ) {
     fun isCancelledOrPostponed(): Boolean {
-        return status == STATUS_CANCELLED ||
-               status == STATUS_REJECTED_NO_FEE ||
-               status == STATUS_REJECTED_WITH_FEE ||
-               status == STATUS_NO_ANSWER ||
-               status == STATUS_POSTPONED
-    }
-
-    companion object {
-        const val STATUS_PENDING = "جاري العمل"
-        const val STATUS_DELIVERED = "تم التسليم"
-        const val STATUS_PARTIAL = "التسليم الجزئى"
-        const val STATUS_REJECTED_NO_FEE = "رفض بدون مصاريف شحن"
-        const val STATUS_REJECTED_WITH_FEE = "رفض ودفع مصاريف شحن"
-        const val STATUS_NO_ANSWER = "لا يرد"
-        const val STATUS_POSTPONED = "مؤجل"
-        const val STATUS_CANCELLED = "لاغى"
+        return status == OrderStatus.CANCELLED.value ||
+               status == OrderStatus.REJECTED_NO_FEE.value ||
+               status == OrderStatus.REJECTED_WITH_FEE.value ||
+               status == OrderStatus.NO_ANSWER.value ||
+               status == OrderStatus.POSTPONED.value
     }
 }

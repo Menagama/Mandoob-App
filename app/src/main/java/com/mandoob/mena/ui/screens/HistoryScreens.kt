@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mandoob.mena.data.Order
+import com.mandoob.mena.data.OrderStatus
 import com.mandoob.mena.ui.theme.BluePrimary
 import com.mandoob.mena.viewmodel.OrderViewModel
 
@@ -34,7 +35,7 @@ fun SuccessfulOrdersScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit
     val context = LocalContext.current
     var editingOrder by remember { mutableStateOf<Order?>(null) }
 
-    val successfulOrders = allOrders.filter { it.status == Order.STATUS_DELIVERED || it.status == Order.STATUS_PARTIAL }.sortedBy { it.createdAt }
+    val successfulOrders = allOrders.filter { it.status == OrderStatus.DELIVERED.value || it.status == OrderStatus.PARTIAL.value }.sortedBy { it.createdAt }
 
     val filteredOrders = remember(successfulOrders, searchQuery) {
         successfulOrders.filter { order ->

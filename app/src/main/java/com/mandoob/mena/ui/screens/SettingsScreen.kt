@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mandoob.mena.R
-import com.mandoob.mena.ui.theme.BlueDark
 import com.mandoob.mena.ui.theme.BluePrimary
 import com.mandoob.mena.ui.theme.CancelledRed
 import com.mandoob.mena.ui.theme.GreenSuccess

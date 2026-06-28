@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.mandoob.mena.data.AppDatabase
 import com.mandoob.mena.data.Order
+import com.mandoob.mena.data.OrderStatus
 import com.mandoob.mena.data.OrderRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -78,9 +79,9 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
         private val CAT3_FLT_KEY = floatPreferencesKey("commission_cat3_float")
     }
 
-    val appThemeSettings: StateFlow<String> = dataStore.data
+    val appThemeSettings: StateFlow<String?> = dataStore.data
         .map { it[THEME_KEY] ?: "system" }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, "system")
+        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     fun updateAppTheme(theme: String) {
         viewModelScope.launch {
@@ -151,11 +152,11 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
             try {
                 val list = repository.allOrders.first()
                 list.forEach { order ->
-                    if (order.status != Order.STATUS_PENDING) {
+                    if (order.status != OrderStatus.PENDING.value) {
                         val newCommission = when (order.status) {
-                            Order.STATUS_DELIVERED, Order.STATUS_PARTIAL -> cat1
-                            Order.STATUS_REJECTED_WITH_FEE -> cat2
-                            Order.STATUS_REJECTED_NO_FEE -> cat3
+                            OrderStatus.DELIVERED.value, OrderStatus.PARTIAL.value -> cat1
+                            OrderStatus.REJECTED_WITH_FEE.value -> cat2
+                            OrderStatus.REJECTED_NO_FEE.value -> cat3
                             else -> 0.0
                         }
                         val updated = order.copy(commission = newCommission)
@@ -170,9 +171,9 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getCommissionForStatus(status: String): Double {
         return when (status) {
-            Order.STATUS_DELIVERED, Order.STATUS_PARTIAL -> commissionCat1.value
-            Order.STATUS_REJECTED_WITH_FEE -> commissionCat2.value
-            Order.STATUS_REJECTED_NO_FEE -> commissionCat3.value
+            OrderStatus.DELIVERED.value, OrderStatus.PARTIAL.value -> commissionCat1.value
+            OrderStatus.REJECTED_WITH_FEE.value -> commissionCat2.value
+            OrderStatus.REJECTED_NO_FEE.value -> commissionCat3.value
             else -> 0.0
         }
     }
@@ -193,9 +194,9 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
     val totalCashInWallet: StateFlow<Double> = allOrders.map { orders ->
         orders.sumOf { order ->
             when (order.status) {
-                Order.STATUS_DELIVERED -> order.amount
-                Order.STATUS_PARTIAL -> order.collectedAmount ?: 0.0
-                Order.STATUS_REJECTED_WITH_FEE -> order.deliveryFeeAmount ?: 0.0
+                OrderStatus.DELIVERED.value -> order.amount
+                OrderStatus.PARTIAL.value -> order.collectedAmount ?: 0.0
+                OrderStatus.REJECTED_WITH_FEE.value -> order.deliveryFeeAmount ?: 0.0
                 else -> 0.0
             }
         }
@@ -203,10 +204,10 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
 
     val totalCommissions: StateFlow<Double> = allOrders.map { orders ->
         orders.filter { 
-            it.status == Order.STATUS_DELIVERED || 
-            it.status == Order.STATUS_PARTIAL || 
-            it.status == Order.STATUS_REJECTED_WITH_FEE ||
-            it.status == Order.STATUS_REJECTED_NO_FEE
+            it.status == OrderStatus.DELIVERED.value || 
+            it.status == OrderStatus.PARTIAL.value || 
+            it.status == OrderStatus.REJECTED_WITH_FEE.value ||
+            it.status == OrderStatus.REJECTED_NO_FEE.value
         }.sumOf { it.commission }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0.0)
 
@@ -219,7 +220,7 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
 
     val completedOrdersCount: StateFlow<Int> = allOrders.map { orders ->
-        orders.count { it.status != Order.STATUS_PENDING }
+        orders.count { it.status != OrderStatus.PENDING.value }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
 
     fun toggleSorting() {
@@ -318,7 +319,7 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
                 amount = amount,
                 commission = commission,
                 notes = notes,
-                status = Order.STATUS_PENDING,
+                status = OrderStatus.PENDING.value,
                 isSequenceArranged = anyArranged,
                 sequenceNumber = if (anyArranged) maxSeq + 1 else 0
             )
@@ -434,7 +435,7 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
                             amount = amount,
                             commission = commission,
                             notes = "",
-                            status = Order.STATUS_PENDING
+                            status = OrderStatus.PENDING.value
                         )
                     )
                     importedCount++
@@ -513,7 +514,7 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
                                     amount = amount,
                                     commission = commission,
                                     notes = "",
-                                    status = Order.STATUS_PENDING
+                                    status = OrderStatus.PENDING.value
                                 )
                             )
                             importedCount++
