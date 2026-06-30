@@ -305,8 +305,8 @@ fun ActiveRouteScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit) {
                                 Toast.makeText(context, "تم حفظ حالة الأوردر: $status", Toast.LENGTH_SHORT).show()
                             }
                         },
-                        onUpdateNotes = { updateNotes, courierNotes ->
-                            viewModel.updateOrderNotes(order.id, updateNotes, courierNotes)
+                        onUpdateNotes = { updateNotes ->
+                            viewModel.updateOrderNotes(order.id, updateNotes)
                         },
                         isSortingEnabled = isSortingEnabled,
                         isFastMoveEnabled = isFastMoveEnabled,

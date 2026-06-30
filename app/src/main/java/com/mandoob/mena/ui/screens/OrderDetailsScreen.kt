@@ -401,7 +401,7 @@ fun OrderDetailsFullScreenPage(
     onDismiss: () -> Unit,
     onStatusChanged: (String, Double?, Double?, Boolean) -> Unit,
     onEditClick: () -> Unit,
-    onUpdateNotes: (String?, String?) -> Unit
+    onUpdateNotes: (String?) -> Unit
 ) {
     val context = LocalContext.current
     var showPartialAmountSelector by remember { mutableStateOf(false) }
@@ -412,8 +412,8 @@ fun OrderDetailsFullScreenPage(
     var tempPartialAmount by remember { mutableStateOf(order.collectedAmount?.toString() ?: "0") }
     var tempFeeAmount by remember { mutableStateOf(order.deliveryFeeAmount?.toString() ?: "0") }
 
-    var showEditCourierNotesDialog by remember { mutableStateOf(false) }
-    var tempCourierNotesValue by remember(order.courierNotes) { mutableStateOf(order.courierNotes ?: "") }
+    var showEditNotesDialog by remember { mutableStateOf(false) }
+    var tempNotesValue by remember(order.notes) { mutableStateOf(order.notes ?: "") }
 
     var showPhoneSelectorDialog by remember { mutableStateOf(false) }
     var pendingActionType by remember { mutableStateOf<String?>(null) }
@@ -595,7 +595,7 @@ fun OrderDetailsFullScreenPage(
 
                 HorizontalDivider(color = if (isDark) Color(0xFF374151) else Color(0xFFF1F5F9), thickness = 1.dp)
 
-                // 2. Rider Notes Block (ملاحظات المندوب)
+                // 2. Order Notes Block (ملاحظات الأوردر)
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -634,7 +634,7 @@ fun OrderDetailsFullScreenPage(
                         }
 
                         IconButton(
-                            onClick = { showEditCourierNotesDialog = true },
+                            onClick = { showEditNotesDialog = true },
                             modifier = Modifier
                                 .size(32.dp)
                                 .background(if (isDark) Color(0xFF064E3B).copy(alpha = 0.3f) else Color(0xFFD1FAE5), CircleShape)
@@ -651,10 +651,10 @@ fun OrderDetailsFullScreenPage(
                     Spacer(modifier = Modifier.height(6.dp))
 
                     Text(
-                        text = order.courierNotes ?: "لا توجد ملاحظات مسجلة للمندوب حالياً.",
+                        text = order.notes ?: "لا توجد ملاحظات مسجلة للأوردر حالياً.",
                         fontSize = 14.sp,
-                        color = if (order.courierNotes != null) (if (isDark) Color.White else Color(0xFF1E293B)) else (if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B)),
-                        fontWeight = if (order.courierNotes != null) FontWeight.Bold else FontWeight.Normal,
+                        color = if (order.notes != null) (if (isDark) Color.White else Color(0xFF1E293B)) else (if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B)),
+                        fontWeight = if (order.notes != null) FontWeight.Bold else FontWeight.Normal,
                         textAlign = TextAlign.Right,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -665,9 +665,9 @@ fun OrderDetailsFullScreenPage(
         }
     }
 
-    if (showEditCourierNotesDialog) {
+    if (showEditNotesDialog) {
         AlertDialog(
-            onDismissRequest = { showEditCourierNotesDialog = false },
+            onDismissRequest = { showEditNotesDialog = false },
             title = {
                 Text(
                     text = stringResource(R.string.string_ar_92),
@@ -679,8 +679,8 @@ fun OrderDetailsFullScreenPage(
             },
             text = {
                 OutlinedTextField(
-                    value = tempCourierNotesValue,
-                    onValueChange = { tempCourierNotesValue = it },
+                    value = tempNotesValue,
+                    onValueChange = { tempNotesValue = it },
                     label = { Text(stringResource(R.string.string_ar_75), fontSize = 12.sp) },
                     modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
@@ -698,8 +698,8 @@ fun OrderDetailsFullScreenPage(
                 ) {
                     Button(
                         onClick = {
-                            onUpdateNotes(null, tempCourierNotesValue)
-                            showEditCourierNotesDialog = false
+                            onUpdateNotes(tempNotesValue)
+                            showEditNotesDialog = false
                         },
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
@@ -707,7 +707,7 @@ fun OrderDetailsFullScreenPage(
                         Text(stringResource(R.string.string_ar_76), color = Color.White, fontWeight = FontWeight.Bold)
                     }
                     OutlinedButton(
-                        onClick = { showEditCourierNotesDialog = false },
+                        onClick = { showEditNotesDialog = false },
                         modifier = Modifier.weight(1f)
                     ) {
                         Text(stringResource(R.string.string_ar_2), fontWeight = FontWeight.Bold)

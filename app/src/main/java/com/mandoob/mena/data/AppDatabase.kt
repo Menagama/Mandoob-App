@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [Order::class], version = 4, exportSchema = false)
+@Database(entities = [Order::class], version = 5, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun orderDao(): OrderDao
 
@@ -38,6 +38,39 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        // Safe migration from version 4 to 5 to remove courierNotes column
+        val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("""
+                    CREATE TABLE IF NOT EXISTS orders_new (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        clientName TEXT NOT NULL,
+                        phoneNumber TEXT NOT NULL,
+                        phoneNumber2 TEXT,
+                        address TEXT NOT NULL,
+                        amount REAL NOT NULL,
+                        commission REAL NOT NULL,
+                        notes TEXT,
+                        status TEXT NOT NULL,
+                        collectedAmount REAL,
+                        deliveryFeeAmount REAL,
+                        isSequenceArranged INTEGER NOT NULL,
+                        sequenceNumber INTEGER NOT NULL,
+                        createdAt INTEGER NOT NULL,
+                        updatedAt INTEGER NOT NULL
+                    )
+                """.trimIndent())
+                
+                db.execSQL("""
+                    INSERT INTO orders_new (id, clientName, phoneNumber, phoneNumber2, address, amount, commission, notes, status, collectedAmount, deliveryFeeAmount, isSequenceArranged, sequenceNumber, createdAt, updatedAt)
+                    SELECT id, clientName, phoneNumber, phoneNumber2, address, amount, commission, notes, status, collectedAmount, deliveryFeeAmount, isSequenceArranged, sequenceNumber, createdAt, updatedAt FROM orders
+                """.trimIndent())
+                
+                db.execSQL("DROP TABLE orders")
+                db.execSQL("ALTER TABLE orders_new RENAME TO orders")
+            }
+        }
+
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -45,7 +78,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "courier_database"
                 )
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
                     .build()
                 INSTANCE = instance
                 instance

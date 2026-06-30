@@ -93,6 +93,30 @@ fun ActiveRouteCardHeader(
                         modifier = Modifier.size(12.dp)
                     )
                 }
+                if (!order.notes.isNullOrEmpty()) {
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Row(
+                        verticalAlignment = Alignment.Top,
+                        horizontalArrangement = Arrangement.Start,
+                        modifier = Modifier.padding(end = 4.dp)
+                    ) {
+                        Text(
+                            text = order.notes,
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            textAlign = TextAlign.Right
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Icon(
+                            imageVector = Icons.Default.Notes,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(12.dp).padding(top = 2.dp)
+                        )
+                    }
+                }
             }
         }
 
@@ -241,7 +265,7 @@ fun ActiveRouteCard(
     onEditClick: () -> Unit,
     onDelete: () -> Unit,
     onStatusChanged: (String, Double?, Double?, Boolean) -> Unit,
-    onUpdateNotes: ((String?, String?) -> Unit)? = null,
+    onUpdateNotes: ((String?) -> Unit)? = null,
     isSortingEnabled: Boolean = false,
     isFastMoveEnabled: Boolean = false,
     onMoveUp: (() -> Unit)? = null,
@@ -436,8 +460,8 @@ fun ActiveRouteCard(
                         showDetailsPage = false
                         onEditClick()
                     },
-                    onUpdateNotes = { updateNotes, courierNotes ->
-                        onUpdateNotes?.invoke(updateNotes, courierNotes)
+                    onUpdateNotes = { updateNotes ->
+                        onUpdateNotes?.invoke(updateNotes)
                     }
                 )
             }

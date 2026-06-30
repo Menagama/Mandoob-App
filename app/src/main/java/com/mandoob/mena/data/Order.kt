@@ -28,7 +28,6 @@ data class Order(
     val amount: Double, // Positive = cash collected, 0 = no cash, Negative = refund/cash returned
     val commission: Double, // Amount earned by courier for this delivery
     val notes: String? = null,
-    val courierNotes: String? = null,
     val status: String = OrderStatus.PENDING.value,
     val collectedAmount: Double? = null, // Used in STATUS_PARTIAL (التسليم الجزئي)
     val deliveryFeeAmount: Double? = null, // Used in STATUS_REJECTED_WITH_FEE (رفض ودفع مصاريف شحن)

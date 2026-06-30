@@ -2,12 +2,12 @@ package com.mandoob.mena.ui.screens
 
 import android.widget.Toast
 import com.mandoob.mena.R
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -29,7 +29,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -44,8 +43,12 @@ import androidx.compose.ui.unit.sp
 import com.mandoob.mena.data.Order
 import com.mandoob.mena.data.OrderStatus
 import com.mandoob.mena.viewmodel.OrderViewModel
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyColumnState
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.ExperimentalFoundationApi
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun RouteReorderScreen(
     viewModel: OrderViewModel,
@@ -61,17 +64,19 @@ fun RouteReorderScreen(
     }
 
     var itemsList by remember { mutableStateOf<List<Order>>(emptyList()) }
-    var draggedIndex by remember { mutableStateOf<Int?>(null) }
-    var dragOffset by remember { mutableStateOf(0f) }
 
     val haptic = LocalHapticFeedback.current
     val listState = rememberLazyListState()
 
+    val reorderableState = rememberReorderableLazyColumnState(listState) { from, to ->
+        itemsList = itemsList.toMutableList().apply {
+            add(to.index, removeAt(from.index))
+        }
+    }
+
     // Sync from database list if not dragging
     LaunchedEffect(pendingOrders) {
-        if (draggedIndex == null) {
-            itemsList = pendingOrders
-        }
+        itemsList = pendingOrders
     }
 
     // Dynamic color coordination
@@ -85,6 +90,11 @@ fun RouteReorderScreen(
     val dividerColor = if (isDark) Color(0xFF262626) else Color(0xFFCBD5E1)
     val textColor = if (isDark) Color.White else Color(0xFF1E293B)
     val subtextColor = if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B)
+
+    BackHandler {
+        viewModel.saveRouteSequence(itemsList)
+        onDismiss()
+    }
 
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
         Scaffold(
@@ -179,120 +189,41 @@ fun RouteReorderScreen(
                         )
                     }
                 } else {
-                    // Parent-Level Drag and Drop LazyColumn
                     LazyColumn(
                         state = listState,
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(horizontal = 16.dp, vertical = 16.dp)
-                            .pointerInput(itemsList) {
-                                detectDragGesturesAfterLongPress(
-                                    onDragStart = { offset ->
-                                        val visibleItems = listState.layoutInfo.visibleItemsInfo
-                                        val touchedItem = visibleItems.find { itemInfo ->
-                                            // itemInfo.offset is coordinates inside the viewable list
-                                            // We add a 12px padding coverage to gap selections
-                                            val top = itemInfo.offset
-                                            val bottom = itemInfo.offset + itemInfo.size + 12
-                                            offset.y.toInt() in top..bottom
-                                        }
-                                        if (touchedItem != null && touchedItem.index < itemsList.size) {
-                                            draggedIndex = touchedItem.index
-                                            dragOffset = 0f
-                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                        }
-                                    },
-                                    onDragEnd = {
-                                        draggedIndex = null
-                                        dragOffset = 0f
-                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                    },
-                                    onDragCancel = {
-                                        draggedIndex = null
-                                        dragOffset = 0f
-                                    },
-                                    onDrag = { change, dragAmount ->
-                                        change.consume()
-                                        val currentDragIdx = draggedIndex ?: return@detectDragGesturesAfterLongPress
-                                        dragOffset += dragAmount.y
-
-                                        val visibleItems = listState.layoutInfo.visibleItemsInfo
-                                        val draggedItem = visibleItems.find { it.index == currentDragIdx }
-
-                                        if (draggedItem != null) {
-                                            val currentList = itemsList
-                                            val currentItemY = draggedItem.offset + dragOffset
-
-                                            // Dragging down: Check crossing center of the next item
-                                            if (dragOffset > 0 && currentDragIdx < currentList.size - 1) {
-                                                val nextItem = visibleItems.find { it.index == currentDragIdx + 1 }
-                                                if (nextItem != null) {
-                                                    val nextCenter = nextItem.offset + nextItem.size / 2
-                                                    val currentCenter = currentItemY + draggedItem.size / 2
-                                                    if (currentCenter > nextCenter) {
-                                                        val mutable = currentList.toMutableList()
-                                                        val temp = mutable[currentDragIdx]
-                                                        mutable[currentDragIdx] = mutable[currentDragIdx + 1]
-                                                        mutable[currentDragIdx + 1] = temp
-                                                        itemsList = mutable
-                                                        draggedIndex = currentDragIdx + 1
-                                                        dragOffset -= nextItem.size + 12 // shift drag offset relative to new position index
-                                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                                    }
-                                                }
-                                            }
-                                            // Dragging up: Check crossing center of the previous item
-                                            else if (dragOffset < 0 && currentDragIdx > 0) {
-                                                val prevItem = visibleItems.find { it.index == currentDragIdx - 1 }
-                                                if (prevItem != null) {
-                                                    val prevCenter = prevItem.offset + prevItem.size / 2
-                                                    val currentCenter = currentItemY + draggedItem.size / 2
-                                                    if (currentCenter < prevCenter) {
-                                                        val mutable = currentList.toMutableList()
-                                                        val temp = mutable[currentDragIdx]
-                                                        mutable[currentDragIdx] = mutable[currentDragIdx - 1]
-                                                        mutable[currentDragIdx - 1] = temp
-                                                        itemsList = mutable
-                                                        draggedIndex = currentDragIdx - 1
-                                                        dragOffset += prevItem.size + 12 // shift drag offset relative to new position index
-                                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                )
-                            },
+                            .padding(horizontal = 16.dp, vertical = 16.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         itemsIndexed(
                             items = itemsList,
                             key = { _, order -> order.id }
                         ) { index, order ->
-                            val isDragged = index == draggedIndex
-                            val itemElevation by animateDpAsState(targetValue = if (isDragged) 8.dp else 0.dp)
+                            ReorderableItem(reorderableState, key = order.id) { isDragged ->
+                                val itemElevation by animateDpAsState(targetValue = if (isDragged) 8.dp else 0.dp)
 
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .graphicsLayer {
-                                        if (isDragged) {
-                                            translationY = dragOffset
-                                            scaleX = 1.04f
-                                            scaleY = 1.04f
-                                            shadowElevation = itemElevation.toPx()
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .animateItem()
+                                        .graphicsLayer {
+                                            if (isDragged) {
+                                                scaleX = 1.04f
+                                                scaleY = 1.04f
+                                                shadowElevation = itemElevation.toPx()
+                                            }
                                         }
-                                    }
-                                    .background(
-                                        color = if (isDragged) {
-                                            if (isDark) Color(0xFF1E293B) else Color(0xFFE0F2FE)
-                                        } else {
-                                            Color.Transparent
-                                        },
-                                        shape = RoundedCornerShape(12.dp)
-                                    ),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
+                                        .background(
+                                            color = if (isDragged) {
+                                                if (isDark) Color(0xFF1E293B) else Color(0xFFE0F2FE)
+                                            } else {
+                                                Color.Transparent
+                                            },
+                                            shape = RoundedCornerShape(12.dp)
+                                        ),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
                                 // Column 1 (Right): Index box & up arrow button (Placed 1st for RTL layout)
                                 Column(
                                     modifier = Modifier.wrapContentWidth(),
@@ -431,7 +362,11 @@ fun RouteReorderScreen(
                                         modifier = Modifier
                                             .size(40.dp)
                                             .border(1.2.dp, if (isDark) Color(0xFF38BDF8).copy(alpha = 0.4f) else Color(0xFFBAE6FD), RoundedCornerShape(8.dp))
-                                            .background(if (isDark) Color(0xFF0C4A6E).copy(alpha = 0.2f) else Color(0xFFE0F2FE), RoundedCornerShape(8.dp)),
+                                            .background(if (isDark) Color(0xFF0C4A6E).copy(alpha = 0.2f) else Color(0xFFE0F2FE), RoundedCornerShape(8.dp))
+                                            .draggableHandle(
+                                                onDragStarted = { haptic.performHapticFeedback(HapticFeedbackType.LongPress) },
+                                                onDragStopped = { haptic.performHapticFeedback(HapticFeedbackType.LongPress) }
+                                            ),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Icon(
@@ -484,6 +419,7 @@ fun RouteReorderScreen(
                                         )
                                     }
                                 }
+                            }
                             }
                         }
                     }

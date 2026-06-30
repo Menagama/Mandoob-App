@@ -68,11 +68,10 @@ class OrderRepository(private val orderDao: OrderDao) {
         updateOrder(updated)
     }
 
-    suspend fun updateOrderNotes(orderId: Int, notes: String?, courierNotes: String?) {
+    suspend fun updateOrderNotes(orderId: Int, notes: String?) {
         val order = getOrderById(orderId) ?: return
         val updated = order.copy(
             notes = notes,
-            courierNotes = courierNotes,
             updatedAt = System.currentTimeMillis()
         )
         updateOrder(updated)

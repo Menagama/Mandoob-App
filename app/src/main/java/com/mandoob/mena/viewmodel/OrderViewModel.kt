@@ -367,10 +367,10 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun updateOrderNotes(orderId: Int, notes: String?, courierNotes: String?) {
+    fun updateOrderNotes(orderId: Int, notes: String?) {
         viewModelScope.launch {
             try {
-                repository.updateOrderNotes(orderId, notes, courierNotes)
+                repository.updateOrderNotes(orderId, notes)
             } catch (e: Exception) {
                 _uiError.value = "Failed to update order notes: ${e.message}"
             }
