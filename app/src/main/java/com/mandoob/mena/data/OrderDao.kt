@@ -21,6 +21,12 @@ interface OrderDao {
     @Update
     suspend fun updateOrder(order: Order)
 
+    @Update
+    suspend fun updateOrders(orders: List<Order>)
+
+    @Query("SELECT * FROM orders WHERE id = :orderId LIMIT 1")
+    suspend fun getOrderById(orderId: Int): Order?
+
     @Query("DELETE FROM orders WHERE id = :orderId")
     suspend fun deleteOrderById(orderId: Int)
 

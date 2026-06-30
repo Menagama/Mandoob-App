@@ -11,6 +11,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.ui.res.stringResource
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -105,7 +106,7 @@ fun ActiveRouteCardHeader(
             ) {
                 Icon(
                     imageVector = Icons.Default.Share,
-                    contentDescription = "مشاركة الأوردر",
+                    contentDescription = stringResource(R.string.string_ar_8),
                     tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.size(18.dp)
                 )
@@ -117,7 +118,7 @@ fun ActiveRouteCardHeader(
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
-                    contentDescription = "تمسح",
+                    contentDescription = stringResource(R.string.string_ar_9),
                     tint = CancelledRed.copy(alpha = 0.8f),
                     modifier = Modifier.size(20.dp)
                 )
@@ -182,7 +183,7 @@ fun ActiveRouteCardFinancialRow(order: Order, onEditClick: () -> Unit) {
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = "المطلوب تحصيله كاش",
+                text = stringResource(R.string.string_ar_3),
                 fontSize = 11.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -224,7 +225,7 @@ fun ActiveRouteCardFinancialRow(order: Order, onEditClick: () -> Unit) {
             ) {
                 Icon(
                     imageVector = Icons.Default.Edit,
-                    contentDescription = "تعديل بيانات الأوردر",
+                    contentDescription = stringResource(R.string.string_ar_10),
                     tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.size(18.dp)
                 )
@@ -322,13 +323,13 @@ fun ActiveRouteCard(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Phone,
-                            contentDescription = "اتصال سريع للعميل",
+                            contentDescription = stringResource(R.string.string_ar_11),
                             tint = if (isDark) Color(0xFF34D399) else Color(0xFF0EA371),
                             modifier = Modifier.size(20.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "إتصال",
+                            text = stringResource(R.string.string_ar_4),
                             color = if (isDark) Color(0xFF34D399) else Color(0xFF0EA371),
                             fontWeight = FontWeight.Bold,
                             fontSize = 13.sp
@@ -365,7 +366,7 @@ fun ActiveRouteCard(
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "رسالة",
+                            text = stringResource(R.string.string_ar_5),
                             color = if (isDark) Color(0xFF38BDF8) else Color(0xFF0084FF),
                             fontWeight = FontWeight.Bold,
                             fontSize = 13.sp
@@ -402,7 +403,7 @@ fun ActiveRouteCard(
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "واتساب",
+                            text = stringResource(R.string.string_ar_6),
                             color = if (isDark) Color(0xFF10B981) else Color(0xFF0EA371),
                             fontWeight = FontWeight.Bold,
                             fontSize = 13.sp
@@ -464,7 +465,7 @@ fun ActiveRouteCard(
             onDismissRequest = { showDeleteWarning = false },
             title = {
                 Text(
-                    text = "تأكيد الحذف ⚠️",
+                    text = stringResource(R.string.string_ar_7),
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
                     textAlign = TextAlign.Right,
@@ -488,14 +489,14 @@ fun ActiveRouteCard(
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = CancelledRed)
                 ) {
-                    Text("حذف الأوردر", color = Color.White, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.string_ar_1), color = Color.White, fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(
                     onClick = { showDeleteWarning = false }
                 ) {
-                    Text("إلغاء", color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.string_ar_2), color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
                 }
             },
             containerColor = MaterialTheme.colorScheme.surface,

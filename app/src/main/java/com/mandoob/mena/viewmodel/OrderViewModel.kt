@@ -53,6 +53,13 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
+    private val _uiError = MutableStateFlow<String?>(null)
+    val uiError: StateFlow<String?> = _uiError.asStateFlow()
+
+    fun clearError() {
+        _uiError.value = null
+    }
+
     private val dataStore = application.dataStore
 
     companion object {
@@ -151,30 +158,20 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
             // Recalculate and update commissions for all stored non-pending orders in database
             try {
                 val list = repository.allOrders.first()
+                val updatedOrders = mutableListOf<Order>()
                 list.forEach { order ->
                     if (order.status != OrderStatus.PENDING.value) {
-                        val newCommission = when (order.status) {
-                            OrderStatus.DELIVERED.value, OrderStatus.PARTIAL.value -> cat1
-                            OrderStatus.REJECTED_WITH_FEE.value -> cat2
-                            OrderStatus.REJECTED_NO_FEE.value -> cat3
-                            else -> 0.0
-                        }
-                        val updated = order.copy(commission = newCommission)
-                        repository.updateOrder(updated)
+                        val newCommission = repository.getCommissionForStatus(order.status, cat1, cat2, cat3)
+                        updatedOrders.add(order.copy(commission = newCommission))
                     }
+                }
+                if (updatedOrders.isNotEmpty()) {
+                    repository.updateOrders(updatedOrders)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
+                _uiError.value = "Failed to update commissions: ${e.message}"
             }
-        }
-    }
-
-    fun getCommissionForStatus(status: String): Double {
-        return when (status) {
-            OrderStatus.DELIVERED.value, OrderStatus.PARTIAL.value -> commissionCat1.value
-            OrderStatus.REJECTED_WITH_FEE.value -> commissionCat2.value
-            OrderStatus.REJECTED_NO_FEE.value -> commissionCat3.value
-            else -> 0.0
         }
     }
 
@@ -273,22 +270,22 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
                 }
 
                 val currentTime = System.currentTimeMillis()
-                listToUpdate.forEachIndexed { i, ord ->
-                    val updated = ord.copy(sequenceNumber = i, isSequenceArranged = true, updatedAt = currentTime)
-                    repository.updateOrder(updated)
+                val updatedList = listToUpdate.mapIndexed { i, ord ->
+                    ord.copy(sequenceNumber = i, isSequenceArranged = true, updatedAt = currentTime)
                 }
+                repository.updateOrders(updatedList)
             }
         }
     }
 
     fun saveRouteSequence(orderedList: List<Order>) {
         viewModelScope.launch {
-            routeMutex.withLock {
-                val currentTime = System.currentTimeMillis()
-                orderedList.forEachIndexed { index, order ->
-                    val updated = order.copy(sequenceNumber = index, isSequenceArranged = true, updatedAt = currentTime)
-                    repository.updateOrder(updated)
+            try {
+                routeMutex.withLock {
+                    repository.saveRouteSequence(orderedList)
                 }
+            } catch (e: Exception) {
+                _uiError.value = "Failed to save route sequence: ${e.message}"
             }
         }
     }
@@ -329,17 +326,15 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
 
     fun updateOrderStatusWithValues(orderId: Int, status: String, collectedAmount: Double? = null, deliveryFeeAmount: Double? = null) {
         viewModelScope.launch {
-            val currentList = repository.allOrders.first()
-            val order = currentList.find { it.id == orderId }
-            if (order != null) {
-                val updated = order.copy(
-                    status = status,
-                    collectedAmount = collectedAmount,
-                    deliveryFeeAmount = deliveryFeeAmount,
-                    commission = getCommissionForStatus(status),
-                    updatedAt = System.currentTimeMillis()
-                )
-                repository.updateOrder(updated)
+            try {
+                val prefs = dataStore.data.first()
+                val c1 = getCommissionFallback(prefs, CAT1_STR_KEY, CAT1_FLT_KEY)
+                val c2 = getCommissionFallback(prefs, CAT2_STR_KEY, CAT2_FLT_KEY)
+                val c3 = getCommissionFallback(prefs, CAT3_STR_KEY, CAT3_FLT_KEY)
+                val commission = repository.getCommissionForStatus(status, c1, c2, c3)
+                repository.updateOrderStatusWithValues(orderId, status, collectedAmount, deliveryFeeAmount, commission)
+            } catch (e: Exception) {
+                _uiError.value = "Failed to update order status: ${e.message}"
             }
         }
     }
@@ -355,42 +350,40 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
         notes: String?
     ) {
         viewModelScope.launch {
-            val currentList = repository.allOrders.first()
-            val order = currentList.find { it.id == orderId }
-            if (order != null) {
-                val updated = order.copy(
+            try {
+                repository.updateOrderDetails(
+                    orderId = orderId,
                     clientName = clientName,
                     phoneNumber = formatEgyptianPhoneNumber(phoneNumber),
                     phoneNumber2 = phoneNumber2?.let { formatEgyptianPhoneNumber(it) },
                     address = address,
                     amount = amount,
                     commission = commission,
-                    notes = notes,
-                    updatedAt = System.currentTimeMillis()
+                    notes = notes
                 )
-                repository.updateOrder(updated)
+            } catch (e: Exception) {
+                _uiError.value = "Failed to update order details: ${e.message}"
             }
         }
     }
 
     fun updateOrderNotes(orderId: Int, notes: String?, courierNotes: String?) {
         viewModelScope.launch {
-            val currentList = repository.allOrders.first()
-            val order = currentList.find { it.id == orderId }
-            if (order != null) {
-                val updated = order.copy(
-                    notes = notes,
-                    courierNotes = courierNotes,
-                    updatedAt = System.currentTimeMillis()
-                )
-                repository.updateOrder(updated)
+            try {
+                repository.updateOrderNotes(orderId, notes, courierNotes)
+            } catch (e: Exception) {
+                _uiError.value = "Failed to update order notes: ${e.message}"
             }
         }
     }
 
     fun deleteOrder(orderId: Int) {
         viewModelScope.launch {
-            repository.deleteOrderById(orderId)
+            try {
+                repository.deleteOrderById(orderId)
+            } catch (e: Exception) {
+                _uiError.value = "Failed to delete order: ${e.message}"
+            }
         }
     }
 
@@ -402,6 +395,9 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
 
     // Parse Excel CSV import
     suspend fun importOrdersFromCsv(csvText: String): Int = withContext(Dispatchers.IO) {
+        val prefs = dataStore.data.first()
+        val cat1 = getCommissionFallback(prefs, CAT1_STR_KEY, CAT1_FLT_KEY)
+
         val lines = csvText.lines()
         if (lines.isEmpty()) return@withContext 0
         
@@ -412,8 +408,8 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
         for (line in dataLines) {
             if (line.isBlank()) continue
             
-            val delimiters = if (line.contains(';')) ";" else if (line.contains('\t')) "\t" else ","
-            val parts = line.split(delimiters).map { it.trim() }
+            val delimiter = if (line.contains(';')) ';' else if (line.contains('\t')) '\t' else ','
+            val parts = parseCsvLine(line, delimiter)
             
             if (parts.size >= 4) {
                 val name = parts[0]
@@ -425,7 +421,7 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
                     val cleanPhone = formatEgyptianPhoneNumber(phoneRaw)
                     val cleanAmountRaw = amountRaw.replace(Regex("[^0-9.-]"), "")
                     val amount = cleanAmountRaw.toDoubleOrNull() ?: 0.0
-                    val commission = commissionCat1.value
+                    val commission = cat1
 
                     newOrders.add(
                         Order(
@@ -461,6 +457,34 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
         importedCount
     }
 
+    private fun parseCsvLine(line: String, delimiter: Char): List<String> {
+        val result = mutableListOf<String>()
+        var current = StringBuilder()
+        var inQuotes = false
+        var i = 0
+        
+        while (i < line.length) {
+            val c = line[i]
+            if (c == '"') {
+                if (inQuotes && i + 1 < line.length && line[i + 1] == '"') {
+                    current.append('"')
+                    i++
+                } else {
+                    inQuotes = !inQuotes
+                }
+            } else if (c == delimiter && !inQuotes) {
+                result.add(current.toString().trim())
+                current = StringBuilder()
+            } else {
+                current.append(c)
+            }
+            i++
+        }
+        result.add(current.toString().trim())
+        
+        return result
+    }
+
     // Normalizes or fixes phone numbers starting with '0' and having 11 digits
     private fun formatEgyptianPhoneNumber(rawPhone: String): String {
         var digits = rawPhone.filter { it.isDigit() }
@@ -483,6 +507,9 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
 
     // Import from Excel Sheet Uri using our clean custom parser
     suspend fun importOrdersFromExcelUri(context: Context, uri: Uri): Int = withContext(Dispatchers.IO) {
+        val prefs = dataStore.data.first()
+        val cat1 = getCommissionFallback(prefs, CAT1_STR_KEY, CAT1_FLT_KEY)
+
         val newOrders = mutableListOf<Order>()
         var importedCount = 0
 
@@ -504,7 +531,7 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
                             val cleanPhone = formatEgyptianPhoneNumber(phoneRaw)
                             val cleanAmountRaw = amountRaw.replace(Regex("[^0-9.-]"), "")
                             val amount = cleanAmountRaw.toDoubleOrNull() ?: 0.0
-                            val commission = commissionCat1.value
+                            val commission = cat1
 
                             newOrders.add(
                                 Order(

@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.DirectionsRun
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.ui.res.stringResource
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
@@ -67,13 +68,15 @@ fun getCurrentFormattedDate(): String {
 fun CaptainAvatarView(avatar: String, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     if (avatar != "default" && avatar != "delivery" && avatar.isNotEmpty()) {
-        val bitmap = remember(avatar) {
+        val file = if (avatar.startsWith("/")) {
+            java.io.File(avatar)
+        } else {
+            java.io.File(context.filesDir, avatar)
+        }
+        val lastMod = if (file.exists()) file.lastModified() else 0L
+        
+        val bitmap = remember(avatar, lastMod) {
             try {
-                val file = if (avatar.startsWith("/")) {
-                    java.io.File(avatar)
-                } else {
-                    java.io.File(context.filesDir, avatar)
-                }
                 if (file.exists()) {
                     android.graphics.BitmapFactory.decodeFile(file.absolutePath)
                 } else null
@@ -84,7 +87,7 @@ fun CaptainAvatarView(avatar: String, modifier: Modifier = Modifier) {
         if (bitmap != null) {
             Image(
                 bitmap = bitmap.asImageBitmap(),
-                contentDescription = "صورة الكابتن",
+                contentDescription = stringResource(R.string.string_ar_19),
                 modifier = modifier
                     .clip(CircleShape)
                     .border(2.dp, MaterialTheme.colorScheme.primaryContainer, CircleShape),
@@ -96,23 +99,27 @@ fun CaptainAvatarView(avatar: String, modifier: Modifier = Modifier) {
 
     when (avatar) {
         "delivery" -> {
-            Image(
-                painter = painterResource(id = R.drawable.ic_mandoob_logo),
-                contentDescription = "صورة الكابتن",
+            Icon(
+                imageVector = Icons.Default.Person,
+                contentDescription = stringResource(R.string.string_ar_19),
                 modifier = modifier
                     .clip(CircleShape)
-                    .border(2.dp, MaterialTheme.colorScheme.primaryContainer, CircleShape),
-                contentScale = ContentScale.Crop
+                    .border(2.dp, MaterialTheme.colorScheme.primaryContainer, CircleShape)
+                    .background(MaterialTheme.colorScheme.secondaryContainer)
+                    .padding(8.dp),
+                tint = MaterialTheme.colorScheme.onSecondaryContainer
             )
         }
         else -> {
-            Image(
-                painter = painterResource(id = R.drawable.img_profile_avatar),
-                contentDescription = "صورة الكابتن",
+            Icon(
+                imageVector = Icons.Default.Person,
+                contentDescription = stringResource(R.string.string_ar_19),
                 modifier = modifier
                     .clip(CircleShape)
-                    .border(2.dp, MaterialTheme.colorScheme.primaryContainer, CircleShape),
-                contentScale = ContentScale.Crop
+                    .border(2.dp, MaterialTheme.colorScheme.primaryContainer, CircleShape)
+                    .background(MaterialTheme.colorScheme.secondaryContainer)
+                    .padding(8.dp),
+                tint = MaterialTheme.colorScheme.onSecondaryContainer
             )
         }
     }
@@ -179,7 +186,7 @@ fun HeaderCard(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Settings,
-                        contentDescription = "الإعدادات",
+                        contentDescription = stringResource(R.string.string_ar_20),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -248,7 +255,7 @@ fun NetRemittanceCard(netRemittance: Double) {
                     modifier = Modifier.fillMaxHeight()
                 ) {
                     Text(
-                        text = "صافي التوريد للمكتب",
+                        text = stringResource(R.string.string_ar_16),
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White.copy(alpha = 0.9f),
@@ -268,7 +275,7 @@ fun NetRemittanceCard(netRemittance: Double) {
                     Spacer(modifier = Modifier.height(4.dp))
                     
                     Text(
-                        text = "صافي المبالغ المستحقة للتسليم وتصفية الوردية",
+                        text = stringResource(R.string.string_ar_17),
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Normal,
                         color = Color.White.copy(alpha = 0.75f),
@@ -381,7 +388,7 @@ fun InteractiveRouteProgressCard(completed: Int, total: Int) {
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = "يلا يا بطل! 🛵",
+                        text = stringResource(R.string.string_ar_18),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = textColor,
@@ -391,11 +398,11 @@ fun InteractiveRouteProgressCard(completed: Int, total: Int) {
 
                 // Subtitle line: "خلصت (15 من 59) من مهماتك النهاردة" with coloured numbers
                 val annotatedSubtitle = buildAnnotatedString {
-                    append("خلصت ")
+                    append(stringResource(R.string.string_ar_148))
                     withStyle(style = SpanStyle(color = highlightColor, fontWeight = FontWeight.Bold)) {
                         append("($completed من $total)")
                     }
-                    append(" من مهماتك النهاردة")
+                    append(stringResource(R.string.string_ar_149))
                 }
 
                 Text(
@@ -569,7 +576,7 @@ fun PhoneTag(
             ) {
                 Icon(
                     imageVector = Icons.Default.Phone,
-                    contentDescription = "اتصال",
+                    contentDescription = stringResource(R.string.string_ar_21),
                     tint = Color(0xFF1E88E5),
                     modifier = Modifier.size(16.dp)
                 )
@@ -583,7 +590,7 @@ fun PhoneTag(
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_whatsapp),
-                    contentDescription = "واتساب",
+                    contentDescription = stringResource(R.string.string_ar_6),
                     tint = Color(0xFF4CAF50),
                     modifier = Modifier.size(16.dp)
                 )

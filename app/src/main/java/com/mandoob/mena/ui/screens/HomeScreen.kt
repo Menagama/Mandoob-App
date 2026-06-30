@@ -1,5 +1,6 @@
 package com.mandoob.mena.ui.screens
 
+import com.mandoob.mena.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -12,6 +13,7 @@ import androidx.compose.material.icons.filled.FileUpload
 import androidx.compose.material.icons.filled.Payments
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
+import androidx.compose.ui.res.stringResource
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -80,9 +82,9 @@ fun HomeScreen(
                     // Cash in Wallet (placed first so it shows on the Right under RTL)
                     Box(modifier = Modifier.weight(1f)) {
                         StatCard(
-                            title = "في الحقيبة (كاش)",
+                            title = stringResource(R.string.string_ar_12),
                             value = "${walletCash.toInt()} ج.م",
-                            subtext = "كاش تم تحصيله فعلياً",
+                            subtext = stringResource(R.string.string_ar_47),
                             icon = Icons.Default.Payments,
                             iconColor = GreenSuccess,
                             testTagPrefix = "wallet"
@@ -92,9 +94,9 @@ fun HomeScreen(
                     // Total Commissions (placed second so it shows on the Left under RTL)
                     Box(modifier = Modifier.weight(1f)) {
                         StatCard(
-                            title = "إجمالي عمولاتك",
+                            title = stringResource(R.string.string_ar_13),
                             value = "${commissions.toInt()} ج.م",
-                            subtext = "إجمالي عمولاتك المستحقة",
+                            subtext = stringResource(R.string.string_ar_48),
                             icon = Icons.Default.Star,
                             iconColor = PurpleStar,
                             testTagPrefix = "commissions"
@@ -161,7 +163,7 @@ fun HomeScreen(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "حذف الكل",
+                    text = stringResource(R.string.string_ar_49),
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
                     fontSize = 14.sp
@@ -200,7 +202,7 @@ fun HomeScreen(
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        text = "إضافة أوردر",
+                        text = stringResource(R.string.string_ar_50),
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp
@@ -233,7 +235,7 @@ fun HomeScreen(
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        text = "استيراد إكسيل",
+                        text = stringResource(R.string.string_ar_51),
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp
@@ -249,7 +251,7 @@ fun HomeScreen(
                 onDismissRequest = { showDeleteAllConfirm = false },
                 title = {
                     Text(
-                        text = "تأكيد مسح خط السير ؟ ⚠️",
+                        text = stringResource(R.string.string_ar_52),
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
                         color = MaterialTheme.colorScheme.onSurface,
@@ -259,7 +261,7 @@ fun HomeScreen(
                 },
                 text = {
                     Text(
-                        text = "هل أنت متأكد من تفريغ خط السير بالكامل؟ سيتم حذف جميع الطلبات الحالية والناجحة والملغاة نهائياً. لا يمكن التراجع عن هذا الإجراء.",
+                        text = stringResource(R.string.string_ar_53),
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Right
@@ -270,16 +272,16 @@ fun HomeScreen(
                         onClick = {
                             viewModel.clearItinerary()
                             showDeleteAllConfirm = false
-                            Toast.makeText(context, "تم مسح وتفريغ خط السير بنجاح! ويبدأ الآن من جديد 🚀", Toast.LENGTH_LONG).show()
+                            Toast.makeText(context, context.getString(R.string.string_ar_54), Toast.LENGTH_LONG).show()
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEF4444))
                     ) {
-                        Text("نعم، امسح خط السير", color = Color.White)
+                        Text(stringResource(R.string.string_ar_46), color = Color.White)
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = { showDeleteAllConfirm = false }) {
-                        Text("إلغاء", color = MaterialTheme.colorScheme.onSurface)
+                        Text(stringResource(R.string.string_ar_2), color = MaterialTheme.colorScheme.onSurface)
                     }
                 }
             )

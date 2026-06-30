@@ -3,6 +3,7 @@ package com.mandoob.mena.ui.screens
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import com.mandoob.mena.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -14,6 +15,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
+import androidx.compose.ui.res.stringResource
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,10 +65,10 @@ fun OnboardingScreen(viewModel: OrderViewModel) {
                     }
                 }
                 avatarFile = fileName
-                Toast.makeText(context, "تم حفظ الصورة بنجاح! 👤", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.string_ar_72), Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 e.printStackTrace()
-                Toast.makeText(context, "فشل نسخ وحفظ صورة الكابتن!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.string_ar_73), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -118,7 +120,7 @@ fun OnboardingScreen(viewModel: OrderViewModel) {
                     ) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "السابق",
+                            contentDescription = stringResource(R.string.string_ar_71),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -149,7 +151,7 @@ fun OnboardingScreen(viewModel: OrderViewModel) {
                     )
 
                     Text(
-                        text = "أهلاً بك في Mandoob",
+                        text = stringResource(R.string.string_ar_63),
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Black,
                         color = MaterialTheme.colorScheme.primary,
@@ -157,7 +159,7 @@ fun OnboardingScreen(viewModel: OrderViewModel) {
                     )
 
                     Text(
-                        text = "يرجى إدخال اسمك وصورتك للبدء في تنظيم رحلات التوصيل الخاصة بك.",
+                        text = stringResource(R.string.string_ar_64),
                         fontSize = 15.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
@@ -169,7 +171,7 @@ fun OnboardingScreen(viewModel: OrderViewModel) {
                     OutlinedTextField(
                         value = nameInput,
                         onValueChange = { nameInput = it },
-                        label = { Text("اسم الكابتن") },
+                        label = { Text(stringResource(R.string.string_ar_58)) },
                         singleLine = true,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -197,7 +199,7 @@ fun OnboardingScreen(viewModel: OrderViewModel) {
                                 contentColor = MaterialTheme.colorScheme.primary
                             )
                         ) {
-                            Text("اختر صورة من الجهاز")
+                            Text(stringResource(R.string.string_ar_59))
                         }
                     }
 
@@ -206,7 +208,7 @@ fun OnboardingScreen(viewModel: OrderViewModel) {
                     Button(
                         onClick = {
                             if (nameInput.trim().isEmpty()) {
-                                Toast.makeText(context, "الرجاء إدخال اسم الكابتن أولاً!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, context.getString(R.string.string_ar_74), Toast.LENGTH_SHORT).show()
                             } else {
                                 currentOnboardingStep++
                             }
@@ -219,7 +221,7 @@ fun OnboardingScreen(viewModel: OrderViewModel) {
                         shape = RoundedCornerShape(14.dp)
                     ) {
                         Text(
-                            text = "التالي",
+                            text = stringResource(R.string.string_ar_65),
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -234,7 +236,7 @@ fun OnboardingScreen(viewModel: OrderViewModel) {
                     )
 
                     Text(
-                        text = "أدخل قيم عمولاتك",
+                        text = stringResource(R.string.string_ar_66),
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Black,
                         color = MaterialTheme.colorScheme.primary,
@@ -242,7 +244,7 @@ fun OnboardingScreen(viewModel: OrderViewModel) {
                     )
 
                     Text(
-                        text = "حدد قيم العمولات الافتراضية لكل حالة توصيل لحساب أرباحك تلقائياً.",
+                        text = stringResource(R.string.string_ar_67),
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
@@ -254,7 +256,7 @@ fun OnboardingScreen(viewModel: OrderViewModel) {
                     OutlinedTextField(
                         value = cat1Input,
                         onValueChange = { cat1Input = it },
-                        label = { Text("عمولة تم التسليم ج.م") },
+                        label = { Text(stringResource(R.string.string_ar_60)) },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier
@@ -269,7 +271,7 @@ fun OnboardingScreen(viewModel: OrderViewModel) {
                     OutlinedTextField(
                         value = cat2Input,
                         onValueChange = { cat2Input = it },
-                        label = { Text("عمولة رفض ودفع مصاريف الشحن ج.م") },
+                        label = { Text(stringResource(R.string.string_ar_61)) },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier
@@ -284,7 +286,7 @@ fun OnboardingScreen(viewModel: OrderViewModel) {
                     OutlinedTextField(
                         value = cat3Input,
                         onValueChange = { cat3Input = it },
-                        label = { Text("عمولة رفض ولم يدفع مصاريف الشحن ج.م") },
+                        label = { Text(stringResource(R.string.string_ar_62)) },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier
@@ -307,7 +309,7 @@ fun OnboardingScreen(viewModel: OrderViewModel) {
                         shape = RoundedCornerShape(14.dp)
                     ) {
                         Text(
-                            text = "التالي",
+                            text = stringResource(R.string.string_ar_65),
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -322,7 +324,7 @@ fun OnboardingScreen(viewModel: OrderViewModel) {
                     )
 
                     Text(
-                        text = "اختر مظهر التطبيق",
+                        text = stringResource(R.string.string_ar_68),
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Black,
                         color = MaterialTheme.colorScheme.primary,
@@ -330,7 +332,7 @@ fun OnboardingScreen(viewModel: OrderViewModel) {
                     )
 
                     Text(
-                        text = "اختر نمط الألوان المفضل والمريح لك للعمل الميداني وساعات الليل الطويلة.",
+                        text = stringResource(R.string.string_ar_69),
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
@@ -409,7 +411,7 @@ fun OnboardingScreen(viewModel: OrderViewModel) {
                         shape = RoundedCornerShape(14.dp)
                     ) {
                         Text(
-                            text = "ابدأ العمل",
+                            text = stringResource(R.string.string_ar_70),
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold
                         )

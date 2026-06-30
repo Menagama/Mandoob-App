@@ -4,6 +4,7 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import com.mandoob.mena.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -12,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FileUpload
 import androidx.compose.material3.*
+import androidx.compose.ui.res.stringResource
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,7 +60,7 @@ fun OrderFormFields(
     OutlinedTextField(
         value = name,
         onValueChange = onNameChange,
-        label = { Text("اسم العميل") },
+        label = { Text(stringResource(R.string.string_ar_22)) },
         modifier = Modifier.fillMaxWidth().testTag(nameTestTag),
         singleLine = true,
         colors = colors
@@ -67,7 +69,7 @@ fun OrderFormFields(
     OutlinedTextField(
         value = phone,
         onValueChange = onPhoneChange,
-        label = { Text("رقم تليفون العميل (أساسي)") },
+        label = { Text(stringResource(R.string.string_ar_23)) },
         modifier = Modifier.fillMaxWidth().testTag(phoneTestTag),
         singleLine = true,
         colors = colors
@@ -76,7 +78,7 @@ fun OrderFormFields(
     OutlinedTextField(
         value = phone2,
         onValueChange = onPhone2Change,
-        label = { Text("رقم تليفون ثانى (اختياري)") },
+        label = { Text(stringResource(R.string.string_ar_24)) },
         modifier = Modifier.fillMaxWidth(),
         singleLine = true,
         colors = colors
@@ -85,7 +87,7 @@ fun OrderFormFields(
     OutlinedTextField(
         value = address,
         onValueChange = onAddressChange,
-        label = { Text("العنوان بالتفصيل") },
+        label = { Text(stringResource(R.string.string_ar_25)) },
         modifier = Modifier.fillMaxWidth().testTag(addressTestTag),
         singleLine = false,
         maxLines = 3,
@@ -95,7 +97,7 @@ fun OrderFormFields(
     OutlinedTextField(
         value = amountValue,
         onValueChange = onAmountChange,
-        label = { Text("مبلغ التحصيل (ج.م)") },
+        label = { Text(stringResource(R.string.string_ar_26)) },
         modifier = Modifier.fillMaxWidth().testTag(amountTestTag),
         singleLine = true,
         colors = colors
@@ -104,7 +106,7 @@ fun OrderFormFields(
     OutlinedTextField(
         value = notes,
         onValueChange = onNotesChange,
-        label = { Text("الملاحظات") },
+        label = { Text(stringResource(R.string.string_ar_27)) },
         modifier = Modifier.fillMaxWidth(),
         singleLine = false,
         maxLines = 2,
@@ -142,7 +144,7 @@ fun AddOrderDialog(
             ) {
                 item {
                     Text(
-                        text = "إضافة أوردر جديد",
+                        text = stringResource(R.string.string_ar_36),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface,
@@ -175,7 +177,7 @@ fun AddOrderDialog(
                         horizontalArrangement = Arrangement.End
                     ) {
                         TextButton(onClick = onDismiss) {
-                            Text("إلغاء", color = CancelledRed)
+                            Text(stringResource(R.string.string_ar_2), color = CancelledRed)
                         }
                         Spacer(modifier = Modifier.width(12.dp))
                         Button(
@@ -191,7 +193,7 @@ fun AddOrderDialog(
                             enabled = name.isNotBlank() && phone.isNotBlank() && address.isNotBlank(),
                             shape = RoundedCornerShape(8.dp)
                         ) {
-                            Text("حفظ الأوردر", color = Color.White)
+                            Text(stringResource(R.string.string_ar_28), color = Color.White)
                         }
                     }
                 }
@@ -232,7 +234,7 @@ fun EditOrderDialog(
             ) {
                 item {
                     Text(
-                        text = "تعديل بيانات الأوردر",
+                        text = stringResource(R.string.string_ar_10),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface,
@@ -265,7 +267,7 @@ fun EditOrderDialog(
                         horizontalArrangement = Arrangement.End
                     ) {
                         TextButton(onClick = onDismiss) {
-                            Text("إلغاء", color = CancelledRed)
+                            Text(stringResource(R.string.string_ar_2), color = CancelledRed)
                         }
                         Spacer(modifier = Modifier.width(12.dp))
                         Button(
@@ -281,7 +283,7 @@ fun EditOrderDialog(
                             enabled = name.isNotBlank() && phone.isNotBlank() && address.isNotBlank(),
                             shape = RoundedCornerShape(8.dp)
                         ) {
-                            Text("تعديل وحفظ الأوردر", color = Color.White)
+                            Text(stringResource(R.string.string_ar_29), color = Color.White)
                         }
                     }
                 }
@@ -312,7 +314,7 @@ fun ImportExcelDialog(
                     Toast.makeText(context, "تم استيراد $count أوردر بنجاح من شيت الإكسيل! 🎉", Toast.LENGTH_LONG).show()
                     onDismiss()
                 } else {
-                    Toast.makeText(context, "فشل قراءة ملف الإكسيل المرفق، تأكد أنه ملف .xlsx صحيح وبنفس نسق الأعمدة", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, context.getString(R.string.string_ar_40), Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -324,7 +326,7 @@ fun ImportExcelDialog(
         if (isGranted || android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             filePickerLauncher.launch("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
         } else {
-            Toast.makeText(context, "يجب الموافقة على صلاحية قراءة الملفات لاستيراد الإكسيل", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.string_ar_41), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -363,7 +365,7 @@ fun ImportExcelDialog(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(
-                    text = "استيراد أوردرات من إكسيل",
+                    text = stringResource(R.string.string_ar_37),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF1B5E20),
@@ -373,7 +375,7 @@ fun ImportExcelDialog(
 
                 // Subtitle Instruction
                 Text(
-                    text = "يجب أن يحتوي شيت الإكسيل بالترتيب على:\nالعمود الأول: الاسم، ثم المحمول (١١ رقم)، ثم العنوان، ثم قيمة التحصيل.",
+                    text = stringResource(R.string.string_ar_38),
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.fillMaxWidth()
@@ -395,8 +397,7 @@ fun ImportExcelDialog(
                             .padding(vertical = 8.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            "نسخ ولصق ورقة",
+                        Text(stringResource(R.string.string_ar_30),
                             color = if (tabIndex == 0) Color.White else MaterialTheme.colorScheme.onSurface,
                             fontWeight = FontWeight.Bold,
                             fontSize = 12.sp
@@ -412,8 +413,7 @@ fun ImportExcelDialog(
                             .padding(vertical = 8.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            "اختيار شيت إكسل",
+                        Text(stringResource(R.string.string_ar_31),
                             color = if (tabIndex == 1) Color.White else MaterialTheme.colorScheme.onSurface,
                             fontWeight = FontWeight.Bold,
                             fontSize = 12.sp
@@ -424,7 +424,7 @@ fun ImportExcelDialog(
                 if (tabIndex == 0) {
                     // Paste Area
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Text("انسخ جدول بياناتك أو الصقه هنا مباشرة:", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.string_ar_32), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
                         OutlinedTextField(
                             value = pastedText,
                             onValueChange = { pastedText = it },
@@ -445,7 +445,7 @@ fun ImportExcelDialog(
 
                         // 1-tap Demo Loader
                         Text(
-                            text = "💡 اضغط هنا لملء نموذج تجريبي جاهز وتجربة الاستيراد فوراً!",
+                            text = stringResource(R.string.string_ar_39),
                             fontSize = 11.sp,
                             color = BluePrimary,
                             fontWeight = FontWeight.Bold,
@@ -470,11 +470,10 @@ fun ImportExcelDialog(
                         ) {
                             Icon(Icons.Default.FileUpload, contentDescription = null, tint = Color.White)
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("تصفح ملفات الهاتف (Excel)", color = Color.White)
+                            Text(stringResource(R.string.string_ar_33), color = Color.White)
                         }
 
-                        Text(
-                            "قم باختيار ملف شيت الإكسيل (.xlsx) الأصلي ليقوم التطبيق بقراءته واستخلاص البيانات وتأسيس خط التوجيه تلقائياً.",
+                        Text(stringResource(R.string.string_ar_34),
                             fontSize = 11.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center
@@ -488,7 +487,7 @@ fun ImportExcelDialog(
                     horizontalArrangement = Arrangement.End
                 ) {
                     TextButton(onClick = onDismiss) {
-                        Text("إلغاء", color = CancelledRed)
+                        Text(stringResource(R.string.string_ar_2), color = CancelledRed)
                     }
                     if (tabIndex == 0) {
                         Spacer(modifier = Modifier.width(12.dp))
@@ -509,7 +508,7 @@ fun ImportExcelDialog(
                             enabled = pastedText.isNotBlank(),
                             shape = RoundedCornerShape(8.dp)
                         ) {
-                            Text("ابدأ الاستيراد", color = Color.White)
+                            Text(stringResource(R.string.string_ar_35), color = Color.White)
                         }
                     }
                 }

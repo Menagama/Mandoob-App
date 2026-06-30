@@ -3,6 +3,7 @@ package com.mandoob.mena.ui.screens
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import com.mandoob.mena.R
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -35,6 +36,7 @@ import androidx.compose.material.icons.outlined.List
 import androidx.compose.material.icons.outlined.Navigation
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
+import androidx.compose.ui.res.stringResource
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
@@ -68,6 +70,15 @@ fun MainScreen(viewModel: OrderViewModel) {
         } else {
             var currentTab by rememberSaveable { mutableStateOf(0) }
             val context = LocalContext.current
+            val snackbarHostState = remember { SnackbarHostState() }
+            val uiError by viewModel.uiError.collectAsState()
+
+            androidx.compose.runtime.LaunchedEffect(uiError) {
+                uiError?.let {
+                    snackbarHostState.showSnackbar(it)
+                    viewModel.clearError()
+                }
+            }
 
             var showAddDialog by remember { mutableStateOf(false) }
             var showImportDialog by remember { mutableStateOf(false) }
@@ -75,6 +86,7 @@ fun MainScreen(viewModel: OrderViewModel) {
 
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                snackbarHost = { SnackbarHost(snackbarHostState) },
                 bottomBar = {
                     BottomBar(
                         selectedTab = currentTab,
@@ -119,7 +131,7 @@ fun MainScreen(viewModel: OrderViewModel) {
                                     address, amount, commissionCat1, notes?.ifBlank { null }
                                 )
                                 showAddDialog = false
-                                Toast.makeText(context, "تم إضافة الأوردر بنجاح!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, context.getString(R.string.string_ar_57), Toast.LENGTH_SHORT).show()
                             }
                         )
                     }
@@ -151,8 +163,7 @@ fun BottomBar(selectedTab: Int, onTabSelected: (Int) -> Unit) {
             selected = selectedTab == 0,
             onClick = { onTabSelected(0) },
             label = {
-                Text(
-                    "الرئيسية",
+                Text(stringResource(R.string.string_ar_55),
                     fontWeight = if (selectedTab == 0) FontWeight.Bold else FontWeight.Normal,
                     fontSize = 12.sp
                 )
@@ -160,7 +171,7 @@ fun BottomBar(selectedTab: Int, onTabSelected: (Int) -> Unit) {
             icon = {
                 Icon(
                     imageVector = if (selectedTab == 0) Icons.Filled.Home else Icons.Outlined.Home,
-                    contentDescription = "الرئيسية"
+                    contentDescription = stringResource(R.string.string_ar_55)
                 )
             },
             colors = NavigationBarItemDefaults.colors(
@@ -177,8 +188,7 @@ fun BottomBar(selectedTab: Int, onTabSelected: (Int) -> Unit) {
             selected = selectedTab == 1,
             onClick = { onTabSelected(1) },
             label = {
-                Text(
-                    "خط السير",
+                Text(stringResource(R.string.string_ar_56),
                     fontWeight = if (selectedTab == 1) FontWeight.Bold else FontWeight.Normal,
                     fontSize = 12.sp
                 )
@@ -186,7 +196,7 @@ fun BottomBar(selectedTab: Int, onTabSelected: (Int) -> Unit) {
             icon = {
                 Icon(
                     imageVector = if (selectedTab == 1) Icons.Filled.Navigation else Icons.Outlined.Navigation,
-                    contentDescription = "خط السير"
+                    contentDescription = stringResource(R.string.string_ar_56)
                 )
             },
             colors = NavigationBarItemDefaults.colors(
@@ -203,8 +213,7 @@ fun BottomBar(selectedTab: Int, onTabSelected: (Int) -> Unit) {
             selected = selectedTab == 2,
             onClick = { onTabSelected(2) },
             label = {
-                Text(
-                    "الإعدادات",
+                Text(stringResource(R.string.string_ar_20),
                     fontWeight = if (selectedTab == 2) FontWeight.Bold else FontWeight.Normal,
                     fontSize = 12.sp
                 )
@@ -212,7 +221,7 @@ fun BottomBar(selectedTab: Int, onTabSelected: (Int) -> Unit) {
             icon = {
                 Icon(
                     imageVector = if (selectedTab == 2) Icons.Filled.Settings else Icons.Outlined.Settings,
-                    contentDescription = "الإعدادات"
+                    contentDescription = stringResource(R.string.string_ar_20)
                 )
             },
             colors = NavigationBarItemDefaults.colors(

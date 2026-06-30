@@ -1,6 +1,7 @@
 package com.mandoob.mena.ui.screens
 
 import android.widget.Toast
+import com.mandoob.mena.R
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -20,6 +21,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
+import androidx.compose.ui.res.stringResource
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -91,7 +93,7 @@ fun RouteReorderScreen(
                 TopAppBar(
                     title = {
                         Text(
-                            text = "ترتيب عناوين خط السير",
+                            text = stringResource(R.string.string_ar_108),
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
                             color = textColor
@@ -104,7 +106,7 @@ fun RouteReorderScreen(
                         }) {
                             Icon(
                                 imageVector = Icons.Default.Close,
-                                contentDescription = "إغلاق",
+                                contentDescription = stringResource(R.string.string_ar_112),
                                 tint = textColor
                             )
                         }
@@ -125,7 +127,7 @@ fun RouteReorderScreen(
                     Button(
                         onClick = {
                             viewModel.saveRouteSequence(itemsList)
-                            Toast.makeText(context, "تم حفظ وترتيب خط السير بنجاح", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.string_ar_117), Toast.LENGTH_SHORT).show()
                             onDismiss()
                         },
                         modifier = Modifier
@@ -141,7 +143,7 @@ fun RouteReorderScreen(
                             horizontalArrangement = Arrangement.Center
                         ) {
                             Text(
-                                text = "حفظ الترتيب",
+                                text = stringResource(R.string.string_ar_109),
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White
@@ -149,7 +151,7 @@ fun RouteReorderScreen(
                             Spacer(modifier = Modifier.width(8.dp))
                             Icon(
                                 imageVector = Icons.Default.Check,
-                                contentDescription = "تم",
+                                contentDescription = stringResource(R.string.string_ar_113),
                                 tint = Color.White,
                                 modifier = Modifier.size(20.dp)
                             )
@@ -170,7 +172,7 @@ fun RouteReorderScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "لا توجد أوردرات جاري العمل لترتيبها!",
+                            text = stringResource(R.string.string_ar_110),
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Medium,
                             color = subtextColor
@@ -345,7 +347,7 @@ fun RouteReorderScreen(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.ArrowUpward,
-                                            contentDescription = "للأعلى",
+                                            contentDescription = stringResource(R.string.string_ar_114),
                                             tint = if (index > 0) {
                                                 if (isDark) Color(0xFF38BDF8) else Color(0xFF0284C7)
                                             } else {
@@ -392,7 +394,7 @@ fun RouteReorderScreen(
                                                 horizontalArrangement = Arrangement.Center
                                             ) {
                                                 Text(
-                                                    text = "تسليم",
+                                                    text = stringResource(R.string.string_ar_111),
                                                     fontSize = 11.sp,
                                                     fontWeight = FontWeight.Bold,
                                                     color = deliveryText
@@ -434,7 +436,7 @@ fun RouteReorderScreen(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.Menu,
-                                            contentDescription = "اسحب للترتيب",
+                                            contentDescription = stringResource(R.string.string_ar_115),
                                             tint = if (isDark) Color(0xFF38BDF8) else Color(0xFF0284C7),
                                             modifier = Modifier.size(20.dp)
                                         )
@@ -472,7 +474,7 @@ fun RouteReorderScreen(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.ArrowDownward,
-                                            contentDescription = "للأسفل",
+                                            contentDescription = stringResource(R.string.string_ar_116),
                                             tint = if (index < itemsList.size - 1) {
                                                 if (isDark) Color(0xFF38BDF8) else Color(0xFF0284C7)
                                             } else {

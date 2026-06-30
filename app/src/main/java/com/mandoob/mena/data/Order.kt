@@ -42,6 +42,7 @@ data class Order(
                status == OrderStatus.REJECTED_NO_FEE.value ||
                status == OrderStatus.REJECTED_WITH_FEE.value ||
                status == OrderStatus.NO_ANSWER.value ||
-               status == OrderStatus.POSTPONED.value
+               status == OrderStatus.POSTPONED.value ||
+               status == OrderStatus.PARTIAL.value
     }
 }

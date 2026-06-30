@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.ui.res.stringResource
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -150,10 +151,10 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                     }
                 }
                 selectedAvatar = fileName // Storing ONLY the file name! Relaxes path breaking bugs
-                Toast.makeText(context, "تم حفظ الصورة بنجاح! اضغط حفظ لاعتمادها 👤", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.string_ar_133), Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 e.printStackTrace()
-                Toast.makeText(context, "فشل نسخ وحفظ صورة الكابتن!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.string_ar_73), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -176,10 +177,10 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                 ) {
                     Text(
                         text = when (activeSection) {
-                            "profile" -> "بيانات الكابتن"
-                            "commissions" -> "فئات العمولات"
-                            "appearance" -> "مظهر التطبيق"
-                            else -> "إعدادات التطبيق"
+                            "profile" -> stringResource(R.string.string_ar_152)
+                            "commissions" -> stringResource(R.string.string_ar_154)
+                            "appearance" -> stringResource(R.string.string_ar_164)
+                            else -> stringResource(R.string.string_ar_165)
                         },
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Black,
@@ -197,7 +198,7 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                             Icon(
                                 imageVector = Icons.Default.ArrowBack,
-                                contentDescription = "رجوع",
+                                contentDescription = stringResource(R.string.string_ar_102),
                                 tint = MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier.size(28.dp)
                             )
@@ -219,8 +220,8 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                         Column {
                             // Section 1: Captain Info
                             SettingsMenuItem(
-                                title = "بيانات الكابتن",
-                                subtitle = "تعديل اسم وصورة كابتن التوصيل",
+                                title = stringResource(R.string.string_ar_152),
+                                subtitle = stringResource(R.string.string_ar_153),
                                 icon = Icons.Default.Person,
                                 iconBackgroundColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
                                 iconColor = MaterialTheme.colorScheme.primary,
@@ -232,8 +233,8 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
 
                             // Section 2: Commissions
                             SettingsMenuItem(
-                                title = "فئات العمولات",
-                                subtitle = "تعديل أسعار عمولات حالات التوصيل",
+                                title = stringResource(R.string.string_ar_154),
+                                subtitle = stringResource(R.string.string_ar_155),
                                 icon = Icons.Default.Payments,
                                 iconBackgroundColor = Color(0xFFE6F4EA),
                                 iconColor = Color(0xFF34A853),
@@ -245,8 +246,8 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
 
                             // Section 3: Appearance mode (Light / Dark)
                             SettingsMenuItem(
-                                title = "مظهر التطبيق (الوضع الليلي)",
-                                subtitle = "تبديل المظهر بين المضيء، الداكن أو التلقائي وبألوان متناسقة",
+                                title = stringResource(R.string.string_ar_156),
+                                subtitle = stringResource(R.string.string_ar_157),
                                 icon = Icons.Default.Brightness4,
                                 iconBackgroundColor = Color(0xFFFEF7E0),
                                 iconColor = Color(0xFFF9AB00),
@@ -259,7 +260,7 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                 // Section: Rights & Copyright ("حقوق الملكية")
                 item {
                     Text(
-                        text = "حقوق الملكية",
+                        text = stringResource(R.string.string_ar_127),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary,
@@ -281,7 +282,7 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                         Column {
                             // Element 1: App Version Number (Read dynamically from BuildConfig.VERSION_NAME)
                             SettingsMenuItem(
-                                title = "إصدار التطبيق",
+                                title = stringResource(R.string.string_ar_158),
                                 subtitle = "الإصدار ${com.mandoob.mena.BuildConfig.VERSION_NAME}",
                                 icon = Icons.Default.Info,
                                 iconBackgroundColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
@@ -296,8 +297,8 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
 
                             // Element 2: Contact Developer (Direct WhatsApp Chat)
                             SettingsMenuItem(
-                                title = "تواصل مع المطور",
-                                subtitle = "راسل المطور مباشرة عبر تطبيق واتساب",
+                                title = stringResource(R.string.string_ar_159),
+                                subtitle = stringResource(R.string.string_ar_160),
                                 painter = painterResource(id = R.drawable.ic_whatsapp),
                                 iconBackgroundColor = Color(0xFFE8F5E9),
                                 iconColor = Color(0xFF25D366),
@@ -319,7 +320,7 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://wa.me/201064139779"))
                                         context.startActivity(intent)
                                     } else {
-                                        Toast.makeText(context, "واتساب غير مثبت على جهازك", Toast.LENGTH_LONG).show()
+                                        Toast.makeText(context, context.getString(R.string.string_ar_134), Toast.LENGTH_LONG).show()
                                     }
                                 }
                             )
@@ -340,7 +341,7 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "تعديل بيانات الكابتن الشخصية 👤",
+                                text = stringResource(R.string.string_ar_128),
                                 fontSize = 17.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.primary,
@@ -361,13 +362,13 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                             ) {
                                 Icon(Icons.Default.FileUpload, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Text("رفع صورة جديدة من ملفات الجهاز 📁", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+                                Text(stringResource(R.string.string_ar_118), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
                             }
 
                             OutlinedTextField(
                                 value = inputName,
                                 onValueChange = { inputName = it },
-                                label = { Text("اسم الكابتن الجديد", fontSize = 12.sp) },
+                                label = { Text(stringResource(R.string.string_ar_119), fontSize = 12.sp) },
                                 singleLine = true,
                                 modifier = Modifier.fillMaxWidth(),
                                 colors = OutlinedTextFieldDefaults.colors(
@@ -386,18 +387,18 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                                 Button(
                                     onClick = {
                                         if (inputName.isBlank()) {
-                                            Toast.makeText(context, "الرجاء كـتابة اسم جـديد!", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, context.getString(R.string.string_ar_135), Toast.LENGTH_SHORT).show()
                                             return@Button
                                         }
                                         viewModel.updateCaptainInfo(inputName.trim(), selectedAvatar)
-                                        Toast.makeText(context, "تم حفظ بيانات الكابتن بنجاح! ✅", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, context.getString(R.string.string_ar_136), Toast.LENGTH_SHORT).show()
                                         activeSection = null
                                     },
                                     colors = ButtonDefaults.buttonColors(containerColor = GreenSuccess),
                                     modifier = Modifier.weight(1f),
                                     shape = RoundedCornerShape(12.dp)
                                 ) {
-                                    Text("حفظ التعديلات ✅", color = Color.White, fontWeight = FontWeight.Bold)
+                                    Text(stringResource(R.string.string_ar_120), color = Color.White, fontWeight = FontWeight.Bold)
                                 }
 
                                 OutlinedButton(
@@ -405,7 +406,7 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                                     modifier = Modifier.weight(1f),
                                     shape = RoundedCornerShape(12.dp)
                                 ) {
-                                    Text("إلغاء التعديل", color = MaterialTheme.colorScheme.onSurface)
+                                    Text(stringResource(R.string.string_ar_121), color = MaterialTheme.colorScheme.onSurface)
                                 }
                             }
                         }
@@ -424,7 +425,7 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             Text(
-                                text = "تعديل فئات العمولات 💰",
+                                text = stringResource(R.string.string_ar_129),
                                 fontSize = 17.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.primary,
@@ -432,7 +433,7 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                             )
 
                             Text(
-                                text = "هذه الفئات تُسـتخدم في الحسـاب التـلقائي لصافي أربـاح الكـابتن والورديـة عـند تعديل حـالة أي أوردر.",
+                                text = stringResource(R.string.string_ar_130),
                                 fontSize = 12.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 textAlign = TextAlign.Right
@@ -441,7 +442,7 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                             OutlinedTextField(
                                 value = inputCat1,
                                 onValueChange = { inputCat1 = it },
-                                label = { Text("الفئة الأولى: التسليم الفعلي والتسليم الجزئي (ج.م)", fontSize = 11.sp) },
+                                label = { Text(stringResource(R.string.string_ar_122), fontSize = 11.sp) },
                                 keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
                                     keyboardType = androidx.compose.ui.text.input.KeyboardType.Number
                                 ),
@@ -458,7 +459,7 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                             OutlinedTextField(
                                 value = inputCat2,
                                 onValueChange = { inputCat2 = it },
-                                label = { Text("الفئة الثانية: الرفض مع تحصيل مصاريف الشحن (ج.م)", fontSize = 11.sp) },
+                                label = { Text(stringResource(R.string.string_ar_123), fontSize = 11.sp) },
                                 keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
                                     keyboardType = androidx.compose.ui.text.input.KeyboardType.Number
                                 ),
@@ -475,7 +476,7 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                             OutlinedTextField(
                                 value = inputCat3,
                                 onValueChange = { inputCat3 = it },
-                                label = { Text("الفئة الثالثة: الرفض بدون دفع مصاريف الشحن (ج.م)", fontSize = 11.sp) },
+                                label = { Text(stringResource(R.string.string_ar_124), fontSize = 11.sp) },
                                 keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
                                     keyboardType = androidx.compose.ui.text.input.KeyboardType.Number
                                 ),
@@ -499,14 +500,14 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                                         val c2 = inputCat2.toDoubleOrNull() ?: 0.0
                                         val c3 = inputCat3.toDoubleOrNull() ?: 0.0
                                         viewModel.updateCommissionRates(c1, c2, c3)
-                                        Toast.makeText(context, "تم حفظ قيم العمولات الجديدة وتحديث الأرقام! ✅", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, context.getString(R.string.string_ar_137), Toast.LENGTH_SHORT).show()
                                         activeSection = null
                                     },
                                     colors = ButtonDefaults.buttonColors(containerColor = GreenSuccess),
                                     modifier = Modifier.weight(1f),
                                     shape = RoundedCornerShape(12.dp)
                                 ) {
-                                    Text("حفظ العمولات 💾", color = Color.White, fontWeight = FontWeight.Bold)
+                                    Text(stringResource(R.string.string_ar_125), color = Color.White, fontWeight = FontWeight.Bold)
                                 }
 
                                 OutlinedButton(
@@ -514,7 +515,7 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                                     modifier = Modifier.weight(1f),
                                     shape = RoundedCornerShape(12.dp)
                                 ) {
-                                    Text("إلغاء", color = MaterialTheme.colorScheme.onSurface)
+                                    Text(stringResource(R.string.string_ar_2), color = MaterialTheme.colorScheme.onSurface)
                                 }
                             }
                         }
@@ -533,7 +534,7 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             Text(
-                                text = "مظهر التطبيق ☀️🌙",
+                                text = stringResource(R.string.string_ar_131),
                                 fontSize = 17.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.primary,
@@ -541,16 +542,16 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                             )
 
                             Text(
-                                text = "اختر نمط الألوان المفضل لك. تم دعم الوضع المضيء والداكن بألوان مريحة ومتناسقة للعين مع ألوان شيت بوسطة للعمل الميداني وساعات الليل الطويلة.",
+                                text = stringResource(R.string.string_ar_132),
                                 fontSize = 12.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 textAlign = TextAlign.Right
                             )
 
                             val modes = listOf(
-                                "system" to "مزامنة تلقائية مع مظهر النظام 💻",
-                                "light" to "الوضع المضيء دائمًا ☀️",
-                                "dark" to "الوضع الداكن دائمًا 🌙"
+                                "system" to stringResource(R.string.string_ar_161),
+                                "light" to stringResource(R.string.string_ar_162),
+                                "dark" to stringResource(R.string.string_ar_163)
                             )
 
                             modes.forEach { (key, titleKey) ->
@@ -563,7 +564,7 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                                         )
                                         .clickable {
                                             viewModel.updateAppTheme(key)
-                                            Toast.makeText(context, "تم حفظ نمط المظهر المختار!", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, context.getString(R.string.string_ar_138), Toast.LENGTH_SHORT).show()
                                         }
                                         .padding(14.dp),
                                     verticalAlignment = Alignment.CenterVertically,
@@ -579,7 +580,7 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                                         selected = appThemeSettings == key,
                                         onClick = {
                                             viewModel.updateAppTheme(key)
-                                            Toast.makeText(context, "تم حفظ نمط المظهر المختار!", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, context.getString(R.string.string_ar_138), Toast.LENGTH_SHORT).show()
                                         },
                                         colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colorScheme.primary)
                                     )
@@ -592,7 +593,7 @@ fun SettingsScreen(viewModel: OrderViewModel, onBack: () -> Unit) {
                                 shape = RoundedCornerShape(12.dp),
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                Text("رجوع للقائمة الرئيسية", color = Color.White, fontWeight = FontWeight.Bold)
+                                Text(stringResource(R.string.string_ar_126), color = Color.White, fontWeight = FontWeight.Bold)
                             }
                         }
                     }

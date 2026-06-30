@@ -16,6 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.ui.res.stringResource
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,7 +58,7 @@ fun OrderDetailsTopBar(order: Order, isDark: Boolean, onDismiss: () -> Unit) {
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowForward,
-                    contentDescription = "رجوع",
+                    contentDescription = stringResource(R.string.string_ar_102),
                     tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.size(20.dp)
                 )
@@ -67,7 +68,7 @@ fun OrderDetailsTopBar(order: Order, isDark: Boolean, onDismiss: () -> Unit) {
                 horizontalAlignment = Alignment.Start
             ) {
                 Text(
-                    text = "تسليم شحنة",
+                    text = stringResource(R.string.string_ar_83),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.ExtraBold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -160,7 +161,7 @@ fun OrderDetailsBottomBar(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "تسليم الشحنة",
+                            text = stringResource(R.string.string_ar_84),
                             color = Color.White,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold
@@ -181,7 +182,7 @@ fun OrderDetailsBottomBar(
                     )
                 ) {
                     Text(
-                        text = "إلغاء / خيارات أخرى",
+                        text = stringResource(R.string.string_ar_85),
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
                         color = if (isDark) Color(0xFFF87171) else Color(0xFFDC2626)
@@ -209,7 +210,7 @@ fun OrderDetailsBottomBar(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "إعادة بدء التوصيل",
+                        text = stringResource(R.string.string_ar_86),
                         color = Color.White,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
@@ -250,13 +251,13 @@ fun OrderDetailsActionCards(
             ) {
                 Icon(
                     imageVector = Icons.Default.Phone,
-                    contentDescription = "اتصال",
+                    contentDescription = stringResource(R.string.string_ar_21),
                     tint = if (isDark) Color(0xFF34D399) else Color(0xFF2E7D32),
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "إتصال",
+                    text = stringResource(R.string.string_ar_4),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
                     color = if (isDark) Color(0xFF34D399) else Color(0xFF2E7D32)
@@ -287,7 +288,7 @@ fun OrderDetailsActionCards(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "رسالة",
+                    text = stringResource(R.string.string_ar_5),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
                     color = if (isDark) Color(0xFF38BDF8) else Color(0xFF0084FF)
@@ -318,7 +319,7 @@ fun OrderDetailsActionCards(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "واتساب",
+                    text = stringResource(R.string.string_ar_6),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
                     color = if (isDark) Color(0xFF10B981) else Color(0xFF0EA371)
@@ -351,7 +352,7 @@ fun OrderDetailsAmountCard(order: Order, isDark: Boolean) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = "المبلغ المطلوب للتجميع",
+                    text = stringResource(R.string.string_ar_87),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     color = if (isDark) Color(0xFFE2E8F0) else Color(0xFF1E293B)
@@ -484,7 +485,7 @@ fun OrderDetailsFullScreenPage(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Text(
-                    text = "بيانات العميل",
+                    text = stringResource(R.string.string_ar_88),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.ExtraBold,
                     color = if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B),
@@ -508,7 +509,7 @@ fun OrderDetailsFullScreenPage(
                             horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
                             Text(
-                                text = "العميل",
+                                text = stringResource(R.string.string_ar_89),
                                 fontSize = 14.sp,
                                 color = if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B),
                                 fontWeight = FontWeight.Bold
@@ -546,7 +547,7 @@ fun OrderDetailsFullScreenPage(
                             horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
                             Text(
-                                text = "العنوان",
+                                text = stringResource(R.string.string_ar_90),
                                 fontSize = 14.sp,
                                 color = if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B),
                                 fontWeight = FontWeight.Bold
@@ -584,7 +585,7 @@ fun OrderDetailsFullScreenPage(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Text(
-                    text = "تفاصيل الشحنة والملاحظات",
+                    text = stringResource(R.string.string_ar_91),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.ExtraBold,
                     color = if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B),
@@ -625,7 +626,7 @@ fun OrderDetailsFullScreenPage(
                                 modifier = Modifier.size(20.dp)
                             )
                             Text(
-                                text = "ملاحظات المندوب",
+                                text = stringResource(R.string.string_ar_75),
                                 fontSize = 14.sp,
                                 color = if (isDark) Color(0xFF34D399) else Color(0xFF16A34A),
                                 fontWeight = FontWeight.Bold
@@ -640,7 +641,7 @@ fun OrderDetailsFullScreenPage(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Edit,
-                                contentDescription = "تعديل ملاحظات المندوب",
+                                contentDescription = stringResource(R.string.string_ar_103),
                                 tint = if (isDark) Color(0xFF34D399) else Color(0xFF16A34A),
                                 modifier = Modifier.size(16.dp)
                             )
@@ -669,7 +670,7 @@ fun OrderDetailsFullScreenPage(
             onDismissRequest = { showEditCourierNotesDialog = false },
             title = {
                 Text(
-                    text = "ملاحظات المندوب ✍️",
+                    text = stringResource(R.string.string_ar_92),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Right,
@@ -680,7 +681,7 @@ fun OrderDetailsFullScreenPage(
                 OutlinedTextField(
                     value = tempCourierNotesValue,
                     onValueChange = { tempCourierNotesValue = it },
-                    label = { Text("ملاحظات المندوب", fontSize = 12.sp) },
+                    label = { Text(stringResource(R.string.string_ar_75), fontSize = 12.sp) },
                     modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = MaterialTheme.colorScheme.onSurface,
@@ -703,13 +704,13 @@ fun OrderDetailsFullScreenPage(
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                     ) {
-                        Text("حفظ", color = Color.White, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.string_ar_76), color = Color.White, fontWeight = FontWeight.Bold)
                     }
                     OutlinedButton(
                         onClick = { showEditCourierNotesDialog = false },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("إلغاء", fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.string_ar_2), fontWeight = FontWeight.Bold)
                     }
                 }
             },
@@ -723,7 +724,7 @@ fun OrderDetailsFullScreenPage(
             onDismissRequest = { showSuccessConfirmation = false },
             title = {
                 Text(
-                    text = "تسليم الشحنة 📦",
+                    text = stringResource(R.string.string_ar_93),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Right,
@@ -732,7 +733,7 @@ fun OrderDetailsFullScreenPage(
             },
             text = {
                 Text(
-                    text = "يرجى تحديد نمط التسليم المطلوب للشحنة للعميل:",
+                    text = stringResource(R.string.string_ar_94),
                     fontSize = 14.sp,
                     textAlign = TextAlign.Right,
                     modifier = Modifier.fillMaxWidth()
@@ -753,7 +754,7 @@ fun OrderDetailsFullScreenPage(
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF10B981)),
                         shape = RoundedCornerShape(10.dp)
                     ) {
-                        Text("تم التسليم بالكامل", color = Color.White, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.string_ar_77), color = Color.White, fontWeight = FontWeight.Bold)
                     }
 
                     Button(
@@ -765,14 +766,14 @@ fun OrderDetailsFullScreenPage(
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0284C7)),
                         shape = RoundedCornerShape(10.dp)
                     ) {
-                        Text("التسليم الجزئى", color = Color.White, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.string_ar_78), color = Color.White, fontWeight = FontWeight.Bold)
                     }
                     
                     TextButton(
                         onClick = { showSuccessConfirmation = false },
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     ) {
-                        Text("إلغاء", fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.string_ar_2), fontWeight = FontWeight.Bold)
                     }
                 }
             },
@@ -786,7 +787,7 @@ fun OrderDetailsFullScreenPage(
             onDismissRequest = { showAdditionalStatusOptions = false },
             title = {
                 Text(
-                    text = "الغاء / باقي الحالات ⚙️",
+                    text = stringResource(R.string.string_ar_95),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Right,
@@ -795,7 +796,7 @@ fun OrderDetailsFullScreenPage(
             },
             text = {
                 Text(
-                    text = "اختر الحالة الجديدة للشحنة للفئات الأخرى:",
+                    text = stringResource(R.string.string_ar_96),
                     fontSize = 14.sp,
                     textAlign = TextAlign.Right,
                     modifier = Modifier.fillMaxWidth()
@@ -842,7 +843,7 @@ fun OrderDetailsFullScreenPage(
                         onClick = { showAdditionalStatusOptions = false },
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     ) {
-                        Text("تراجع", fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.string_ar_79), fontWeight = FontWeight.Bold)
                     }
                 }
             },
@@ -856,7 +857,7 @@ fun OrderDetailsFullScreenPage(
             onDismissRequest = { showPartialAmountSelector = false },
             title = {
                 Text(
-                    text = "التسليم الجزئى 💳",
+                    text = stringResource(R.string.string_ar_97),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Right,
@@ -877,7 +878,7 @@ fun OrderDetailsFullScreenPage(
                     OutlinedTextField(
                         value = tempPartialAmount,
                         onValueChange = { tempPartialAmount = it },
-                        label = { Text("المبلغ المحصل كاش", fontSize = 12.sp) },
+                        label = { Text(stringResource(R.string.string_ar_80), fontSize = 12.sp) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
@@ -908,14 +909,14 @@ fun OrderDetailsFullScreenPage(
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("تأكيد", color = Color.White)
+                        Text(stringResource(R.string.string_ar_81), color = Color.White)
                     }
 
                     TextButton(
                         onClick = { showPartialAmountSelector = false },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("إلغاء")
+                        Text(stringResource(R.string.string_ar_2))
                     }
                 }
             },
@@ -929,7 +930,7 @@ fun OrderDetailsFullScreenPage(
             onDismissRequest = { showFeeAmountSelector = false },
             title = {
                 Text(
-                    text = "مصاريف شحن الرفض 🚚",
+                    text = stringResource(R.string.string_ar_98),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Right,
@@ -942,7 +943,7 @@ fun OrderDetailsFullScreenPage(
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     Text(
-                        text = "ادخل قيمة مصاريف الشحن التي تم تحصيله من العميل عند الرفض:",
+                        text = stringResource(R.string.string_ar_99),
                         fontSize = 14.sp,
                         textAlign = TextAlign.Right,
                         modifier = Modifier.fillMaxWidth()
@@ -950,7 +951,7 @@ fun OrderDetailsFullScreenPage(
                     OutlinedTextField(
                         value = tempFeeAmount,
                         onValueChange = { tempFeeAmount = it },
-                        label = { Text("مصاريف الشحن المحصلة", fontSize = 12.sp) },
+                        label = { Text(stringResource(R.string.string_ar_82), fontSize = 12.sp) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
@@ -977,14 +978,14 @@ fun OrderDetailsFullScreenPage(
                         colors = ButtonDefaults.buttonColors(containerColor = CancelledRed),
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("تأكيد", color = Color.White)
+                        Text(stringResource(R.string.string_ar_81), color = Color.White)
                     }
 
                     TextButton(
                         onClick = { showFeeAmountSelector = false },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("إلغاء")
+                        Text(stringResource(R.string.string_ar_2))
                     }
                 }
             },
@@ -1021,7 +1022,7 @@ fun PhoneSelectorDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = "اختيار رقم الاتصال 📞",
+                text = stringResource(R.string.string_ar_100),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Right,
@@ -1034,7 +1035,7 @@ fun PhoneSelectorDialog(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(
-                    text = "يرجى اختيار الرقم المطلوب للتواصل مع العميل:",
+                    text = stringResource(R.string.string_ar_101),
                     fontSize = 14.sp,
                     textAlign = TextAlign.Right,
                     modifier = Modifier.fillMaxWidth()
@@ -1064,7 +1065,7 @@ fun PhoneSelectorDialog(
         confirmButton = {},
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("إلغاء", color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.string_ar_2), color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
             }
         },
         containerColor = MaterialTheme.colorScheme.surface,
@@ -1078,7 +1079,7 @@ fun launchDialerWithNumber(context: Context, phoneNumber: String) {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
     } catch (e: Exception) {
-        Toast.makeText(context, "لا يمكن فتح لوحة الاتصال", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.string_ar_104), Toast.LENGTH_SHORT).show()
     }
 }
 
@@ -1094,7 +1095,7 @@ fun sendQuickWhatsAppMessageWithNumber(context: Context, order: Order, phoneNumb
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
     } catch (e: Exception) {
-        Toast.makeText(context, "تعذر إرسال رسالة سريعة للواتساب", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.string_ar_105), Toast.LENGTH_SHORT).show()
     }
 }
 
@@ -1106,7 +1107,7 @@ fun sendQuickSMSMessageWithNumber(context: Context, order: Order, phoneNumber: S
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
     } catch (e: Exception) {
-        Toast.makeText(context, "تعذر إرسال رسالة SMS سريعة!", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.string_ar_106), Toast.LENGTH_SHORT).show()
     }
 }
 
@@ -1144,6 +1145,6 @@ fun shareOrderToWhatsApp(context: Context, order: Order) {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
     } catch (e: Exception) {
-        Toast.makeText(context, "تعذر مشاركة بيانات الطلب عبر واتساب", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.string_ar_107), Toast.LENGTH_SHORT).show()
     }
 }

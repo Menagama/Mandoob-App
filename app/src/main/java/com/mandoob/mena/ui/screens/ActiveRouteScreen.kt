@@ -1,6 +1,7 @@
 package com.mandoob.mena.ui.screens
 
 import android.widget.Toast
+import com.mandoob.mena.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -13,6 +14,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material3.*
+import androidx.compose.ui.res.stringResource
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,14 +52,14 @@ fun ActiveRouteScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit) {
 
     // Count pending, success and cancelled categories
     val countPending = allOrders.count { it.status == OrderStatus.PENDING.value }
-    val countSuccess = allOrders.count { it.status == OrderStatus.DELIVERED.value || it.status == OrderStatus.PARTIAL.value }
+    val countSuccess = allOrders.count { it.status == OrderStatus.DELIVERED.value }
     val countCancelled = allOrders.count { it.isCancelledOrPostponed() }
 
     // Filter by the selected sub-tab
     val activeOrders = remember(allOrders, selectedSubTab) {
         when (selectedSubTab) {
             0 -> allOrders.filter { it.status == OrderStatus.PENDING.value }
-            1 -> allOrders.filter { it.status == OrderStatus.DELIVERED.value || it.status == OrderStatus.PARTIAL.value }
+            1 -> allOrders.filter { it.status == OrderStatus.DELIVERED.value }
             else -> allOrders.filter { it.isCancelledOrPostponed() }
         }
     }
@@ -103,7 +105,7 @@ fun ActiveRouteScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit) {
         OutlinedTextField(
             value = searchQuery,
             onValueChange = { viewModel.setSearchQuery(it) },
-            placeholder = { Text("بحث باسم العميل أو رقم الهاتف...", fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)) },
+            placeholder = { Text(stringResource(R.string.string_ar_12), fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)) },
             modifier = Modifier
                 .fillMaxWidth()
                 .shadow(1.dp, RoundedCornerShape(12.dp)),
@@ -146,9 +148,9 @@ fun ActiveRouteScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             val tabs = listOf(
-                Triple("جاري العمل", countPending, 0),
-                Triple("الناجحة", countSuccess, 1),
-                Triple("الملغاة", countCancelled, 2)
+                Triple(stringResource(R.string.string_ar_139), countPending, 0),
+                Triple(stringResource(R.string.string_ar_140), countSuccess, 1),
+                Triple(stringResource(R.string.string_ar_141), countCancelled, 2)
             )
 
             tabs.forEach { (title, count, index) ->
@@ -207,9 +209,9 @@ fun ActiveRouteScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             val headerTitle = when (selectedSubTab) {
-                0 -> "أوردرات خط السير الحالية"
-                1 -> "الأوردرات الناجحة"
-                else -> "الأوردرات الملغاة والمؤجلة"
+                0 -> stringResource(R.string.string_ar_142)
+                1 -> stringResource(R.string.string_ar_143)
+                else -> stringResource(R.string.string_ar_144)
             }
 
             Text(
@@ -243,14 +245,14 @@ fun ActiveRouteScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit) {
                     ) {
                         Icon(
                             imageVector = Icons.Default.ArrowDownward,
-                            contentDescription = "ترتيب خط السير",
+                            contentDescription = stringResource(R.string.string_ar_13),
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(2.dp))
                         Icon(
                             imageVector = Icons.Default.ArrowUpward,
-                            contentDescription = "ترتيب خط السير",
+                            contentDescription = stringResource(R.string.string_ar_13),
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(16.dp)
                         )
@@ -269,9 +271,9 @@ fun ActiveRouteScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit) {
             if (filteredAndSortedOrders.isEmpty()) {
                 item {
                     val emptyMessage = when (selectedSubTab) {
-                        0 -> "لا توجد أوردرات جاري العمل حالياً!"
-                        1 -> "لا توجد أوردرات ناجحة حالياً!"
-                        else -> "لا توجد أوردرات ملغاة أو مؤجلة حالياً!"
+                        0 -> stringResource(R.string.string_ar_145)
+                        1 -> stringResource(R.string.string_ar_146)
+                        else -> stringResource(R.string.string_ar_147)
                     }
                     EmptyStateView(
                         if (searchQuery.isNotEmpty()) "لا توجد نتائج مطابقة لبحثك!"
@@ -290,7 +292,7 @@ fun ActiveRouteScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit) {
                         onEditClick = { editingOrder = order },
                         onDelete = {
                             viewModel.deleteOrder(order.id)
-                            Toast.makeText(context, "تم مسح الأوردر", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.string_ar_14), Toast.LENGTH_SHORT).show()
                         },
                         onStatusChanged = { status, collected, fee, isQuiet ->
                             viewModel.updateOrderStatusWithValues(
@@ -339,7 +341,7 @@ fun ActiveRouteScreen(viewModel: OrderViewModel, onOpenSettings: () -> Unit) {
                     notes = notes
                 )
                 editingOrder = null
-                Toast.makeText(context, "تم تعديل بيانات الأوردر بنجاح!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.string_ar_15), Toast.LENGTH_SHORT).show()
             }
         )
         }
